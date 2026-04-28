@@ -1,5 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.database import get_db
@@ -11,6 +13,7 @@ from app.utils.logger import get_logger
 router = APIRouter(prefix="/auth", tags=["Auth"])
 bearer_scheme = HTTPBearer()
 logger = get_logger(__name__)
+limiter = Limiter(key_func=get_remote_address)
 
 @router.post("/register", response_model=UserResponse, status_code=201)
 async def register(data: UserCreate, db: AsyncSession = Depends(get_db)):
@@ -30,6 +33,7 @@ async def register(data: UserCreate, db: AsyncSession = Depends(get_db)):
     return user
 
 @router.post("/login", response_model=Token)
+@limiter.limit("5/minute") # max 5 login attempts per minute per IP
 async def login(data: LoginRequest, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User).where(User.email == data.email))
     user = result.scalar_one_or_none()
