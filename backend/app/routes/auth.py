@@ -6,9 +6,11 @@ from app.database import get_db
 from app.models.user import User
 from app.schemas.user import UserCreate, UserResponse, LoginRequest, Token
 from app.utils.auth import hash_password, verify_password, create_access_token, create_refresh_token, decode_token
+from app.utils.logger import get_logger
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 bearer_scheme = HTTPBearer()
+logger = get_logger(__name__)
 
 @router.post("/register", response_model=UserResponse, status_code=201)
 async def register(data: UserCreate, db: AsyncSession = Depends(get_db)):
@@ -24,6 +26,7 @@ async def register(data: UserCreate, db: AsyncSession = Depends(get_db)):
     )
     db.add(user)
     await db.flush()        # gets the ID without full commit
+    logger.info(f"New user registerd: {user.username}")       # Logging
     return user
 
 @router.post("/login", response_model=Token)
@@ -32,8 +35,10 @@ async def login(data: LoginRequest, db: AsyncSession = Depends(get_db)):
     user = result.scalar_one_or_none()
 
     if not user or not verify_password(data.password, user.password_hash):
+        logger.warning(f"Failed login attempt for email: {data.email}")     # Logging
         raise HTTPException(status_code=401, detail="Invalid credentials")
-
+    
+    logger.info(f"User logged in : {user.username}")      # Logging
     return Token(
         access_token=create_access_token(user.id),
         refresh_token=create_refresh_token(user.id)

@@ -4,6 +4,8 @@ from app.routes.auth import router as auth_router
 from app.routes.exercises import router as exercise_router
 from app.routes.workouts import router as workout_router
 from app.routes.user import router as user_router
+from app.routes.stats import router as stats_router
+
 from app.utils.error_handler import register_error_handlers
 from app.database import AsyncSessionLocal
 from app.utils.seed import seed_exercises
@@ -27,6 +29,7 @@ app.include_router(auth_router)
 app.include_router(exercise_router)
 app.include_router(workout_router)
 app.include_router(user_router)
+app.include_router(stats_router)
 
 register_error_handlers(app)
 
