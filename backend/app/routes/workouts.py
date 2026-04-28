@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, and_
+from datetime import date
 from app.database import get_db
 from app.models.user import User
 from app.models.workout import Workout
@@ -13,9 +14,33 @@ router = APIRouter(prefix="/workouts", tags=["Workouts"])
 @router.get("/", response_model=list[WorkoutResponse])
 async def get_workouts(
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
+    # Pagination
+    page: int = Query(default=1, ge=1),
+    limit: int = Query(default=10, ge=1, le=50),
+    # Filters
+    type: str | None = Query(default=None),
+    date_from: date | None = Query(default=None),
+    date_to: date | None = Query(default=None),
 ):
-    result = await db.execute(select(Workout).where(Workout.user_id == current_user.id))
+    filters = [Workout.user_id == current_user.id]
+
+    if type:
+        filters.append(Workout.type == type)
+    if date_from:
+        filters.append(Workout.date >= date_from)
+    if date_to:
+        filters.append(Workout.date <= date_to)
+
+    offset = (page - 1) * limit
+    
+    result = await db.execute(
+        select(Workout)
+        .where(and_(*filters))
+        .order_by(Workout.date.desc())
+        .offset(offset)
+        .limit(limit)
+    )
     return result.scalars().all()
 
 @router.get("/{workout_id}", response_model=WorkoutResponse)
