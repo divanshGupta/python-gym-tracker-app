@@ -34,7 +34,7 @@ async def register(data: UserCreate, db: AsyncSession = Depends(get_db)):
 
 @router.post("/login", response_model=Token)
 @limiter.limit("5/minute") # max 5 login attempts per minute per IP
-async def login(data: LoginRequest, db: AsyncSession = Depends(get_db)):
+async def login(request: Request, data: LoginRequest, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User).where(User.email == data.email))
     user = result.scalar_one_or_none()
 
