@@ -1,4 +1,8 @@
 import api from "./axios"
+import type { Exercise } from "../types"
 
-export const getExercises = () => api.get("/exercises")
-export const createExercise = (data: any) => api.post("/exercises", data)
+export const getExercises = () =>
+  api.get<Exercise[]>("/exercises")
+
+export const createExercise = (data: { name: string; category: string }) =>
+  api.post<Exercise>("/exercises", data)
