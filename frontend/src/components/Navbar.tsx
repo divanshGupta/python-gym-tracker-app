@@ -16,6 +16,7 @@ export default function Navbar() {
         <Link to="/" className="hover:text-green-400">Dashboard</Link>
         <Link to="/workouts" className="hover:text-green-400">Workouts</Link>
         <Link to="/exercises" className="hover:text-green-400">Exercises</Link>
+        <Link to="/profile" className="hover:text-green-400 text-sm">Profile</Link>
         <button
           onClick={logout}
           className="bg-red-600 px-3 py-1 rounded hover:bg-red-700"

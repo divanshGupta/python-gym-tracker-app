@@ -8,6 +8,7 @@ import WorkoutDetail from "./pages/WorkoutDetail"
 import Exercises from "./pages/Exercises"
 import Navbar from "./components/Navbar"
 import CreateWorkout from "./pages/CreateWorkout"
+import Profile from "./pages/Profile"
 
 export default function App() {
   return (
@@ -60,6 +61,12 @@ export default function App() {
             <Exercises />
           </ProtectedRoute>
         }/>
+
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <Navbar />
+            <Profile />
+          </ProtectedRoute>} />
 
       </Routes>
     </BrowserRouter>

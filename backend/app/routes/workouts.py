@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_
+from sqlalchemy.orm import selectinload
 from datetime import date
 from app.database import get_db
 from app.models.user import User
@@ -84,8 +85,20 @@ async def create_workout(
         )
         db.add(workout_exercise)
 
-    await db.flush()
-    await db.refresh(workout)   # reload with workout_exercises
+    await db.commit()
+
+    # ✅ RE-FETCH with eager loading
+    result = await db.execute(
+        select(Workout)
+        .options(
+            selectinload(Workout.workout_exercises)
+            .selectinload(WorkoutExercise.exercise)
+        )
+        .where(Workout.id == workout.id)
+    )
+
+    workout = result.scalar_one()
+
     return workout
 
 @router.put("/{workout_id}", response_model=WorkoutResponse)
