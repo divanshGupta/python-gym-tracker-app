@@ -9,6 +9,9 @@ import Exercises from "./pages/Exercises"
 import Navbar from "./components/Navbar"
 import CreateWorkout from "./pages/CreateWorkout"
 import Profile from "./pages/Profile"
+import Progress from "./pages/progress"
+import Goals from "./pages/Goals"
+import Measurements from "./pages/Measurements"
 
 export default function App() {
   return (
@@ -66,7 +69,29 @@ export default function App() {
           <ProtectedRoute>
             <Navbar />
             <Profile />
-          </ProtectedRoute>} />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/progress" element={
+          <ProtectedRoute>
+            <Navbar />
+            <Progress />
+          </ProtectedRoute>
+        }/>
+
+        <Route path="/goals" element={
+          <ProtectedRoute>
+            <Navbar />
+            <Goals />
+          </ProtectedRoute>
+        }/>
+
+        <Route path="/measurements" element={
+          <ProtectedRoute>
+            <Navbar />
+            <Measurements />
+          </ProtectedRoute>
+        }/>
 
       </Routes>
     </BrowserRouter>

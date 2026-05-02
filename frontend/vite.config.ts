@@ -7,4 +7,13 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:8000",  // FastAPI port
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""), // Vite proxy strips /api and then fastAPI gets /measurement or /profile etc
+      },
+    },
+  },
 })

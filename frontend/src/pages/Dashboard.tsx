@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { Link } from "react-router-dom"
-import { getStats, getPersonalBests } from "../api/workouts"
-import { getWorkouts } from "../api/workouts"
+import { getStats, getPersonalBests, getWorkouts, getStreak } from "../api/workouts"
 import { Workout } from "../types"
 
 function StatCard({ label, value, unit }: any) {
@@ -63,9 +62,15 @@ export default function Dashboard() {
     queryFn: getPersonalBests,
   })
 
+  const { data: streakRes } = useQuery({
+    queryKey: ["streak"],
+    queryFn: getStreak,
+  })
+
   const stats = statsRes?.data
   const recentWorkouts = workoutsRes?.data || []
   const personalBests = pbRes?.data?.personal_bests || []
+  const streak = streakRes?.data
 
   return (
     <div className="min-h-screen bg-gray-950 text-white p-6">
@@ -104,6 +109,32 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+
+      {/* Streak Cards */}
+      {streak && (
+        <div className="grid grid-cols-2 gap-4 mb-8">
+          <div className="bg-gray-900 rounded-xl p-5 flex items-center gap-4">
+            <span className="text-4xl">🔥</span>
+            <div>
+              <p className="text-gray-400 text-sm">Current Streak</p>
+              <p className="text-white text-3xl font-bold">
+                {streak.current_streak}
+                <span className="text-gray-400 text-lg ml-1">days</span>
+              </p>
+            </div>
+          </div>
+          <div className="bg-gray-900 rounded-xl p-5 flex items-center gap-4">
+            <span className="text-4xl">🏆</span>
+            <div>
+              <p className="text-gray-400 text-sm">Longest Streak</p>
+              <p className="text-white text-3xl font-bold">
+                {streak.longest_streak}
+                <span className="text-gray-400 text-lg ml-1">days</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Recent Workouts */}
       <div className="bg-gray-900 rounded-xl p-5">

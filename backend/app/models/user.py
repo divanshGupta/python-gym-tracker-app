@@ -12,4 +12,6 @@ class User(Base):
     created_at: Mapped[DateTime] = mapped_column(DateTime, server_default=func.now())
 
     # Like mongoose populate — lazy="selectin" auto-loads related data
+    goals:        Mapped[list["Goal"]]             = relationship("Goal", back_populates="user")
+    measurements: Mapped[list["BodyMeasurement"]]  = relationship("BodyMeasurement", back_populates="user")
     workouts: Mapped[list["Workout"]] = relationship("Workout", back_populates="user", lazy="selectin")

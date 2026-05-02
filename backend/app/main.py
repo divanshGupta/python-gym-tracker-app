@@ -9,6 +9,8 @@ from app.routes.exercises import router as exercise_router
 from app.routes.workouts import router as workout_router
 from app.routes.user import router as user_router
 from app.routes.stats import router as stats_router
+from app.routes.goals import router as goals_router
+from app.routes.measurements import router as measurements_router
 
 from app.utils.error_handler import register_error_handlers
 from app.database import AsyncSessionLocal
@@ -41,6 +43,8 @@ app.include_router(exercise_router)
 app.include_router(workout_router)
 app.include_router(user_router)
 app.include_router(stats_router)
+app.include_router(goals_router)
+app.include_router(measurements_router)
 
 register_error_handlers(app)
 

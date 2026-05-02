@@ -7,6 +7,7 @@ from app.models.workout import Workout
 from app.models.workout_exercise import WorkoutExercise
 from app.models.exercise import Exercise
 from app.utils.dependencies import get_current_user
+from datetime import date, timedelta
 
 router = APIRouter(prefix="/stats", tags=["Stats"])
 
@@ -81,5 +82,99 @@ async def get_personal_bests(
     return {
         "personal_bests": [
             {"exercise": row[0], "max_weight_kg": row[1]} for row in rows
+        ]
+    }
+    
+
+@router.get("/streak")
+async def get_streak(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # Get all workout dates for user, ordered descending
+    result = await db.execute(
+        select(Workout.date)
+        .where(Workout.user_id == current_user.id)
+        .order_by(Workout.date.desc())
+    )
+    dates = [row[0] for row in result.all()]
+
+    if not dates:
+        return {"current_streak": 0, "longest_streak": 0, "last_workout": None}
+
+    # Current streak
+    current_streak = 0
+    check_date = date.today()
+
+    # Allow today or yesterday as starting point
+    if dates[0] < check_date - timedelta(days=1):
+        current_streak = 0
+    else:
+        for d in dates:
+            if d == check_date or d == check_date - timedelta(days=1):
+                current_streak += 1
+                check_date = d - timedelta(days=1)
+            else:
+                break
+
+    # Longest streak
+    longest_streak = 1
+    current_run = 1
+    for i in range(1, len(dates)):
+        if dates[i] == dates[i - 1] - timedelta(days=1):
+            current_run += 1
+            longest_streak = max(longest_streak, current_run)
+        else:
+            current_run = 1
+
+    return {
+        "current_streak": current_streak,
+        "longest_streak": longest_streak,
+        "last_workout": str(dates[0]),
+    }
+
+@router.get("/progress/{exercise_id}")
+async def get_exercise_progress(
+    exercise_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    result = await db.execute(
+        select(Workout.date, func.max(WorkoutExercise.weight).label("max_weight"))
+        .join(WorkoutExercise, WorkoutExercise.workout_id == Workout.id)
+        .where(
+            Workout.user_id == current_user.id,
+            WorkoutExercise.exercise_id == exercise_id,
+            WorkoutExercise.weight > 0
+        )
+        .group_by(Workout.date)
+        .order_by(Workout.date.asc())
+    )
+    rows = result.all()
+
+    # Volume = sets * reps * weight per session
+    volume_result = await db.execute(
+        select(
+            Workout.date,
+            func.sum(WorkoutExercise.sets * WorkoutExercise.reps * WorkoutExercise.weight).label("volume")
+        )
+        .join(WorkoutExercise, WorkoutExercise.workout_id == Workout.id)
+        .where(
+            Workout.user_id == current_user.id,
+            WorkoutExercise.exercise_id == exercise_id,
+            WorkoutExercise.weight > 0
+        )
+        .group_by(Workout.date)
+        .order_by(Workout.date.asc())
+    )
+    volume_rows = volume_result.all()
+
+    return {
+        "exercise_id": exercise_id,
+        "max_weight_over_time": [
+            {"date": str(r[0]), "max_weight": float(r[1])} for r in rows
+        ],
+        "volume_over_time": [
+            {"date": str(r[0]), "volume": float(r[1]) if r[1] else 0} for r in volume_rows
         ]
     }
