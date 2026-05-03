@@ -77,17 +77,31 @@ export default function WorkoutDetail() {
       )}
 
       {/* Exercises */}
-      <div className="bg-gray-900 rounded-xl p-5">
+      <Link
+        to="/progress" 
+        className="bg-gray-900 rounded-xl p-5"
+      >
         <p className="text-gray-400 text-sm mb-4">Exercises</p>
         {workout.workout_exercises.length === 0 ? (
           <p className="text-gray-500 text-sm">No exercises logged.</p>
         ) : (
           <div className="flex flex-col gap-3">
             {workout.workout_exercises.map((we) => (
-              <div key={we.id} className="bg-gray-800 rounded-lg px-4 py-3">
-                <p className="text-white font-medium mb-2">{we.exercise.name}
-                  <span className="text-xs text-gray-400 ml-2">({we.exercise.category})</span>
+              <Link
+                key={we.id}
+                to={`/progress?exercise=${we.exercise.id}`}
+                className="bg-gray-800 hover:bg-gray-700 rounded-lg px-4 py-3 block transition-colors group"
+              >
+                <p className="text-white font-medium mb-2 flex items-center justify-between">
+                  <span>
+                    {we.exercise.name}
+                    <span className="text-xs text-gray-400 ml-2">({we.exercise.category})</span>
+                  </span>
+                  <span className="text-xs text-green-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                    View progress →
+                  </span>
                 </p>
+
                 <div className="flex gap-6 text-sm">
                   {we.sets && (
                     <div>
@@ -108,11 +122,11 @@ export default function WorkoutDetail() {
                     </div>
                   )}
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
-      </div>
+      </Link>
 
       <button
         onClick={() => navigate("/workouts")}

@@ -1,15 +1,23 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useQuery } from "@tanstack/react-query"
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Legend
 } from "recharts"
+import { useSearchParams } from "react-router-dom"
 import { getExercises } from "../api/exercises"
 import { getExerciseProgress } from "../api/workouts"
 import type { Exercise } from "../types"
 
 export default function Progress() {
-  const [selectedId, setSelectedId] = useState<number | null>(null)
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [localId, setLocalId] = useState<number | null>(null)
+
+  // URL param always wins; local state only used after user picks from dropdown
+  const urlId = Number(searchParams.get("exercise")) || null
+  const selectedId = localId ?? urlId
+
+  console.log("urlId:", urlId, "localId:", localId, "selectedId:", selectedId)
 
   const { data: exercisesRes } = useQuery({
     queryKey: ["exercises"],
@@ -37,7 +45,13 @@ export default function Progress() {
         <select
           className="bg-gray-800 text-white px-4 py-2 rounded outline-none focus:ring-2 focus:ring-green-400 w-full max-w-sm"
           value={selectedId || ""}
-          onChange={(e) => setSelectedId(Number(e.target.value) || null)}
+          // dropdown onChange:
+          onChange={(e) => {
+            const id = Number(e.target.value) || null
+            setLocalId(id)
+            if (id) setSearchParams({ exercise: String(id) })
+            else setSearchParams({})
+          }}
         >
           <option value="">Choose an exercise...</option>
           {exercises.map((e) => (
