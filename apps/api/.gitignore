@@ -1,0 +1,16 @@
+# env files
+.env
+backend/.env
+backend/.env.development.local
+backend/.env.production.local
+frontend/.env.local
+dist/
+build/
+.vscode/
+coverage/
+.cache/
+.next/
+out/
+public/build/
+.venv
+__pycache__
