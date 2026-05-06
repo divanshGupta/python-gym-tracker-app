@@ -1,9 +1,8 @@
 # env files
 .env
-backend/.env
-backend/.env.development.local
-backend/.env.production.local
-frontend/.env.local
+api/.env
+api/.env.development.local
+api/.env.production.local
 dist/
 build/
 .vscode/
@@ -13,4 +12,7 @@ coverage/
 out/
 public/build/
 .venv
-__pycache__
+# Testing
+.pytest_cache/
+__pycache__/
+.pytest_cache
