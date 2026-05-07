@@ -11,7 +11,7 @@ export default function Navbar() {
 
   return (
     <nav className="bg-gray-900 text-white px-6 py-4 flex justify-between items-center">
-      <Link to="/" className="text-xl font-bold text-green-400">GymTracker</Link>
+      <Link to="/" className="text-xl font-bold text-accent">GymTracker</Link>
       <div className="flex gap-6 items-center">
         <Link to="/" className="hover:text-green-400">Dashboard</Link>
         <Link to="/workouts" className="hover:text-green-400">Workouts</Link>
@@ -22,7 +22,7 @@ export default function Navbar() {
         <Link to="/measurements" className="hover:text-green-400 text-sm">Measurements</Link>
         <button
           onClick={logout}
-          className="bg-red-600 px-3 py-1 rounded hover:bg-red-700"
+          className="bg-danger px-3 py-1 rounded hover:bg-red-700"
         >
           Logout
         </button>

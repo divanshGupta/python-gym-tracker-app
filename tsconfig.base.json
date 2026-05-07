@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "strict": true,
+    "moduleResolution": "Bundler",
+
+    "baseUrl": ".",
+
+    "paths": {
+      "@gymtracker/constants/*": ["packages/constants/*"],
+      "@gymtracker/hooks/*": ["packages/hooks/*"],
+      "@gymtracker/types/*": ["packages/types/*"],
+      "@gymtracker/api-client/*": ["packages/api-client/*"],
+      "@gymtracker/stores/*": ["packages/stores/*"],
+      "@gymtracker/tailwind-config/*": ["packages/tailwind-config/*"],
+      "@gymtracker/utils/*": ["packages/utils/*"]
+
+    },
+
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  }
+}

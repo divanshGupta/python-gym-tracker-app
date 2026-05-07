@@ -1,13 +1,17 @@
 {
-  "name": "python-gym-tracker",
+  "name": "gymtracker",
+  "private": true,
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "packageManager": "pnpm@10.33.4",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "web": "pnpm --filter web dev",
+    "mobile": "pnpm --filter mobile start",
+    "api": "cd apps/api && uvicorn app.main:app --reload",
+    "install:all": "pnpm install",
+    "build:web": "pnpm --filter web build",
+    "lint": "pnpm -r lint"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.33.4"
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  }
 }

@@ -73,7 +73,7 @@ export default function Dashboard() {
   const streak = streakRes?.data
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-6">
+    <div className="min-h-screen bg-void text-text-primary p-6">
       <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
 
       {/* Stats Cards */}

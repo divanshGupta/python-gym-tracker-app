@@ -9,7 +9,7 @@ import Exercises from "./pages/Exercises"
 import Navbar from "./components/Navbar"
 import CreateWorkout from "./pages/CreateWorkout"
 import Profile from "./pages/Profile"
-import Progress from "./pages/progress"
+import Progress from "./pages/Progress"
 import Goals from "./pages/Goals"
 import Measurements from "./pages/Measurements"
 
