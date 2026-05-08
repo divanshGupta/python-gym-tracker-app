@@ -3,7 +3,7 @@ import {
   View, Text, TextInput, FlatList,
   TouchableOpacity, Modal,
 } from "react-native";
-import { useExerciseStore } from "../../store/exercise.store";
+import { useExerciseStore } from "@gymtracker/stores";
 import { useWorkoutSessionStore } from "@gymtracker/stores"; 
 import { ExerciseCard } from "../exercise/ExerciseCard";
 import { tokens } from "../../theme/tokens";

@@ -6,7 +6,7 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuthStore } from "../../store/auth.store";
+import { useAuthStore } from "@gymtracker/stores"; 
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 const schema = z.object({

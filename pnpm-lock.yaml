@@ -23,6 +23,9 @@ importers:
       '@gymtracker/constants':
         specifier: workspace:*
         version: link:../../packages/constants
+      '@gymtracker/hooks':
+        specifier: workspace:*
+        version: link:../../packages/hooks
       '@gymtracker/stores':
         specifier: workspace:*
         version: link:../../packages/stores
@@ -207,6 +210,31 @@ importers:
         version: 1.16.0
 
   packages/constants: {}
+
+  packages/hooks:
+    dependencies:
+      '@gymtracker/api-client':
+        specifier: workspace:*
+        version: link:../api-client
+      '@gymtracker/constants':
+        specifier: workspace:*
+        version: link:../constants
+      '@gymtracker/types':
+        specifier: workspace:*
+        version: link:../types
+      react:
+        specifier: '>=18'
+        version: 19.2.6
+    devDependencies:
+      '@tanstack/react-query':
+        specifier: ^5.0.0
+        version: 5.100.9(react@19.2.6)
+      '@types/react':
+        specifier: ^18.0.0
+        version: 18.3.28
+      typescript:
+        specifier: ^5.3.0
+        version: 5.9.3
 
   packages/stores:
     dependencies:
@@ -1484,10 +1512,16 @@ packages:
   '@types/node@25.6.0':
     resolution: {integrity: sha512-+qIYRKdNYJwY3vRCZMdJbPLJAtGjQBudzZzdzwQYkEPQd+PJGixUL5QfvCLDaULoLv+RhT3LDkwEfKaAkgSmNQ==}
 
+  '@types/prop-types@15.7.15':
+    resolution: {integrity: sha512-F6bEyamV9jKGAFBEmlQnesRPGOQqS2+Uwi0Em15xenOxHaf2hv6L8YCVn3rPdPJOiJfPiCnLIRyvwVaqMY3MIw==}
+
   '@types/react-dom@19.2.3':
     resolution: {integrity: sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ==}
     peerDependencies:
       '@types/react': ^19.2.0
+
+  '@types/react@18.3.28':
+    resolution: {integrity: sha512-z9VXpC7MWrhfWipitjNdgCauoMLRdIILQsAEV+ZesIzBq/oUlxk0m3ApZuMFCXdnS4U7KrI+l3WRUEGQ8K1QKw==}
 
   '@types/react@19.1.17':
     resolution: {integrity: sha512-Qec1E3mhALmaspIrhWt9jkQMNdw6bReVu64mjvhbhq2NFPftLPVr+l1SZgmw/66WwBNpDh7ao5AT6gF5v41PFA==}
@@ -5849,9 +5883,16 @@ snapshots:
     dependencies:
       undici-types: 7.19.2
 
+  '@types/prop-types@15.7.15': {}
+
   '@types/react-dom@19.2.3(@types/react@19.2.14)':
     dependencies:
       '@types/react': 19.2.14
+
+  '@types/react@18.3.28':
+    dependencies:
+      '@types/prop-types': 15.7.15
+      csstype: 3.2.3
 
   '@types/react@19.1.17':
     dependencies:

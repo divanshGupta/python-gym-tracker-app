@@ -1,5 +1,5 @@
 export interface User {
-  id: string;
+  id: number;
   email: string;
   username: string;
   created_at: string;
@@ -11,7 +11,7 @@ export interface AuthTokensResponse {
 }
 
 export interface UserResponse {
-  id:         string;
+  id:         number;
   email:      string;
   username:   string;
   created_at: string;

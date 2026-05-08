@@ -4,8 +4,9 @@ import {
   RefreshControl, StatusBar, ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useAuthStore } from "../../store/auth.store";
-import { useWorkoutStore } from "../../store/workout.store";
+import { useAuthStore } from "@gymtracker/stores"; 
+import { useWorkoutSessionStore } from "@gymtracker/stores";
+import { useWorkouts } from "@gymtracker/hooks";
 import { StreakCard } from "../../components/dashboard/StreakCard";
 import { StatCard } from "../../components/dashboard/StatCard";
 import { RecentWorkoutItem } from "../../components/dashboard/RecentWorkoutItem";
@@ -16,11 +17,9 @@ import { format } from "date-fns";
 export const DashboardScreen = ({ navigation }: any) => {
   const insets = useSafeAreaInsets();
   const { user } = useAuthStore();
-  const { workouts, isLoading, fetchWorkouts } = useWorkoutStore();
+  const { data: workouts = [], isLoading } = useWorkouts();
 
-  useEffect(() => { fetchWorkouts(); }, []);
-
-  const onRefresh = useCallback(() => { fetchWorkouts(); }, []);
+  // const onRefresh = useCallback(() => { fetchWorkouts(); }, []);
 
   const greeting = () => {
     const h = new Date().getHours();

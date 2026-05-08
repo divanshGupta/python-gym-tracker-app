@@ -1,5 +1,5 @@
 export interface WorkoutSet {
-  id: string;
+  id: number;
   reps: number;
   weight: number;
   unit: "kg" | "lbs";
@@ -8,7 +8,7 @@ export interface WorkoutSet {
 }
 
 export interface WorkoutExercise {
-  id: string;
+  id: number;
   exercise_id: string;
   exercise_name: string;
   muscle_group: string;
@@ -18,7 +18,7 @@ export interface WorkoutExercise {
 }
 
 export interface Workout {
-  id: string;
+  id: number;
   name: string;
   user_id: string;
   started_at: string;           // ISO string
@@ -37,7 +37,7 @@ export interface CreateSetPayload {
 }
 
 export interface CreateExercisePayload {
-  exercise_id:   string;
+  exercise_id:   number;
   exercise_name: string;
   muscle_group:  string;
   sets:          CreateSetPayload[];

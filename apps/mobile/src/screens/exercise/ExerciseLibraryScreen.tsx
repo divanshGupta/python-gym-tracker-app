@@ -5,7 +5,8 @@ import {
   TouchableOpacity, StatusBar, ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useExerciseStore } from "../../store/exercise.store";
+import { useExerciseStore } from "@gymtracker/stores";
+import { useAuthStore } from "@gymtracker/stores";
 import { ExerciseCard } from "../../components/exercise/ExerciseCard";
 import type { MuscleGroup } from "../../types/exercise.types";
 import { tokens } from "../../theme/tokens";

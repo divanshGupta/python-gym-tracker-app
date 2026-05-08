@@ -7,7 +7,7 @@ export type Equipment =
 export type ExerciseType = "compound" | "isolation" | "isometric" | "cardio";
 
 export interface Exercise {
-  id: string;
+  id: number;
   name: string;
   muscle_group: MuscleGroup;
   equipment: Equipment;

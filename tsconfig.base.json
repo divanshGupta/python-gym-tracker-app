@@ -18,7 +18,10 @@
       "@gymtracker/api-client/*": ["packages/api-client/src/*"],
 
       "@gymtracker/stores": ["packages/stores/src"],
-      "@gymtracker/stores/*": ["packages/stores/src/*"]
+      "@gymtracker/stores/*": ["packages/stores/src/*"],
+
+      "@gymtracker/hooks": ["packages/stores/src"],
+      "@gymtracker/hooks/*": ["packages/stores/src/*"]
     },
 
     "jsx": "react-jsx",

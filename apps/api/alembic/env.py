@@ -18,11 +18,11 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from app.backend.app.models import User, Workout, Exercise, WorkoutExercise
-from app.backend.app.models.goal import Goal, GoalProgress
-from app.backend.app.models.measurement import BodyMeasurement
-from app.backend.app.database import Base
-from app.backend.app.config import settings
+from app.models import User, Workout, Exercise, WorkoutExercise
+from app.models.goal import Goal, GoalProgress
+from app.models.measurement import BodyMeasurement
+from app.database import Base
+from app.config import settings
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
@@ -57,7 +57,7 @@ def run_migrations_offline() -> None:
 
 def run_migrations_online() -> None:
     from sqlalchemy import create_engine
-    from app.backend.app.config import settings
+    from app.config import settings
 
     sync_url = settings.DATABASE_URL.replace("+asyncpg", "")
     connectable = create_engine(sync_url)
