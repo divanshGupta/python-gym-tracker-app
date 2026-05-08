@@ -8,15 +8,20 @@
     "baseUrl": ".",
 
     "paths": {
-      "@gymtracker/constants/*": ["packages/constants/*"],
-      "@gymtracker/hooks/*": ["packages/hooks/*"],
-      "@gymtracker/types/*": ["packages/types/*"],
-      "@gymtracker/api-client/*": ["packages/api-client/*"],
-      "@gymtracker/stores/*": ["packages/stores/*"],
-      "@gymtracker/tailwind-config/*": ["packages/tailwind-config/*"],
-      "@gymtracker/utils/*": ["packages/utils/*"]
+      "@gymtracker/constants": ["packages/constants/src"],
+      "@gymtracker/constants/*": ["packages/constants/src/*"],
 
+      "@gymtracker/types": ["packages/types/src"],
+      "@gymtracker/types/*": ["packages/types/src/*"],
+
+      "@gymtracker/api-client": ["packages/api-client/src"],
+      "@gymtracker/api-client/*": ["packages/api-client/src/*"],
+
+      "@gymtracker/stores": ["packages/stores/src"],
+      "@gymtracker/stores/*": ["packages/stores/src/*"]
     },
+
+    "jsx": "react-jsx",
 
     "resolveJsonModule": true,
     "esModuleInterop": true,

@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
-import type { MuscleGroup, Exercise } from "../../types/exercise.types";
+import type { MuscleGroup, Exercise } from "@gymtracker/types"; 
 
 const MUSCLE_CONFIG: Record<MuscleGroup, { bg: string; color: string; dot: string }> = {
   chest:     { bg: "#2C1F5E", color: "#9B7EFD", dot: "#7C5CFC" },
@@ -9,7 +9,7 @@ const MUSCLE_CONFIG: Record<MuscleGroup, { bg: string; color: string; dot: strin
   arms:      { bg: "#2E1A22", color: "#F472B6", dot: "#EC4899" },
   shoulders: { bg: "#1A2030", color: "#60A5FA", dot: "#3B82F6" },
   core:      { bg: "#1C1C2E", color: "#8E8E93", dot: "#636366" },
-  cardio:    { bg: "#2E1A1A", color: "#FCA5A5", dot: "#EF4444" },
+  full_body: { bg: "#1C2A1C", color: "#86EFAC", dot: "#4ADE80" },
 };
 
 interface Props {
@@ -42,7 +42,7 @@ export const ExerciseCard = ({ exercise, onPress, rightElement }: Props) => {
       <View className="flex-1">
         <Text className="text-text-primary text-sm font-medium">{exercise.name}</Text>
         <Text className="text-text-secondary mt-0.5 capitalize" style={{ fontSize: 11 }}>
-          {exercise.equipment} · {exercise.type}
+          {exercise.equipment} · {exercise.category}
         </Text>
       </View>
 

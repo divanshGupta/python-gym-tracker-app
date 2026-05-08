@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text } from "react-native";
 import { startOfDay, subDays, isSameDay } from "date-fns";
-import type { Workout } from "../../types/workout.types";
+import type { Workout } from "@gymtracker/types"; 
 
 interface Props { workouts: Workout[]; }
 

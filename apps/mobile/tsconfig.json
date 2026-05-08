@@ -1,8 +1,9 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+  
     "strict": true,
-    "ignoreDeprecations": "5.0"
+    "ignoreDeprecations": "6.0",
   },
   "include": [
     "**/*.ts",

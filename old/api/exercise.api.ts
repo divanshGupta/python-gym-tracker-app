@@ -1,6 +1,5 @@
 import { apiClient } from "./client";
-import type { Exercise } from "../types/exercise.types";
-import { AppRegistry } from "react-native";
+import type { Exercise } from "../../apps/mobile/src/types/exercise.types";
 
 export const exerciseApi = {
     getAll: () => apiClient.get<Exercise[]>("/exercise"),

@@ -1,0 +1,15 @@
+{
+  "name": "@gymtracker/stores",
+  "version": "0.0.1",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@gymtracker/api-client": "workspace:*",
+    "@gymtracker/types":      "workspace:*",
+    "@gymtracker/constants":  "workspace:*",
+    "zustand":                "^4.5.0"
+  }
+}

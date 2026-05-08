@@ -1,11 +1,14 @@
+import type {
+  ExerciseCategoryValue,
+  MuscleGroupValue,
+  EquipmentValue,
+} from "@gymtracker/constants";
+
 // Match your FastAPI backend exactly
-export type ExerciseCategory = "strength" | "cardio" | "flexibility" | "core";
-
-export type MuscleGroup =
-  | "chest" | "back" | "shoulders" | "arms" | "legs" | "core" | "full_body";
-
-export type Equipment =
-  | "barbell" | "dumbbell" | "bodyweight" | "machine" | "cable" | "kettlebell" | "none";
+// Re-export for convenience — consumers can import types from one place
+export type ExerciseCategory = ExerciseCategoryValue;
+export type MuscleGroup      = MuscleGroupValue;
+export type Equipment        = EquipmentValue;
 
 export interface Exercise {
   id: string;

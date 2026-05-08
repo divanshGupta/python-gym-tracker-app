@@ -1,12 +1,11 @@
-import React from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
-import { useWorkoutStore, type ActiveExercise } from "../../store/workout.store";
+import { useWorkoutSessionStore, type ActiveExercise } from "@gymtracker/stores";
 import { tokens } from "../../theme/tokens";
 
 interface Props { activeExercise: ActiveExercise; }
 
 export const ActiveExerciseSection = ({ activeExercise }: Props) => {
-  const { addSet, removeSet, updateSet, toggleSet, removeExercise } = useWorkoutStore();
+  const { addSet, removeSet, updateSet, toggleSet, removeExercise } = useWorkoutSessionStore();
   const { localId, exercise, sets } = activeExercise;
 
   return (

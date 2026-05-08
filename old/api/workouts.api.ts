@@ -1,5 +1,5 @@
 import { apiClient } from "./client";
-import type { Workout, CreateWorkoutPayload } from "../types/workout.types";
+import type { Workout, CreateWorkoutPayload } from "../../apps/mobile/src/types/workout.types";
 
 export const workoutsApi = {
   getAll: () => apiClient.get<Workout[]>("/workouts"),

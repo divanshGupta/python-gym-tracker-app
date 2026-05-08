@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { exerciseApi } from "../api/exercise.api";
+import { exerciseApi } from "../../../../old/api/exercise.api";
 import  type { Exercise, MuscleGroup } from "../types/exercise.types"
 
 interface ExerciseState {
@@ -21,6 +21,5 @@ export const useExerciseStore = create<ExerciseState>((set) => ({
             set({ isLoading: false });
         }
     },
-
 
 }))

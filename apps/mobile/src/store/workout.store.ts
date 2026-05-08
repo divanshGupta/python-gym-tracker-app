@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { workoutsApi } from "../api/workouts.api";
+import { workoutsApi } from "../../../../old/api/workouts.api";
 import type { Workout, CreateWorkoutPayload } from "../types/workout.types";
 import type { Exercise } from "../types/exercise.types";
 

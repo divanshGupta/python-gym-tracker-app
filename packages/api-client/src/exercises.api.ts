@@ -1,10 +1,10 @@
 import { apiClient } from "./client";
-import type { Exercise } from "@gymtracker/types";
+import type { Exercise, ExerciseCategory } from "@gymtracker/types";
 
 export const exercisesApi = {
 
   // GET /exercises  →  optional ?category= filter
-  getAll: (category?: string) =>
+  getAll: (category?: ExerciseCategory) =>
     apiClient.get<Exercise[]>("/exercises", {
       params: category ? { category } : undefined,
     }),

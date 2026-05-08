@@ -1,13 +1,13 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import {
   View, Text, TextInput, FlatList,
   TouchableOpacity, Modal,
 } from "react-native";
 import { useExerciseStore } from "../../store/exercise.store";
-import { useWorkoutStore } from "../../store/workout.store";
+import { useWorkoutSessionStore } from "@gymtracker/stores"; 
 import { ExerciseCard } from "../exercise/ExerciseCard";
 import { tokens } from "../../theme/tokens";
-import type { Exercise } from "../../types/exercise.types";
+import type { Exercise } from "@gymtracker/types";
 
 interface Props {
   visible: boolean;
@@ -16,7 +16,7 @@ interface Props {
 
 export const ExercisePickerModal = ({ visible, onClose }: Props) => {
   const { exercises } = useExerciseStore();
-  const { addExercise } = useWorkoutStore();
+  const { addExercise } = useWorkoutSessionStore();
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() =>

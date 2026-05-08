@@ -1,7 +1,6 @@
-import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { formatDistanceToNow } from "date-fns";
-import type { Workout } from "../../types/workout.types";
+import type { Workout } from "@gymtracker/types"; 
 
 interface Props {
   workout: Workout;

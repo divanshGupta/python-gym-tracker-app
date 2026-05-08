@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import * as SecureStore from "expo-secure-store";
-import { authApi, LoginPayload, RegisterPayload } from "../api/auth.api";
+import { authApi, LoginPayload, RegisterPayload } from "../../../../old/api/auth.api";
 
 interface User { id: string; email: string; username: string; }
 
