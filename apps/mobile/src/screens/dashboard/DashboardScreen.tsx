@@ -1,48 +1,77 @@
-import React, { useEffect, useCallback } from "react";
+import React from "react";
 import {
   View, Text, ScrollView, TouchableOpacity,
   RefreshControl, StatusBar, ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useAuthStore } from "@gymtracker/stores"; 
-import { useWorkoutSessionStore } from "@gymtracker/stores";
-import { useWorkouts } from "@gymtracker/hooks";
-import { StreakCard } from "../../components/dashboard/StreakCard";
-import { StatCard } from "../../components/dashboard/StatCard";
-import { RecentWorkoutItem } from "../../components/dashboard/RecentWorkoutItem";
-import { ProfileScreen } from "../profile/ProfileScreen";
-import { tokens } from "../../theme/tokens";
-import { format } from "date-fns";
+
+// shared packages 
+
+import { useAuthStore }  from "@gymtracker/stores";
+import { useWorkouts }   from "@gymtracker/hooks";
+import type { Workout }  from "@gymtracker/types";
+
+// Local components (mobile-only UI — stays in mobile app) 
+import { StreakCard }         from "../../components/dashboard/StreakCard";
+import { StatCard }           from "../../components/dashboard/StatCard";
+import { RecentWorkoutItem }  from "../../components/dashboard/RecentWorkoutItem";
+import { tokens }             from "../../theme/tokens";
+
+// Helpers
+const getGreeting = (): string => {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 17) return "Good afternoon";
+  return "Good evening";
+};
+
+const formatVolume = (kg: number): string =>
+  kg >= 1000 ? `${(kg / 1000).toFixed(1)}t` : `${Math.round(kg)}`;
+
+// Screen
 
 export const DashboardScreen = ({ navigation }: any) => {
   const insets = useSafeAreaInsets();
+
+  // Auth — from Zustand (local state, already in memory)
   const { user } = useAuthStore();
-  const { data: workouts = [], isLoading } = useWorkouts();
 
-  // const onRefresh = useCallback(() => { fetchWorkouts(); }, []);
+  // ── Workouts — from React Query (server state, auto-fetched + cached) ────
+  // data:     the workouts array (defaults to [] while loading)
+  // isLoading: true only on the very first fetch (no cached data yet)
+  // isRefetching: true on background refresh (cached data already shown)
+  // refetch:  call manually to trigger a refresh
 
-  const greeting = () => {
-    const h = new Date().getHours();
-    if (h < 12) return "Good morning";
-    if (h < 17) return "Good afternoon";
-    return "Good evening";
-  };
+  const {
+    data: workouts = [],
+    isLoading,
+    isRefetching,
+    refetch,
+  } = useWorkouts();
 
-  const thisMonthCount = workouts.filter((w) => {
-    const d = new Date(w.started_at);
+  // Derived values — computed from the cached workouts array
+
+  const thisMonthCount = workouts.filter((w: Workout) => {
+    const d   = new Date(w.started_at);
     const now = new Date();
-    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    return (
+      d.getMonth()    === now.getMonth() &&
+      d.getFullYear() === now.getFullYear()
+    );
   }).length;
 
-  const totalKg = workouts.reduce((acc, w) => {
-    return acc + w.exercises.reduce((eAcc, e) => {
-      return eAcc + e.sets.reduce((sAcc, s) => sAcc + s.weight * s.reps, 0);
-    }, 0);
-  }, 0);
+  const totalKg = workouts.reduce((acc, w) =>
+    acc + w.exercises.reduce((eAcc, e) =>
+      eAcc + e.sets.reduce((sAcc, s) =>
+        sAcc + s.weight * s.reps, 0), 0), 0);
 
   const recentWorkouts = [...workouts]
-    .sort((a, b) => new Date(b.started_at).getTime() - new Date(a.started_at).getTime())
+    .sort((a, b) =>
+      new Date(b.started_at).getTime() - new Date(a.started_at).getTime()
+    )
     .slice(0, 3);
+
+  // Render
 
   return (
     <View className="flex-1 bg-void">
@@ -53,21 +82,22 @@ export const DashboardScreen = ({ navigation }: any) => {
         contentContainerStyle={{ paddingBottom: 100 }}
         showsVerticalScrollIndicator={false}
         refreshControl={
+          // isRefetching shows the spinner during pull-to-refresh
+          // isLoading would hide the list entirely on first load — wrong here
           <RefreshControl
-            refreshing={isLoading}
-            onRefresh={onRefresh}
+            refreshing={isRefetching}
+            onRefresh={refetch}          // refetch comes directly from useWorkouts
             tintColor={tokens.colors.accent}
           />
         }
       >
-        {/* Header */}
-        <View
-          className="px-5 pb-4"
-          style={{ paddingTop: insets.top + 12 }}
-        >
+        {/* ── Header ───────────────────────────────────────────────────── */}
+        <View className="px-5 pb-4" style={{ paddingTop: insets.top + 12 }}>
           <View className="flex-row items-center justify-between">
             <View>
-              <Text className="text-text-secondary text-sm">{greeting()}</Text>
+              <Text className="text-text-secondary text-sm">
+                {getGreeting()}
+              </Text>
               <Text className="text-text-primary text-xl font-semibold mt-0.5">
                 {user?.username ?? "Athlete"} 👋
               </Text>
@@ -84,24 +114,23 @@ export const DashboardScreen = ({ navigation }: any) => {
         </View>
 
         <View className="px-4 gap-3">
-          {/* Streak card */}
+
+          {/* ── Streak card ──────────────────────────────────────────────── */}
           <StreakCard workouts={workouts} />
 
-          {/* Stat cards */}
+          {/* ── Stat cards ───────────────────────────────────────────────── */}
           <View className="flex-row gap-3">
             <StatCard
               value={thisMonthCount.toString()}
               label="Workouts this month"
             />
             <StatCard
-              value={totalKg >= 1000
-                ? `${(totalKg / 1000).toFixed(1)}t`
-                : `${Math.round(totalKg)}`}
+              value={formatVolume(totalKg)}
               label="Total kg lifted"
             />
           </View>
 
-          {/* Recent workouts */}
+          {/* ── Recent workouts ──────────────────────────────────────────── */}
           <View className="mt-1">
             <View className="flex-row items-center justify-between mb-3">
               <Text className="text-text-secondary text-2xs font-medium uppercase tracking-wide">
@@ -112,16 +141,21 @@ export const DashboardScreen = ({ navigation }: any) => {
               </TouchableOpacity>
             </View>
 
-            {isLoading && workouts.length === 0 ? (
+            {/* First load — no cached data yet, show full spinner */}
+            {isLoading ? (
               <View className="items-center py-8">
                 <ActivityIndicator color={tokens.colors.accent} />
               </View>
+
+            /* Loaded but empty */
             ) : recentWorkouts.length === 0 ? (
               <View className="bg-surface rounded-md p-6 items-center border border-border-default">
                 <Text className="text-text-secondary text-sm text-center">
                   No workouts yet.{"\n"}Tap + to log your first session.
                 </Text>
               </View>
+
+            /* Has data */
             ) : (
               <View className="bg-surface rounded-md border border-border-default overflow-hidden">
                 {recentWorkouts.map((w, i) => (
@@ -137,12 +171,13 @@ export const DashboardScreen = ({ navigation }: any) => {
               </View>
             )}
           </View>
+
         </View>
       </ScrollView>
 
-      {/* FAB */}
+      {/* ── FAB ────────────────────────────────────────────────────────── */}
       <TouchableOpacity
-        className="absolute bottom-8 right-5 w-14 h-14 bg-accent rounded-xl items-center justify-center"
+        className="absolute right-5 w-14 h-14 bg-accent rounded-xl items-center justify-center"
         style={{ bottom: insets.bottom + 16 }}
         onPress={() => navigation.navigate("Log")}
         activeOpacity={0.85}

@@ -8,7 +8,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useExerciseStore } from "@gymtracker/stores";
 import { useAuthStore } from "@gymtracker/stores";
 import { ExerciseCard } from "../../components/exercise/ExerciseCard";
-import type { MuscleGroup } from "../../types/exercise.types";
+import type { MuscleGroup } from "@gymtracker/types";
 import { tokens } from "../../theme/tokens";
 
 const FILTERS: { label: string; value: MuscleGroup | "all" }[] = [

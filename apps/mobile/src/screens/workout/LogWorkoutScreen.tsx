@@ -4,7 +4,7 @@ import {
   Alert, StatusBar, KeyboardAvoidingView, Platform,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useWorkoutStore } from "../../store/workout.store";
+import { useWorkoutSessionStore } from "@gymtracker/stores";
 import { ExercisePickerModal } from "../../components/workouts/ExercisePickerModal";
 import { ActiveExerciseSection } from "../../components/workouts/ActiveExerciseSection";
 import { tokens } from "../../theme/tokens";
@@ -28,7 +28,7 @@ export const LogWorkoutScreen = ({ navigation }: any) => {
   const {
     activeWorkoutName, activeExercises, sessionStartTime,
     startSession, finishSession, cancelSession,
-  } = useWorkoutStore();
+  } = useWorkoutSessionStore();
 
   const [pickerVisible, setPickerVisible] = useState(false);
   const [workoutName, setWorkoutName] = useState("Morning workout");

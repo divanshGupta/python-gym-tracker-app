@@ -20,8 +20,8 @@
       "@gymtracker/stores": ["packages/stores/src"],
       "@gymtracker/stores/*": ["packages/stores/src/*"],
 
-      "@gymtracker/hooks": ["packages/stores/src"],
-      "@gymtracker/hooks/*": ["packages/stores/src/*"]
+      "@gymtracker/hooks": ["packages/hooks/src"],
+      "@gymtracker/hooks/*": ["packages/hooks/src/*"]
     },
 
     "jsx": "react-jsx",

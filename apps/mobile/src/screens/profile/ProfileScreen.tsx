@@ -4,8 +4,8 @@ import {
   Switch, Alert, StatusBar,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useAuthStore } from "../../store/auth.store";
-import { useWorkoutStore } from "../../store/workout.store";
+import { useAuthStore } from "@gymtracker/stores";
+import { useWorkouts } from "@gymtracker/hooks";
 import { SettingsRow } from "./SettingsRow";
 import { tokens } from "../../theme/tokens";
 
@@ -14,7 +14,9 @@ type WeightUnit = "kg" | "lbs";
 export const ProfileScreen = ({ navigation }: any) => {
   const insets = useSafeAreaInsets();
   const { user, logout } = useAuthStore();
-  const { workouts } = useWorkoutStore();
+  const {
+      data: workouts = [],
+    } = useWorkouts();
 
   const [weightUnit, setWeightUnit] = useState<WeightUnit>("kg");
   const [restTimer, setRestTimer] = useState(true);

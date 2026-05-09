@@ -11,5 +11,9 @@
     "@gymtracker/types":      "workspace:*",
     "@gymtracker/constants":  "workspace:*",
     "zustand":                "^4.5.0"
+  },
+  "peerDependencies": {
+    "react": "*"
   }
+  
 }

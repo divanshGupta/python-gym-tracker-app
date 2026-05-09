@@ -1,4 +1,4 @@
-export const colors = {
+const colors = {
   accent: "#7C5CFC",
   "accent-light": "#9B7EFD",
   "accent-subtle": "#EDE8FF",
@@ -15,11 +15,11 @@ export const colors = {
   danger: "#EF4444",
 };
 
-export const fontFamily = {
+const fontFamily = {
   sans: ["Inter", "ui-sans-serif", "system-ui"],
 };
 
-export const radius = {
+const radius = {
   xs: "4px",
   sm: "8px",
   md: "12px",
@@ -27,7 +27,7 @@ export const radius = {
   xl: "24px",
 };
 
-export const spacing = {
+const spacing = {
   1: "4px",
   2: "8px",
   3: "12px",
