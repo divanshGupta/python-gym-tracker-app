@@ -6,6 +6,7 @@ backend/.env
 backend/.env.development.local
 backend/.env.production.local
 frontend/.env.local
+
 dist/
 build/
 .vscode/

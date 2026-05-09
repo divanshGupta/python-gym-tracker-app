@@ -8,9 +8,9 @@
   },
   "dependencies": {
     "@gymtracker/api-client": "workspace:*",
-    "@gymtracker/types":      "workspace:*",
-    "@gymtracker/constants":  "workspace:*",
-    "zustand":                "^4.5.0"
+    "@gymtracker/types": "workspace:*",
+    "@gymtracker/constants": "workspace:*",
+    "zustand": "^5.0.13"
   },
   "peerDependencies": {
     "react": "*"

@@ -31,12 +31,17 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000"],
-    allow_credentials=True,
+    allow_origins=["*"], # temporary debug only
+    allow_credentials=False, # must be false when using wildcard
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],
     expose_headers=["*"],
 )
+
+        # "http://localhost:5173",      # vite web dev
+        # "http://localhost:3000",      # alt web dev
+        # "http://192.168.1.105:5173",  # Web from another device on network
+        # "http://192.168.1.105:8081",  # Expo web
 
 app.include_router(auth_router)
 app.include_router(exercise_router)

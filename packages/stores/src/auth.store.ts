@@ -75,6 +75,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   // ------------- Login ------------------
   login: async (payload) => {
+    console.log("→ STORE LOGIN called with:", JSON.stringify(payload));
     set({ isLoading: true, error: null });
 
     try {
@@ -94,8 +95,17 @@ export const useAuthStore = create<AuthState>((set) => ({
   register: async (payload) => {
     set({ isLoading: true, error: null });
     try {
-      const { data: tokens } = await authApi.register(payload);
+      // step 1 - create the account
+      await authApi.register(payload);
+
+      // step 2 - log in immediately to get token
+      const { data: tokens } = await authApi.login({
+        email: payload.email,
+        password: payload.password,
+      })
       await _storage.set(tokens.access_token);
+
+      // step 3 - fetch user object
       const { data: user }   = await authApi.me();
       set({ user, isAuthenticated: true, isLoading: false });
     } catch (e: any) {

@@ -16,6 +16,6 @@ class ExerciseResponse(BaseModel):
     equipment: str
     description: str | None
     is_custom: bool
-    created_by: str | None
+    created_by: int | None
 
     model_config = {"from_attributes": True}

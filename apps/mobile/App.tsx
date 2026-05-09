@@ -1,26 +1,29 @@
 import React, { useEffect } from "react"
 import { ActivityIndicator, View } from "react-native"
-import * as SecureStore from "expo-secure-store"
+// import * as SecureStore from "expo-secure-store"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { configureApiClient } from "@gymtracker/api-client"
-import { configureAuthStore, useAuthStore } from "@gymtracker/stores"
+// import { configureApiClient } from "@gymtracker/api-client"
+import { useAuthStore } from "@gymtracker/stores"
 import { STALE_TIMES } from "@gymtracker/constants"
 import { RootNavigator } from "./src/navigation/RootNavigator"
 import { tokens } from "./src/theme/tokens"
+import { setupApp } from "./src/setup"
 
 // ----------- Inject platform-specific token storage once ---------------------
 
-configureAuthStore({
-  get: () => SecureStore.getItemAsync("access_token"),
-  set: (t) => SecureStore.setItemAsync("access_token", t),
-  remove: () => SecureStore.deleteItemAsync("access_token"),
-})
+// configureAuthStore({
+//   get: () => SecureStore.getItemAsync("access_token"),
+//   set: (t) => SecureStore.setItemAsync("access_token", t),
+//   remove: () => SecureStore.deleteItemAsync("access_token"),
+// })
 
-configureApiClient({
-  baseURL: process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:8000",
-  getToken: () => SecureStore.getItemAsync("access_token"),
-  removeToken: () => SecureStore.deleteItemAsync("access_token"),
-})
+// configureApiClient({
+//   baseURL: process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:8000",
+//   getToken: () => SecureStore.getItemAsync("access_token"),
+//   removeToken: () => SecureStore.deleteItemAsync("access_token"),
+// })
+
+setupApp();
 
 // ------- QueryClient - each app creates its own instance ------------
 

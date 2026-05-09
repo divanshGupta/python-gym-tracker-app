@@ -7,18 +7,12 @@ export interface User {
 
 export interface AuthTokensResponse {
   access_token: string;
+  refresh_token: string;
   token_type: "bearer";
 }
 
-export interface UserResponse {
-  id:         number;
-  email:      string;
-  username:   string;
-  created_at: string;
-}
-
 export interface LoginPayload {
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -27,3 +21,6 @@ export interface RegisterPayload {
   username: string;
   password: string;
 }
+
+// Alias for api-client
+export type UserResponse = User;

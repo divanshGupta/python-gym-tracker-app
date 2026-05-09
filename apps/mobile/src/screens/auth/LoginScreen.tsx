@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+//apps/mobile/src/screens/LoginScreen.tsx
+import { useState } from "react";
 import {
   View, Text, TextInput, TouchableOpacity,
   KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator,
@@ -8,9 +9,11 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuthStore } from "@gymtracker/stores"; 
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { tokens } from "../../theme/tokens";
 
+// zod schema
 const schema = z.object({
-  username: z.string().min(1, "Username is required"),
+  email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Minimum 6 characters"),
 });
 type FormData = z.infer<typeof schema>;
@@ -58,27 +61,28 @@ export const LoginScreen = ({ navigation }: NativeStackScreenProps<any>) => {
             {/* Username */}
             <Controller
               control={control}
-              name="username"
+              name="email"
               render={({ field: { onChange, onBlur, value } }) => (
                 <View className="mb-4">
                   <Text className="text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">
                     Username
                   </Text>
                   <TextInput
-                    className={`bg-gray-50 border rounded-xl px-4 py-3.5 text-sm text-gray-900 ${
-                      errors.username ? "border-red-300" : "border-gray-200"
+                    className={`bg-elevated border rounded-md px-4 py-3.5 text-sm text-text-primary ${
+                      errors.email ? "border-danger" : "border-border-default"
                     }`}
-                    placeholder="your_username"
-                    placeholderTextColor="#9ca3af"
+                    placeholder="you@example.com"
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    placeholderTextColor={tokens.colors.textSecondary}
                     onChangeText={onChange}
                     onBlur={onBlur}
                     value={value}
-                    autoCapitalize="none"
                     autoCorrect={false}
                   />
-                  {errors.username && (
+                  {errors.email && (
                     <Text className="text-red-500 text-xs mt-1">
-                      {errors.username.message}
+                      {errors.email.message}
                     </Text>
                   )}
                 </View>
