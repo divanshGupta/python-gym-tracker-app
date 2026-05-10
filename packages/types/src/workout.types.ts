@@ -1,53 +1,61 @@
-export interface WorkoutSet {
-  id: number;
-  reps: number;
-  weight: number;
-  unit: "kg" | "lbs";
-  completed: boolean;
-  rest_seconds?: number;
-}
-
+// Matches backend WorkoutExerciseResponse exactly
 export interface WorkoutExercise {
-  id: number;
-  exercise_id: string;
-  exercise_name: string;
-  muscle_group: string;
-  sets: WorkoutSet[];
-  notes?: string;
-  order: number;
+  id:          number;
+  exercise_id: number;
+  sets:        number | null;
+  reps:        number | null;
+  weight:      number | null;
+  exercise:    WorkoutExerciseDetail;
 }
 
+export interface WorkoutExerciseDetail {
+  id:       number;
+  name:     string;
+  category: string;
+}
+
+// Matches backend WorkoutResponse exactly
 export interface Workout {
-  id: number;
-  name: string;
-  user_id: string;
-  started_at: string;           // ISO string
-  completed_at?: string;
-  exercises: WorkoutExercise[];
-  notes?: string;
-  total_volume?: number;        // computed by backend
+  id:                number;
+  user_id:           number;
+  date:              string;         // "YYYY-MM-DD"
+  type:              string;         // "Strength" | "Cardio" etc
+  duration:          number | null;  // minutes
+  calories:          number | null;
+  notes:             string | null;
+  workout_exercises: WorkoutExercise[];
 }
 
-export interface CreateSetPayload {
-  reps:         number;
-  weight:       number;
-  unit:         "kg" | "lbs";
-  completed:    boolean;
-  rest_seconds?: number;
-}
-
-export interface CreateExercisePayload {
-  exercise_id:   number;
-  exercise_name: string;
-  muscle_group:  string;
-  sets:          CreateSetPayload[];
-  notes?:        string;
-  order:         number;
-}
-
+// Matches backend WorkoutCreate
 export interface CreateWorkoutPayload {
-  name:          string;
-  exercises:     CreateExercisePayload[];
-  notes?:        string;
-  completed_at?: string;
+  date:      string;
+  type:      string;
+  duration?: number;
+  calories?: number;
+  notes?:    string;
+  exercises: CreateWorkoutExercisePayload[];
+}
+
+export interface CreateWorkoutExercisePayload {
+  exercise_id: number;
+  sets?:       number;
+  reps?:       number;
+  weight?:     number;
+}
+
+export interface UpdateWorkoutPayload {
+  date?:     string;
+  type?:     string;
+  duration?: number;
+  calories?: number;
+  notes?:    string;
+}
+
+// ─── Filters ───────────────────────────────────────────────────────────────
+export interface WorkoutFilters {
+  page?:      number;
+  limit?:     number;
+  type?:      string;
+  date_from?: string;
+  date_to?:   string;
 }

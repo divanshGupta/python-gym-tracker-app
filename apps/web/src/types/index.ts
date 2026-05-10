@@ -1,3 +1,4 @@
+// apps/web/src/types/index.ts 
 export interface User {
   id: number
   username: string

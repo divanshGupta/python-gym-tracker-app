@@ -1,19 +1,29 @@
 import { apiClient } from "./client";
-import type { Workout, CreateWorkoutPayload } from "@gymtracker/types";
+import type {
+  Workout,
+  CreateWorkoutPayload,
+  UpdateWorkoutPayload,
+  WorkoutFilters,
+} from "@gymtracker/types";
 
 export const workoutsApi = {
-
-  // GET /workouts
-  getAll: () => apiClient.get<Workout[]>("/workouts"),
+  // GET /workouts?page=1&limit=10&type=...
+  getAll: (filters?: WorkoutFilters) =>
+    apiClient.get<Workout[]>("/workouts", { params: filters }),
 
   // GET /workouts/:id
-  getById: (id: string) => apiClient.get<Workout>(`/workouts/${id}`),
+  getById: (id: number) =>
+    apiClient.get<Workout>(`/workouts/${id}`),
 
   // POST /workouts
-  create: (data: CreateWorkoutPayload) => apiClient.post<Workout>("/workouts", data),
+  create: (data: CreateWorkoutPayload) =>
+    apiClient.post<Workout>("/workouts", data),
 
-  update: (id: string, data: Partial<CreateWorkoutPayload>) =>
+  // PUT /workouts/:id
+  update: (id: number, data: UpdateWorkoutPayload) =>
     apiClient.put<Workout>(`/workouts/${id}`, data),
 
-  delete: (id: string) => apiClient.delete(`/workouts/${id}`),
+  // DELETE /workouts/:id
+  delete: (id: number) =>
+    apiClient.delete(`/workouts/${id}`),
 };

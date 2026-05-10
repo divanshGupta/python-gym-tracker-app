@@ -1,3 +1,4 @@
+# apps/api/app/models/workout.py
 from sqlalchemy import Integer, String, Date, DateTime, ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base

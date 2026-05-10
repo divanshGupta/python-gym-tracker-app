@@ -1,3 +1,4 @@
+# apps/api/app/schemas/workout.py
 from pydantic import BaseModel
 from datetime import date as date_type
 from app.schemas.exercise import ExerciseResponse

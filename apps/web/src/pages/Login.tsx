@@ -1,11 +1,9 @@
 import { useForm, SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { useMutation } from "@tanstack/react-query"
 import { useNavigate, Link } from "react-router-dom"
-import { loginUser } from "../api/auth"
-import authStore from "../store/authStore"
-import axios, { AxiosError } from "axios"
+import { useAuthStore } from "@gymtracker/stores"
+import { useEffect } from "react"
 
 // 🔹 Zod Schema
 const schema = z.object({
@@ -13,21 +11,11 @@ const schema = z.object({
   password: z.string().min(6, "Min 6 characters"),
 })
 
-// 🔹 Infer Type from Schema
-type LoginFormInputs = z.infer<typeof schema>
-
-// 🔹 API Response Type
-type LoginResponse = {
-  access_token: string
-}
-
-// 🔹 Error Response Type
-type ErrorResponse = {
-  detail?: string
-}
+type LoginFormInputs = z.infer<typeof schema>;
 
 export default function Login() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const { login, isLoading, error, isAuthenticated, clearError } = useAuthStore();
 
   const {
     register,
@@ -37,20 +25,16 @@ export default function Login() {
     resolver: zodResolver(schema),
   })
 
-  const { mutate, isPending, error } = useMutation<
-    { data: LoginResponse }, // success response
-    AxiosError<ErrorResponse>, // error type
-    LoginFormInputs // variables (form data)
-  >({
-    mutationFn: loginUser,
-    onSuccess: (res) => {
-      authStore.setToken(res.data.access_token)
-      navigate("/")
-    },
-  })
+  // Redirect once authenticated = replaces the onSuccess navigate() call
+  useEffect(()=> {
+    if (isAuthenticated) navigate("/", { replace: true })
+  }, [isAuthenticated]);
+
+  // clear store error when component unmounts (navigating away)
+  useEffect(()=> { return () => clearError(); }, [])
 
   const onSubmit: SubmitHandler<LoginFormInputs> = (data) => {
-    mutate(data)
+    login(data)
   }
 
   return (
@@ -61,7 +45,7 @@ export default function Login() {
 
         {error && (
           <p className="text-red-400 text-sm mb-4">
-            {error.response?.data?.detail || "Login failed"}
+            {error}
           </p>
         )}
 
@@ -96,10 +80,10 @@ export default function Login() {
 
           <button
             type="submit"
-            disabled={isPending}
+            disabled={isLoading}
             className="bg-green-500 hover:bg-green-600 text-white py-2 rounded font-semibold disabled:opacity-50"
           >
-            {isPending ? "Logging in..." : "Login"}
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
 

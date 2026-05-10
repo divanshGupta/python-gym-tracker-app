@@ -1,32 +1,30 @@
-// pages/Workout.tsx
-import { useState } from "react"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { Link } from "react-router-dom"
-import { getWorkouts, deleteWorkout } from "../api/workouts"
-import type { WorkoutFilters } from "../api/workouts"
-import type { Workout } from "../types"
+// apps/web/src/pages/Workouts.tsx
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
-const WORKOUT_TYPES = ["Strength", "Cardio", "Flexibility", "Core"]
+// ── Shared packages ────────────────────────────────────────────────────────
+import { useWorkouts, useDeleteWorkout } from "@gymtracker/hooks";
+import type { WorkoutFilters, Workout } from "@gymtracker/types";
+
+// ── Constants ─────────────────────────────────────────────────────────────
+const WORKOUT_TYPES = ["Strength", "Cardio", "Flexibility", "Core"];
 
 export default function Workouts() {
-  const queryClient = useQueryClient()
-  const [filters, setFilters] = useState<WorkoutFilters>({ page: 1, limit: 10 })
+  const [filters, setFilters] = useState<WorkoutFilters>({ page: 1, limit: 10 });
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["workouts", filters],
-    queryFn: () => getWorkouts(filters),
-  })
+  // ── Data fetching ──────────────────────────────────────────────────────
+  // useWorkouts handles queryKey, queryFn, and staleTime internally
+  // No need for useQueryClient or manual queryKey strings here
+  const { data: workouts = [], isLoading } = useWorkouts(filters);
 
-  const { mutate: remove } = useMutation({
-    mutationFn: deleteWorkout,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["workouts"] }),
-  })
-
-  const workouts: Workout[] = data?.data || []
+  // ── Mutations ──────────────────────────────────────────────────────────
+  // useDeleteWorkout handles cache invalidation on success internally
+  // No need for useQueryClient here either
+  const { mutate: remove } = useDeleteWorkout();
 
   const handleDelete = (id: number) => {
-    if (confirm("Delete this workout?")) remove(id)
-  }
+    if (confirm("Delete this workout?")) remove(id);
+  };
 
   return (
     <div className="min-h-screen bg-gray-950 text-white p-6">
@@ -45,24 +43,32 @@ export default function Workouts() {
         <select
           className="bg-gray-800 text-white px-3 py-2 rounded text-sm outline-none"
           value={filters.type || ""}
-          onChange={(e) => setFilters({ ...filters, type: e.target.value || undefined, page: 1 })}
+          onChange={(e) =>
+            setFilters({ ...filters, type: e.target.value || undefined, page: 1 })
+          }
         >
           <option value="">All Types</option>
-          {WORKOUT_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
+          {WORKOUT_TYPES.map((t) => (
+            <option key={t} value={t}>{t}</option>
+          ))}
         </select>
 
         <input
           type="date"
           className="bg-gray-800 text-white px-3 py-2 rounded text-sm outline-none"
           value={filters.date_from || ""}
-          onChange={(e) => setFilters({ ...filters, date_from: e.target.value || undefined, page: 1 })}
+          onChange={(e) =>
+            setFilters({ ...filters, date_from: e.target.value || undefined, page: 1 })
+          }
         />
 
         <input
           type="date"
           className="bg-gray-800 text-white px-3 py-2 rounded text-sm outline-none"
           value={filters.date_to || ""}
-          onChange={(e) => setFilters({ ...filters, date_to: e.target.value || undefined, page: 1 })}
+          onChange={(e) =>
+            setFilters({ ...filters, date_to: e.target.value || undefined, page: 1 })
+          }
         />
 
         <button
@@ -88,7 +94,7 @@ export default function Workouts() {
         </div>
       ) : (
         <div className="flex flex-col gap-3">
-          {workouts.map((w) => (
+          {workouts.map((w: Workout) => (
             <div
               key={w.id}
               className="bg-gray-900 rounded-xl px-5 py-4 flex justify-between items-center"
@@ -102,10 +108,12 @@ export default function Workouts() {
                 </div>
                 <div className="flex gap-4 text-gray-400 text-sm">
                   <span>{w.date}</span>
-                  {w.duration && <span>{w.duration} min</span>}
-                  {w.calories && <span>{w.calories} kcal</span>}
+                  {w.duration  && <span>{w.duration} min</span>}
+                  {w.calories  && <span>{w.calories} kcal</span>}
                 </div>
-                {w.notes && <p className="text-gray-500 text-xs mt-1 truncate">{w.notes}</p>}
+                {w.notes && (
+                  <p className="text-gray-500 text-xs mt-1 truncate">{w.notes}</p>
+                )}
               </Link>
 
               <div className="flex gap-2 ml-4">
@@ -148,5 +156,5 @@ export default function Workouts() {
         </div>
       )}
     </div>
-  )
+  );
 }

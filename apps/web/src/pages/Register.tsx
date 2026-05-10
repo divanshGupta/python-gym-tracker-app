@@ -1,11 +1,9 @@
+import { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { useMutation } from "@tanstack/react-query"
 import { useNavigate, Link } from "react-router-dom"
-import { registerUser, loginUser } from "../api/auth"
-import authStore from "../store/authStore"
-import { AxiosError } from "axios"
+import { useAuthStore } from "@gymtracker/stores"
 
 // 🔹 Schema
 const schema = z.object({
@@ -18,19 +16,11 @@ const schema = z.object({
   path: ["confirmPassword"],
 })
 
-// 🔹 Types
 type RegisterFormInputs = z.infer<typeof schema>
-
-type LoginResponse = {
-  access_token: string
-}
-
-type ErrorResponse = {
-  detail?: string
-}
 
 export default function Register() {
   const navigate = useNavigate()
+  const { register: registerUser, isLoading, error, isAuthenticated, clearError } = useAuthStore();
 
   const {
     register,
@@ -40,35 +30,22 @@ export default function Register() {
     resolver: zodResolver(schema),
   })
 
-  const { mutate, isPending, error } = useMutation<
-    { data: LoginResponse },          // final response (from login)
-    AxiosError<ErrorResponse>,        // error
-    RegisterFormInputs               // variables (form data)
-  >({
-    mutationFn: async (data) => {
-      // Register user
-      await registerUser({
-        username: data.username,
-        email: data.email,
-        password: data.password,
-      })
+  // Redirect once authenticated = replaces the onSuccess navigate() call
+  useEffect(()=> {
+    if (isAuthenticated) navigate("/", { replace: true })
+  }, [isAuthenticated]);
 
-      // Then login
-      return loginUser({
-        email: data.email,
-        password: data.password,
-      })
-    },
-    onSuccess: (res) => {
-      authStore.setToken(res.data.access_token)
-      navigate("/")
-    },
-  })
+  // clear store error when component unmounts (navigating away)
+  useEffect(()=> { return () => clearError(); }, [])
 
   const onSubmit: SubmitHandler<RegisterFormInputs> = (data) => {
-    mutate(data)
-  }
-
+      registerUser({
+        username: data.username,
+        email:    data.email,
+        password: data.password,
+      })
+   }
+   
   return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center">
       <div className="bg-gray-900 p-8 rounded-xl w-full max-w-md">
@@ -77,7 +54,7 @@ export default function Register() {
 
         {error && (
           <p className="text-red-400 text-sm mb-4">
-            {error.response?.data?.detail || "Registration failed"}
+            {error}
           </p>
         )}
 
@@ -139,10 +116,10 @@ export default function Register() {
 
           <button
             type="submit"
-            disabled={isPending}
+            disabled={isLoading}
             className="bg-green-500 hover:bg-green-600 text-white py-2 rounded font-semibold disabled:opacity-50"
           >
-            {isPending ? "Creating account..." : "Register"}
+            {isLoading ? "Creating account..." : "Register"}
           </button>
         </form>
 

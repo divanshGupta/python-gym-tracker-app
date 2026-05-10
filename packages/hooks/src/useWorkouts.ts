@@ -1,50 +1,49 @@
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
-import { workoutsApi }                from "@gymtracker/api-client";
-import { queryKeys, STALE_TIMES }     from "@gymtracker/constants";
-import type { CreateWorkoutPayload }  from "@gymtracker/types";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { workoutsApi } from "@gymtracker/api-client";
+import { queryKeys, STALE_TIMES } from "@gymtracker/constants";
+import type { CreateWorkoutPayload, UpdateWorkoutPayload, WorkoutFilters } from "@gymtracker/types";
 
-// Fetch all workouts for the current user
-export const useWorkouts = () =>
+export const useWorkouts = (filters?: WorkoutFilters) =>
   useQuery({
-    queryKey: queryKeys.workouts.all(),
-    queryFn:  () => workoutsApi.getAll().then((r) => r.data),
+    queryKey:  [...queryKeys.workouts.all(), filters],
+    queryFn:   () => workoutsApi.getAll(filters).then((r) => r.data),
     staleTime: STALE_TIMES.workouts,
   });
 
-// Fetch a single workout by id
-export const useWorkout = (id: string) =>
+export const useWorkout = (id: number) =>
   useQuery({
-    queryKey: queryKeys.workouts.detail(id),
+    queryKey: queryKeys.workouts.detail(String(id)),
     queryFn:  () => workoutsApi.getById(id).then((r) => r.data),
     staleTime: STALE_TIMES.workouts,
     enabled:   !!id,
   });
 
-// Create a new workout — invalidates list cache on success
 export const useCreateWorkout = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (data: CreateWorkoutPayload) =>
       workoutsApi.create(data).then((r) => r.data),
-    onSuccess: () => {
-      // Both web and mobile caches are invalidated — next render refetches
-      qc.invalidateQueries({ queryKey: queryKeys.workouts.all() });
-    },
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: queryKeys.workouts.all() }),
   });
 };
 
-// Delete a workout — optimistically removes from list cache
+export const useUpdateWorkout = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: UpdateWorkoutPayload }) =>
+      workoutsApi.update(id, data).then((r) => r.data),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: queryKeys.workouts.all() }),
+  });
+};
+
 export const useDeleteWorkout = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) =>
+    mutationFn: (id: number) =>
       workoutsApi.delete(id).then((r) => r.data),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: queryKeys.workouts.all() });
-    },
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: queryKeys.workouts.all() }),
   });
 };

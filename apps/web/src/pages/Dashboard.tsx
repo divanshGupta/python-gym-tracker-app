@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { Link } from "react-router-dom"
 import { getStats, getPersonalBests, getWorkouts, getStreak } from "../api/workouts"
-import { Workout } from "../types"
 
 function StatCard({ label, value, unit }: any) {
   return (

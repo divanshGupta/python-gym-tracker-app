@@ -1,26 +1,25 @@
 export interface User {
-  id: number;
-  email: string;
-  username: string;
+  id:         number;    // int on backend, not string
+  email:      string;
+  username:   string;
   created_at: string;
 }
 
 export interface AuthTokensResponse {
-  access_token: string;
+  access_token:  string;
   refresh_token: string;
-  token_type: "bearer";
+  token_type:    string;
 }
 
 export interface LoginPayload {
-  email: string;
+  email:    string;
   password: string;
 }
 
 export interface RegisterPayload {
-  email: string;
+  email:    string;
   username: string;
   password: string;
 }
 
-// Alias for api-client
 export type UserResponse = User;

@@ -6,7 +6,6 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // shared packages 
-
 import { useAuthStore }  from "@gymtracker/stores";
 import { useWorkouts }   from "@gymtracker/hooks";
 import type { Workout }  from "@gymtracker/types";
@@ -29,7 +28,6 @@ const formatVolume = (kg: number): string =>
   kg >= 1000 ? `${(kg / 1000).toFixed(1)}t` : `${Math.round(kg)}`;
 
 // Screen
-
 export const DashboardScreen = ({ navigation }: any) => {
   const insets = useSafeAreaInsets();
 

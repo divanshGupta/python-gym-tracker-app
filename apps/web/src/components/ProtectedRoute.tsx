@@ -1,13 +1,7 @@
 import { Navigate } from "react-router-dom"
-import authStore from "../store/authStore"
+import { useAuthStore } from "@gymtracker/stores"
 
-interface ProtectedRouteProps {
-  children: React.ReactNode
-}
-
-export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-  if (!authStore.isLoggedIn()) {
-    return <Navigate to="/login" replace />
-  }
-  return <>{children}</>
+export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated } = useAuthStore();
+  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
 }
