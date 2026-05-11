@@ -1,50 +1,34 @@
+// apps/web/src/pages/CreateWorkout.tsx
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { createWorkout } from "../api/workouts"
-import { getExercises } from "../api/exercises"
-import type { Exercise } from "../types"
-import type { WorkoutExerciseInput } from "../api/workouts"
+import { useExercises, useCreateExercise } from "@gymtracker/hooks"
+import type { WorkoutExerciseInput } from "@gymtracker/types" 
 
 const schema = z.object({
   date: z.string().min(1, "Date is required"),
   type: z.string().min(1, "Type is required"),
   duration: z.coerce.number().min(1).optional(),
   calories: z.coerce.number().min(1).optional(),
-  notes: z.string().optional(),
+  notes: z.string().optional(), 
 })
 
 type FormData = z.infer<typeof schema>
 
-const WORKOUT_TYPES = ["Strength", "Cardio", "Flexibility", "Core"]
+const WORKOUT_TYPES = ["strength", "cardio", "flexibility", "core"]
 
 export default function CreateWorkout() {
+
+  const { data: exercises = [] } = useExercises();
+  const { mutate, isPending, error } = useCreateExercise();
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
   const [selectedExercises, setSelectedExercises] = useState<WorkoutExerciseInput[]>([])
-
-  const { data: exercisesRes } = useQuery({
-    queryKey: ["exercises"],
-    queryFn: getExercises,
-  })
-
-  const exercises: Exercise[] = exercisesRes?.data || []
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { date: new Date().toISOString().split("T")[0] }
-  })
-
-  const { mutate, isPending, error } = useMutation({
-    mutationFn: createWorkout,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["workouts"] })
-      queryClient.invalidateQueries({ queryKey: ["stats"] })
-      navigate("/workouts")
-    }
   })
 
   const addExercise = () => {
@@ -97,7 +81,7 @@ export default function CreateWorkout() {
               className="w-full bg-gray-800 text-white px-4 py-2 rounded outline-none focus:ring-2 focus:ring-green-400"
             >
               <option value="">Select type</option>
-              {WORKOUT_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
+              {WORKOUT_TYPES.map((c) => <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>)}
             </select>
             {errors.type && <p className="text-red-400 text-xs mt-1">{errors.type.message}</p>}
           </div>

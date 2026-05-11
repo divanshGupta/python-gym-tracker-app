@@ -5,7 +5,7 @@ import {
   TouchableOpacity, StatusBar, ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useExerciseStore } from "@gymtracker/stores";
+import { useExercises } from "@gymtracker/hooks"; 
 import { useAuthStore } from "@gymtracker/stores";
 import { ExerciseCard } from "../../components/exercise/ExerciseCard";
 import type { MuscleGroup } from "@gymtracker/types";
@@ -23,11 +23,11 @@ const FILTERS: { label: string; value: MuscleGroup | "all" }[] = [
 
 export const ExerciseLibraryScreen = ({ navigation }: any) => {
   const insets = useSafeAreaInsets();
-  const { exercises, isLoading, fetchExercises } = useExerciseStore();
+  const { data: exercises = [], isLoading } = useExercises();
   const [query, setQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<MuscleGroup | "all">("all");
 
-  useEffect(() => { fetchExercises(); }, []);
+
 
   const filtered = useMemo(() => {
     return exercises.filter((ex) => {

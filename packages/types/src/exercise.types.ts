@@ -11,12 +11,11 @@ export type MuscleGroup      = MuscleGroupValue;
 export type Equipment        = EquipmentValue;
 
 export interface Exercise {
-  id: number;
-  name: string;
-  category: ExerciseCategory;   // ← matches backend enum
-  muscle_group: MuscleGroup;
-  equipment: Equipment;
-  description?: string;
-  is_custom: boolean;
+  id:            number;
+  name:          string;
+  category:      string;
+  muscle_group:  string | null;   // null for cardio/flexibility exercises
+  equipment:     string;
+  description?:  string | null;
   created_by?: number;          // user id if custom
 }

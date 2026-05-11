@@ -51,11 +51,57 @@ export interface UpdateWorkoutPayload {
   notes?:    string;
 }
 
-// ─── Filters ───────────────────────────────────────────────────────────────
 export interface WorkoutFilters {
   page?:      number;
   limit?:     number;
   type?:      string;
   date_from?: string;
   date_to?:   string;
+}
+
+// old types
+export interface WorkoutFilters {
+  page?: number
+  limit?: number
+  type?: string
+  date_from?: string
+  date_to?: string
+}
+
+export interface WorkoutExerciseInput {
+  exercise_id: number
+  sets?: number
+  reps?: number
+  weight?: number
+}
+
+export interface WorkoutInput {
+  date: string
+  type: string
+  duration?: number
+  calories?: number
+  notes?: string
+  exercises: WorkoutExerciseInput[]
+}
+
+export interface StreakData {
+  current_streak: number
+  longest_streak: number
+  last_workout: string | null
+}
+
+export interface ProgressPoint {
+  date: string
+  max_weight: number
+}
+
+export interface VolumePoint {
+  date: string
+  volume: number
+}
+
+export interface ExerciseProgress {
+  exercise_id: number
+  max_weight_over_time: ProgressPoint[]
+  volume_over_time: VolumePoint[]
 }

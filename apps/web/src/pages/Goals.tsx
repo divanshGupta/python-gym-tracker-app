@@ -1,3 +1,4 @@
+// apps/web/src/pages/Goals.tsx
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { getGoals, createGoal, updateGoal, deleteGoal, logGoalProgress } from "../api/goals"

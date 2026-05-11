@@ -3,7 +3,7 @@ import {
   View, Text, TextInput, FlatList,
   TouchableOpacity, Modal,
 } from "react-native";
-import { useExerciseStore } from "@gymtracker/stores";
+import { useExercises } from "@gymtracker/hooks"; 
 import { useWorkoutSessionStore } from "@gymtracker/stores"; 
 import { ExerciseCard } from "../exercise/ExerciseCard";
 import { tokens } from "../../theme/tokens";
@@ -15,7 +15,7 @@ interface Props {
 }
 
 export const ExercisePickerModal = ({ visible, onClose }: Props) => {
-  const { exercises } = useExerciseStore();
+  const { data: exercises = [], isLoading } = useExercises();
   const { addExercise } = useWorkoutSessionStore();
   const [query, setQuery] = useState("");
 

@@ -1,37 +1,25 @@
-import { useState, useEffect } from "react"
-import { useQuery } from "@tanstack/react-query"
+// apps/web/src/pages/Progress.tsx
+import { useState } from "react"
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Legend
 } from "recharts"
 import { useSearchParams } from "react-router-dom"
-import { getExercises } from "../api/exercises"
-import { getExerciseProgress } from "../api/workouts"
-import type { Exercise } from "../types"
+import { useExercises } from "@gymtracker/hooks" 
+import { useExerciseProgress } from "@gymtracker/hooks"  
 
 export default function Progress() {
+  const { data: exercises = [], isLoading } = useExercises();
+  
   const [searchParams, setSearchParams] = useSearchParams()
   const [localId, setLocalId] = useState<number | null>(null)
 
   // URL param always wins; local state only used after user picks from dropdown
   const urlId = Number(searchParams.get("exercise")) || null
   const selectedId = localId ?? urlId
+  const { data: progress } = useExerciseProgress(selectedId!);
 
   console.log("urlId:", urlId, "localId:", localId, "selectedId:", selectedId)
-
-  const { data: exercisesRes } = useQuery({
-    queryKey: ["exercises"],
-    queryFn: getExercises,
-  })
-
-  const { data: progressRes, isLoading } = useQuery({
-    queryKey: ["progress", selectedId],
-    queryFn: () => getExerciseProgress(selectedId!),
-    enabled: !!selectedId,
-  })
-
-  const exercises: Exercise[] = exercisesRes?.data || []
-  const progress = progressRes?.data
 
   const hasData = progress && progress.max_weight_over_time.length > 0
 
@@ -54,7 +42,7 @@ export default function Progress() {
           }}
         >
           <option value="">Choose an exercise...</option>
-          {exercises.map((e) => (
+          {exercises?.map((e) => (
             <option key={e.id} value={e.id}>{e.name} ({e.category})</option>
           ))}
         </select>

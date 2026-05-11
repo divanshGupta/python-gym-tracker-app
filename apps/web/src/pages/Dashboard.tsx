@@ -1,8 +1,8 @@
-import { useQuery } from "@tanstack/react-query"
+// apps/web/src/pages/Dashboard.tsx
 import { Link } from "react-router-dom"
-import { getStats, getPersonalBests, getWorkouts, getStreak } from "../api/workouts"
+import { useWorkouts, useWorkoutStats, usePersonalBests, useStreak } from "@gymtracker/hooks";
 
-function StatCard({ label, value, unit }: any) {
+function StatCard({ label, value, unit }: { label: string; value: any; unit?: string }) {
   return (
     <div className="bg-gray-900 rounded-xl p-5 flex flex-col gap-1">
       <p className="text-gray-400 text-sm">{label}</p>
@@ -11,22 +11,22 @@ function StatCard({ label, value, unit }: any) {
         {unit && <span className="text-gray-400 text-lg ml-1">{unit}</span>}
       </p>
     </div>
-  )
+  );
 }
 
-function WorkoutTypeBar({ data }: any) {
-  const total = Object.values(data).reduce((a, b) => a + b, 0)
-  const colors = {
-    Strength: "bg-green-500",
-    Cardio: "bg-blue-500",
+function WorkoutTypeBar({ data }: { data: Record<string, number> }) {
+  const total = Object.values(data).reduce((a, b) => a + b, 0);
+  const colors: Record<string, string> = {
+    Strength:    "bg-green-500",
+    Cardio:      "bg-blue-500",
     Flexibility: "bg-yellow-500",
-    Core: "bg-purple-500",
-  }
+    Core:        "bg-purple-500",
+  };
   return (
     <div className="bg-gray-900 rounded-xl p-5">
       <p className="text-gray-400 text-sm mb-3">Workouts by Type</p>
       <div className="flex flex-col gap-2">
-        {Object.entries(data).map(([type, count]: any) => (
+        {Object.entries(data).map(([type, count]) => (
           <div key={type}>
             <div className="flex justify-between text-sm text-white mb-1">
               <span>{type}</span>
@@ -42,34 +42,17 @@ function WorkoutTypeBar({ data }: any) {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 export default function Dashboard() {
-  const { data: statsRes, isLoading: statsLoading } = useQuery({
-    queryKey: ["stats"],
-    queryFn: getStats,
-  })
+  
+  const { data: stats, isLoading: statsLoading } = useWorkoutStats();
+  const { data: recentWorkouts = [], isLoading: workoutsLoading } = useWorkouts({ page: 1, limit: 5 });
+  const { data: pbData } = usePersonalBests();
+  const { data: streak } = useStreak();
 
-  const { data: workoutsRes, isLoading: workoutsLoading } = useQuery({
-    queryKey: ["workouts", { page: 1, limit: 5 }],
-    queryFn: () => getWorkouts({ page: 1, limit: 5 }),
-  })
-
-  const { data: pbRes } = useQuery({
-    queryKey: ["personal_bests"],
-    queryFn: getPersonalBests,
-  })
-
-  const { data: streakRes } = useQuery({
-    queryKey: ["streak"],
-    queryFn: getStreak,
-  })
-
-  const stats = statsRes?.data
-  const recentWorkouts = workoutsRes?.data || []
-  const personalBests = pbRes?.data?.personal_bests || []
-  const streak = streakRes?.data
+  const personalBests = pbData?.personal_bests ?? [];
 
   return (
     <div className="min-h-screen bg-void text-text-primary p-6">

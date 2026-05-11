@@ -1,3 +1,4 @@
+# apps/api/routes/exercise.py
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -18,14 +19,25 @@ async def get_exercises(db: AsyncSession = Depends(get_db)):
 async def create_exercise(
     data: ExerciseCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)   # protected
+    current_user: User = Depends(get_current_user)
 ):
-    # Check duplicate
-    result = await db.execute(select(Exercise).where(Exercise.name == data.name))
+    # name is already lowercased by validator
+    result = await db.execute(
+        select(Exercise).where(Exercise.name == data.name)
+    )
     if result.scalar_one_or_none():
         raise HTTPException(status_code=400, detail="Exercise already exists")
 
-    exercise = Exercise(name=data.name, category=data.category)
+    exercise = Exercise(
+        name=         data.name,
+        category=     data.category,
+        muscle_group= data.muscle_group or "none",   # fallback for NOT NULL
+        equipment=    data.equipment    or "none",
+        description=  data.description,
+        is_custom=    True,
+        created_by=   current_user.id,
+    )
     db.add(exercise)
-    await db.flush()
+    await db.commit()
+    await db.refresh(exercise)
     return exercise

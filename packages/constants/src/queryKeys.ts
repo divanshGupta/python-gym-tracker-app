@@ -14,12 +14,12 @@ export const queryKeys = {
   exercises: {
     all:        ()                          => ["exercises"] as const,
     byCategory: (cat: ExerciseCategoryValue) => ["exercises", "category", cat] as const,
-    detail:     (id: string)                => ["exercises", "detail", id] as const,
+    detail:     (id: number)                => ["exercises", "detail", id] as const,
   },
 
   // Workouts — user-specific, needs frequent invalidation
   workouts: {
     all:    ()          => ["workouts"] as const,
-    detail: (id: string) => ["workouts", "detail", id] as const,
+    detail: (id: number) => ["workouts", "detail", id] as const,
   },
 } as const;

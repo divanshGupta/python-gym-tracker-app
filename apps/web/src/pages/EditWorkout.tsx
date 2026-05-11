@@ -1,3 +1,4 @@
+// apps/web/src/pages/EditWorkout.tsx
 import { useParams, useNavigate } from "react-router-dom"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"

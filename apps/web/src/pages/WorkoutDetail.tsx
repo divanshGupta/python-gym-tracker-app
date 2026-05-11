@@ -1,7 +1,8 @@
+// apps/web/src/pages/WorkoutDetail.tsx
 import { useParams, useNavigate, Link } from "react-router-dom"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { getWorkout, deleteWorkout } from "../api/workouts"
-import type { Workout } from "../types"
+import type { Workout } from "@gymtracker/types" 
 
 export default function WorkoutDetail() {
   const { id } = useParams<{ id: string }>()

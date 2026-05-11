@@ -1,34 +1,27 @@
-import { useQuery } from "@tanstack/react-query"
-import { getProfile } from "../api/auth"
-import { getStats } from "../api/workouts"
-import type { User } from "../types"
-import type { Stats } from "../types"
-import authStore from "../store/authStore"
+// apps/web/src/pages/Profile.tsx
 import { useNavigate } from "react-router-dom"
 
+// shared packages
+import { useWorkoutStats } from "@gymtracker/hooks"
+import { useAuthStore } from "@gymtracker/stores";
+
 export default function Profile() {
+  const { data: stats, isLoading } = useWorkoutStats();
+  const { user, logout } = useAuthStore();
   const navigate = useNavigate()
 
-  const { data: profileRes, isLoading } = useQuery({
-    queryKey: ["profile"],
-    queryFn: getProfile,
-  })
+  // const logout = () => {
+  //   authStore.removeToken()
+  //   navigate("/login")
+  // }
 
-  const { data: statsRes } = useQuery({
-    queryKey: ["stats"],
-    queryFn: getStats,
-  })
-
-  const user: User | undefined = profileRes?.data
-  const stats: Stats | undefined = statsRes?.data
-
-  const logout = () => {
-    authStore.removeToken()
+  const handleLogout = async () => {
+    await logout();
     navigate("/login")
   }
 
-  if (isLoading) return <div className="min-h-screen bg-gray-950 text-gray-400 p-6">Loading...</div>
-  if (!user) return <div className="min-h-screen bg-gray-950 text-gray-400 p-6">User not found.</div>
+  if (isLoading) return <div className="min-h-screen bg-void text-text-secondary p-6">Loading...</div>
+  if (!user) return <div className="min-h-screen bg-void text-text-secondary p-6">User not found.</div>
 
   return (
     <div className="min-h-screen bg-gray-950 text-white p-6 max-w-xl mx-auto">
@@ -79,7 +72,7 @@ export default function Profile() {
 
       {/* Logout */}
       <button
-        onClick={logout}
+        onClick={handleLogout}
         className="w-full bg-red-600 hover:bg-red-700 py-2 rounded font-semibold text-sm"
       >
         Logout

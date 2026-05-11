@@ -1,3 +1,4 @@
+# apps/api/models/exercise.py
 from typing import TYPE_CHECKING
 from sqlalchemy import Integer, String, Boolean, ForeignKey, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
