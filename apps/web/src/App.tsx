@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { useAuthStore } from "@gymtracker/stores"
 import ProtectedRoute from "./components/ProtectedRoute"
@@ -14,6 +14,7 @@ import Profile from "./pages/Profile"
 import Progress from "./pages/Progress"
 import Goals from "./pages/Goals"
 import Measurements from "./pages/Measurements"
+import EditWorkout from "./pages/EditWorkout"
 
 export default function App() {
 
@@ -67,6 +68,11 @@ export default function App() {
           <ProtectedRoute><Navbar /><Measurements /></ProtectedRoute>
         }/>
         <Route path="*" element={<Navigate to="/" />} />
+
+        <Route path="/workouts/:id/edit" element={
+          <ProtectedRoute><Navbar /><EditWorkout /> </ProtectedRoute>
+        }/>
+        
       </Routes>
     </BrowserRouter>
   );

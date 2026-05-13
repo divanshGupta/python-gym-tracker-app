@@ -8,7 +8,7 @@ import {
 } from "@gymtracker/hooks";
 import type { Goal, GoalType } from "@gymtracker/types";
 
-// ── Constants ──────────────────────────────────────────────────────────────
+// Constants
 
 const GOAL_TYPE_LABELS: Record<GoalType, string> = {
   workout_frequency:    "Workout Frequency",

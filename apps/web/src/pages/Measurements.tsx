@@ -3,13 +3,12 @@ import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts"
 import { getMeasurements, logMeasurement, deleteMeasurement } from "../api/measurements"
-import type { Measurement } from "../types"
 
 function bmiCategory(bmi: number): { label: string; color: string } {
   if (bmi < 18.5) return { label: "Underweight", color: "text-blue-400" }
   if (bmi < 25)   return { label: "Normal", color: "text-green-400" }
   if (bmi < 30)   return { label: "Overweight", color: "text-yellow-400" }
-  return              { label: "Obese", color: "text-red-400" }
+  return { label: "Obese", color: "text-red-400" }
 }
 
 export default function Measurements() {
@@ -56,7 +55,9 @@ export default function Measurements() {
     .sort((a, b) => a.date.localeCompare(b.date))
     .map((e) => ({ date: e.date, Weight: e.weight_kg, BMI: e.bmi ?? undefined }))
 
-  const latest = entries[0] as Measurement | undefined
+  const latest = [...entries].sort(
+    (a, b) => b.date.localeCompare(a.date)
+  )[0]
 
   return (
     <div className="min-h-screen bg-gray-950 text-white p-6">
@@ -92,7 +93,14 @@ export default function Measurements() {
             <div className="bg-gray-900 rounded-xl px-4 py-3">
               <p className="text-gray-400 text-xs mb-1">Change</p>
               {(() => {
-                const diff = latest.weight_kg - entries[entries.length - 1].weight_kg
+                const sorted = [...entries].sort((a,b)=>
+                  a.date.localeCompare(b.date)
+                )
+
+                const first = sorted[0]
+                const latest = sorted[sorted.length - 1]
+
+                const diff = latest.weight_kg - first.weight_kg
                 const sign = diff > 0 ? "+" : ""
                 const color = diff > 0 ? "text-red-400" : "text-green-400"
                 return <p className={`text-xl font-bold ${color}`}>{sign}{diff.toFixed(1)} kg</p>

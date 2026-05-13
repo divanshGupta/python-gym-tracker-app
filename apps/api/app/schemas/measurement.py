@@ -1,3 +1,4 @@
+# apps/api/schemas/measurement.py
 from pydantic import BaseModel, model_validator
 from datetime import date, datetime
 from typing import Optional
@@ -8,12 +9,6 @@ class MeasurementCreate(BaseModel):
     weight_kg: float
     height_cm: Optional[float] = None
     notes: Optional[str] = None
-
-    @model_validator(mode="after")
-    def compute_bmi(self) -> "MeasurementCreate":
-        # BMI is computed in the route so the model stays clean;
-        # height can come from a previous entry. This validator is a no-op.
-        return self
 
 
 class MeasurementResponse(BaseModel):

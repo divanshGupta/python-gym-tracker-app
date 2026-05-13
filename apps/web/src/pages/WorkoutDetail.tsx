@@ -1,37 +1,36 @@
 // apps/web/src/pages/WorkoutDetail.tsx
 import { useParams, useNavigate, Link } from "react-router-dom"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { getWorkout, deleteWorkout } from "../api/workouts"
-import type { Workout } from "@gymtracker/types" 
+import { useWorkout, useDeleteWorkout } from "@gymtracker/hooks"
 
 export default function WorkoutDetail() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["workout", id],
-    queryFn: () => getWorkout(Number(id)),
-    enabled: !!id,
-  })
-
-  const { mutate: remove, isPending: isDeleting } = useMutation({
-    mutationFn: deleteWorkout,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["workouts"] })
-      queryClient.invalidateQueries({ queryKey: ["stats"] })
-      navigate("/workouts")
-    },
-  })
-
-  const workout: Workout | undefined = data?.data
+  const { data: workout, isLoading } = useWorkout(Number(id));
+  const { mutate: deleteWorkout, isPending, error } = useDeleteWorkout();
 
   if (isLoading) return <div className="min-h-screen bg-gray-950 text-gray-400 p-6">Loading...</div>
   if (!workout) return <div className="min-h-screen bg-gray-950 text-gray-400 p-6">Workout not found.</div>
 
+  const handleDelete = () => {
+    const confirmed = confirm("Delete this workout?");
+
+    if (!confirmed) return
+
+    deleteWorkout(workout.id, {
+      onSuccess: () => {
+        navigate("/workouts")
+      },
+    })
+  }
   return (
     <div className="min-h-screen bg-gray-950 text-white p-6 max-w-2xl mx-auto">
 
+      {error && (
+        <p className="text-red-400 text-sm mb-4">
+          Failed to update workout. Try again.
+        </p>
+      )}
       {/* Header */}
       <div className="flex justify-between items-start mb-6">
         <div>
@@ -46,11 +45,11 @@ export default function WorkoutDetail() {
             Edit
           </Link>
           <button
-            onClick={() => confirm("Delete this workout?") && remove(workout.id)}
-            disabled={isDeleting}
+            onClick={handleDelete}
+            disabled={isPending}
             className="bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded text-sm disabled:opacity-50"
           >
-            {isDeleting ? "Deleting..." : "Delete"}
+            {isPending ? "Deleting..." : "Delete"}
           </button>
         </div>
       </div>

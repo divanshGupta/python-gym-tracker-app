@@ -1,3 +1,4 @@
+# apps/api/models/measurement.py
 from sqlalchemy import Integer, String, Float, Date, DateTime, ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
@@ -10,9 +11,9 @@ class BodyMeasurement(Base):
     user_id:     Mapped[int]   = mapped_column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     date:        Mapped[Date]  = mapped_column(Date, nullable=False, index=True)
     weight_kg:   Mapped[float] = mapped_column(Float, nullable=False)
-    height_cm:   Mapped[float] = mapped_column(Float, nullable=True)   # optional; used to compute BMI
-    bmi:         Mapped[float] = mapped_column(Float, nullable=True)   # stored computed value
-    notes:       Mapped[str]   = mapped_column(String(300), nullable=True)
+    height_cm:   Mapped[float | None] = mapped_column(Float, nullable=True)   # optional; used to compute BMI
+    bmi:         Mapped[float | None] = mapped_column(Float, nullable=True)   # stored computed value
+    notes:       Mapped[str | None] = mapped_column(String(300), nullable=True)
     created_at:  Mapped[DateTime] = mapped_column(DateTime, server_default=func.now())
 
     user: Mapped["User"] = relationship("User", back_populates="measurements")

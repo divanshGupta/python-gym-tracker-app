@@ -40,10 +40,14 @@ export const useUpdateWorkout = () => {
 
 export const useDeleteWorkout = () => {
   const qc = useQueryClient();
+
   return useMutation({
     mutationFn: (id: number) =>
       workoutsApi.delete(id).then((r) => r.data),
+
     onSuccess: () =>
-      qc.invalidateQueries({ queryKey: queryKeys.workouts.all() }),
+      qc.invalidateQueries({ 
+        queryKey: queryKeys.workouts.all() 
+      }),
   });
 };

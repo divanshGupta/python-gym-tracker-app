@@ -1,77 +1,99 @@
 // apps/web/src/pages/EditWorkout.tsx
 import { useParams, useNavigate } from "react-router-dom"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { useEffect } from "react"
-import { getWorkout, updateWorkout } from "../api/workouts"
-import type { Workout } from "../types"
+
+import { useWorkout, useUpdateWorkout } from "@gymtracker/hooks";
+import { WORKOUT_TYPES } from "@gymtracker/types"
 
 const schema = z.object({
-  date: z.string().min(1, "Date is required"),
-  type: z.string().min(1, "Type is required"),
+  date:     z.string().min(1, "Date is required"),
+  type:     z.enum(WORKOUT_TYPES),
   duration: z.coerce.number().min(1).optional(),
   calories: z.coerce.number().min(1).optional(),
-  notes: z.string().optional(),
-})
+  notes:    z.string().optional(),
+});
 
-type FormData = z.infer<typeof schema>
-
-const WORKOUT_TYPES = ["Strength", "Cardio", "Flexibility", "Core"]
+type WorkoutFormData = z.infer<typeof schema>;
 
 export default function EditWorkout() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["workout", id],
-    queryFn: () => getWorkout(Number(id)),
-    enabled: !!id,
-  })
+  // ── Data ──────────────────────────────────────────────────────────────
+  // Before: useQuery + getWorkout(Number(id)) + data?.data unwrap
+  // After:  useWorkout returns data directly, no unwrap needed
+  const { data: workout, isLoading } = useWorkout(Number(id));
 
-  const workout: Workout | undefined = data?.data
+  // ── Mutation ──────────────────────────────────────────────────────────
+  // Before: useMutation + updateWorkout + manual invalidateQueries x3
+  // After:  useUpdateWorkout invalidates workouts cache internally
+  //         stats invalidation added via onSuccess callback at call site
+  const { mutate, isPending, error } = useUpdateWorkout();
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<z.input<typeof schema>,
+    any,
+    z.output<typeof schema>
+  >({
     resolver: zodResolver(schema),
-  })
+  });
 
-  // Populate form once workout loads
+  // Populate form once workout loads — unchanged
   useEffect(() => {
     if (workout) {
       reset({
-        date: workout.date,
-        type: workout.type,
-        duration: workout.duration ?? undefined,
-        calories: workout.calories ?? undefined,
-        notes: workout.notes ?? undefined,
-      })
+        date:     workout.date,
+        type:     workout.type,
+        duration: workout.duration  ?? undefined,
+        calories: workout.calories  ?? undefined,
+        notes:    workout.notes     ?? undefined,
+      });
     }
-  }, [workout, reset])
+  }, [workout, reset]);
 
-  const { mutate, isPending, error } = useMutation({
-    mutationFn: (data: FormData) => updateWorkout(Number(id), data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["workout", id] })
-      queryClient.invalidateQueries({ queryKey: ["workouts"] })
-      queryClient.invalidateQueries({ queryKey: ["stats"] })
-      navigate(`/workouts/${id}`)
-    },
-  })
+  const onSubmit = (data: WorkoutFormData) => {
+    mutate(
+      { id: Number(id), data },
+      {
+        onSuccess: () => navigate(`/workouts/${id}`),
+      }
+    );
+  };
 
-  if (isLoading) return <div className="min-h-screen bg-gray-950 text-gray-400 p-6">Loading...</div>
-  if (!workout) return <div className="min-h-screen bg-gray-950 text-gray-400 p-6">Workout not found.</div>
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-950 text-gray-400 p-6">
+        Loading...
+      </div>
+    );
+  }
+
+  if (!workout) {
+    return (
+      <div className="min-h-screen bg-gray-950 text-gray-400 p-6">
+        Workout not found.
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-950 text-white p-6 max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">Edit Workout</h1>
 
       {error && (
-        <p className="text-red-400 text-sm mb-4">Failed to update workout. Try again.</p>
+        <p className="text-red-400 text-sm mb-4">
+          Failed to update workout. Try again.
+        </p>
       )}
 
-      <form onSubmit={handleSubmit((d) => mutate(d))} className="flex flex-col gap-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
 
         {/* Date + Type */}
         <div className="grid grid-cols-2 gap-4">
@@ -82,7 +104,9 @@ export default function EditWorkout() {
               {...register("date")}
               className="w-full bg-gray-800 text-white px-4 py-2 rounded outline-none focus:ring-2 focus:ring-green-400"
             />
-            {errors.date && <p className="text-red-400 text-xs mt-1">{errors.date.message}</p>}
+            {errors.date && (
+              <p className="text-red-400 text-xs mt-1">{errors.date.message}</p>
+            )}
           </div>
 
           <div>
@@ -92,16 +116,22 @@ export default function EditWorkout() {
               className="w-full bg-gray-800 text-white px-4 py-2 rounded outline-none focus:ring-2 focus:ring-green-400"
             >
               <option value="">Select type</option>
-              {WORKOUT_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
+              {WORKOUT_TYPES.map((t) => (
+                <option key={t} value={t}>{t}</option>
+              ))}
             </select>
-            {errors.type && <p className="text-red-400 text-xs mt-1">{errors.type.message}</p>}
+            {errors.type && (
+              <p className="text-red-400 text-xs mt-1">{errors.type.message}</p>
+            )}
           </div>
         </div>
 
         {/* Duration + Calories */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="text-gray-400 text-sm mb-1 block">Duration (min)</label>
+            <label className="text-gray-400 text-sm mb-1 block">
+              Duration (min)
+            </label>
             <input
               type="number"
               {...register("duration")}
@@ -128,7 +158,6 @@ export default function EditWorkout() {
           />
         </div>
 
-        {/* Note about exercises */}
         <p className="text-gray-500 text-xs">
           * To change exercises, delete this workout and create a new one.
         </p>
@@ -151,5 +180,5 @@ export default function EditWorkout() {
         </div>
       </form>
     </div>
-  )
+  );
 }

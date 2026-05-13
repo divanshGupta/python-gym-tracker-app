@@ -25,7 +25,8 @@ export const REST_TIMER_PRESETS = [
 
 // Stale times for React Query — centralized so both apps use same cache policy
 export const STALE_TIMES = {
-  exercises: 1000 * 60 * 10,  // 10 min — exercises rarely change
+  exercises: 1000 * 60 * 20,  // 10 min — exercises rarely change
   workouts:  1000 * 60 * 2,   // 2 min  — workouts change often
-  auth:      1000 * 60 * 5,   // 5 min
+  auth:      1000 * 60 * 10,   // 5 min
+  measurements: 1000 * 60 * 10,
 } as const;

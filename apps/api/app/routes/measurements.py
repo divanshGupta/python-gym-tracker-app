@@ -1,3 +1,4 @@
+# apps/api/routes/measurements.py
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -8,7 +9,6 @@ from app.schemas.measurement import MeasurementCreate, MeasurementResponse
 from app.utils.dependencies import get_current_user
 
 router = APIRouter(prefix="/measurements", tags=["Measurements"])
-
 
 def _compute_bmi(weight_kg: float, height_cm: float | None) -> float | None:
     if not height_cm or height_cm <= 0:
@@ -52,13 +52,6 @@ async def log_measurement(
 
     bmi = _compute_bmi(data.weight_kg, height_cm)
 
-    # entry = BodyMeasurement(
-    #     **data.model_dump(),        # ← this already includes height_cm from the request
-    #     user_id=current_user.id,
-    #     height_cm=height_cm,        # ← then you pass it again explicitly
-    #     bmi=bmi,
-    # )
-
     entry = BodyMeasurement(
         **data.model_dump(exclude={"height_cm"}),   # exclude it from the spread
         user_id=current_user.id,
@@ -66,8 +59,11 @@ async def log_measurement(
         bmi=bmi,
     )
     db.add(entry)
+
     await db.flush()
+    await db.commit()
     await db.refresh(entry)
+
     return entry
 
 
@@ -87,3 +83,4 @@ async def delete_measurement(
     if not entry:
         raise HTTPException(status_code=404, detail="Measurement not found")
     await db.delete(entry)
+    await db.commit()

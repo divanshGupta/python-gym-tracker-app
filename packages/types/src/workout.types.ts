@@ -29,7 +29,7 @@ export interface WorkoutExercise {
   id: number
 
   exercise_id: number
-
+  
   sets: number | null
   reps: number | null
   weight: number | null
@@ -74,6 +74,7 @@ export interface WorkoutExerciseInput {
 }
 
 export interface WorkoutInput {
+
   date: string
 
   type: WorkoutType
