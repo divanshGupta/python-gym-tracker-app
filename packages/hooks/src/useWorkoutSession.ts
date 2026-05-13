@@ -1,6 +1,6 @@
 import { useWorkoutSessionStore } from "@gymtracker/stores";
 import { useCreateWorkout }       from "./useWorkouts";
-import type { CreateWorkoutPayload, CreateExercisePayload } from "@gymtracker/types";
+import type { WorkoutInput, WorkoutExerciseInput } from "@gymtracker/types";
 
 // Combines the local session store with the API mutation.
 // This is the single hook LogWorkoutScreen needs —
@@ -11,10 +11,10 @@ export const useWorkoutSession = () => {
   const createWorkout   = useCreateWorkout();
 
   const finishSession = async (): Promise<void> => {
-    const payload: CreateWorkoutPayload = {
+    const payload: WorkoutInput = {
       name:         store.workoutName,
       completed_at: new Date().toISOString(),
-      exercises:    store.activeExercises.map((ae, index): CreateExercisePayload => ({
+      exercises:    store.activeExercises.map((ae, index): WorkoutExerciseInput => ({
         exercise_id:   ae.exercise.id,
         exercise_name: ae.exercise.name,
         muscle_group:  ae.exercise.muscle_group,

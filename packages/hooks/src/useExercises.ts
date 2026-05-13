@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { exercisesApi } from "@gymtracker/api-client";
 import { queryKeys, STALE_TIMES } from "@gymtracker/constants";
 import type { ExerciseCategory }  from "@gymtracker/types";
-import type { CreateExercisePayload } from "@gymtracker/api-client";
+import type { CreateExercisePayload } from "@gymtracker/types";
 
 // Fetch all exercises — optionally filtered by category
 // Cached for 10 min because exercises are reference data that rarely change

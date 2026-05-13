@@ -1,107 +1,107 @@
-// Matches backend WorkoutExerciseResponse exactly
-export interface WorkoutExercise {
-  id:          number;
-  exercise_id: number;
-  sets:        number | null;
-  reps:        number | null;
-  weight:      number | null;
-  exercise:    WorkoutExerciseDetail;
-}
+// packages/types/src/workout.types.ts
+
+import type { ExerciseCategory } from "./exercise.types"
+
+/* =========================
+   Workout Enums / Unions
+========================= */
+
+export const WORKOUT_TYPES = [
+  "strength",
+  "cardio",
+  "flexibility",
+  "core",
+] as const
+
+export type WorkoutType = (typeof WORKOUT_TYPES)[number]
+
+/* =========================
+   Workout Exercise
+========================= */
 
 export interface WorkoutExerciseDetail {
-  id:       number;
-  name:     string;
-  category: string;
+  id: number
+  name: string
+  category: ExerciseCategory
 }
 
-// Matches backend WorkoutResponse exactly
+export interface WorkoutExercise {
+  id: number
+
+  exercise_id: number
+
+  sets: number | null
+  reps: number | null
+  weight: number | null
+
+  exercise: WorkoutExerciseDetail
+}
+
+/* =========================
+   Workout Entity
+========================= */
+
 export interface Workout {
-  id:                number;
-  user_id:           number;
-  date:              string;         // "YYYY-MM-DD"
-  type:              string;         // "Strength" | "Cardio" etc
-  duration:          number | null;  // minutes
-  calories:          number | null;
-  notes:             string | null;
-  workout_exercises: WorkoutExercise[];
+  id: number
+
+  user_id: number
+
+  date: string // YYYY-MM-DD
+
+  type: WorkoutType
+
+  duration: number | null
+
+  calories: number | null
+
+  notes: string | null
+
+  workout_exercises: WorkoutExercise[]
 }
 
-// Matches backend WorkoutCreate
-export interface CreateWorkoutPayload {
-  date:      string;
-  type:      string;
-  duration?: number;
-  calories?: number;
-  notes?:    string;
-  exercises: CreateWorkoutExercisePayload[];
-}
-
-export interface CreateWorkoutExercisePayload {
-  exercise_id: number;
-  sets?:       number;
-  reps?:       number;
-  weight?:     number;
-}
-
-export interface UpdateWorkoutPayload {
-  date?:     string;
-  type?:     string;
-  duration?: number;
-  calories?: number;
-  notes?:    string;
-}
-
-export interface WorkoutFilters {
-  page?:      number;
-  limit?:     number;
-  type?:      string;
-  date_from?: string;
-  date_to?:   string;
-}
-
-// old types
-export interface WorkoutFilters {
-  page?: number
-  limit?: number
-  type?: string
-  date_from?: string
-  date_to?: string
-}
+/* =========================
+   Payloads
+========================= */
 
 export interface WorkoutExerciseInput {
   exercise_id: number
-  sets?: number
-  reps?: number
-  weight?: number
+
+  sets?: number | null
+
+  reps?: number | null
+
+  weight?: number | null
 }
 
 export interface WorkoutInput {
   date: string
-  type: string
-  duration?: number
-  calories?: number
-  notes?: string
+
+  type: WorkoutType
+
+  duration?: number | null
+
+  calories?: number | null
+
+  notes?: string | null
+
   exercises: WorkoutExerciseInput[]
 }
 
-export interface StreakData {
-  current_streak: number
-  longest_streak: number
-  last_workout: string | null
-}
+export interface UpdateWorkoutPayload
+  extends Partial<WorkoutInput> {}
 
-export interface ProgressPoint {
-  date: string
-  max_weight: number
-}
+/* =========================
+   Filters
+========================= */
 
-export interface VolumePoint {
-  date: string
-  volume: number
-}
+export interface WorkoutFilters {
+  page?: number
 
-export interface ExerciseProgress {
-  exercise_id: number
-  max_weight_over_time: ProgressPoint[]
-  volume_over_time: VolumePoint[]
+  limit?: number
+
+  type?: WorkoutType
+
+  date_from?: string
+
+  date_to?: string
 }

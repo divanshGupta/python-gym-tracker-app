@@ -19,3 +19,11 @@ export interface Exercise {
   description?:  string | null;
   created_by?: number;          // user id if custom
 }
+
+export interface CreateExercisePayload {
+  name:          string;
+  category:      string;
+  muscle_group?: string | null;   // optional
+  equipment?:    string | null;   // optional
+  description?:  string | null;
+}

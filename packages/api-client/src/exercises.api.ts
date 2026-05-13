@@ -1,14 +1,8 @@
 // packages/api-client/src/exercises.api.ts
 import { apiClient } from "./client";
-import type { Exercise, ExerciseCategory } from "@gymtracker/types";
+import type { Exercise, ExerciseCategory, CreateExercisePayload } from "@gymtracker/types";
 
-export interface CreateExercisePayload {
-  name:          string;
-  category:      string;
-  muscle_group?: string | null;   // optional
-  equipment?:    string | null;   // optional
-  description?:  string | null;
-}
+
 
 export const exercisesApi = {
 

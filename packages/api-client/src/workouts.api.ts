@@ -1,7 +1,7 @@
 import { apiClient } from "./client";
 import type {
   Workout,
-  CreateWorkoutPayload,
+  WorkoutInput,
   UpdateWorkoutPayload,
   WorkoutFilters,
 } from "@gymtracker/types";
@@ -16,7 +16,7 @@ export const workoutsApi = {
     apiClient.get<Workout>(`/workouts/${id}`),
 
   // POST /workouts
-  create: (data: CreateWorkoutPayload) =>
+  create: (data: WorkoutInput) =>
     apiClient.post<Workout>("/workouts", data),
 
   // PUT /workouts/:id

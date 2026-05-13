@@ -4,10 +4,10 @@ import { Link } from "react-router-dom";
 
 // ── Shared packages ────────────────────────────────────────────────────────
 import { useWorkouts, useDeleteWorkout } from "@gymtracker/hooks";
-import type { WorkoutFilters, Workout } from "@gymtracker/types";
+import type { WorkoutFilters, Workout, WorkoutType } from "@gymtracker/types";
 
 // ── Constants ─────────────────────────────────────────────────────────────
-const WORKOUT_TYPES = ["Strength", "Cardio", "Flexibility", "Core"];
+const WORKOUT_TYPES = ["strength", "cardio", "flexibility", "core"];
 
 export default function Workouts() {
   const [filters, setFilters] = useState<WorkoutFilters>({ page: 1, limit: 10 });
@@ -44,7 +44,7 @@ export default function Workouts() {
           className="bg-gray-800 text-white px-3 py-2 rounded text-sm outline-none"
           value={filters.type || ""}
           onChange={(e) =>
-            setFilters({ ...filters, type: e.target.value || undefined, page: 1 })
+            setFilters({ ...filters, type: (e.target.value) as WorkoutType || undefined, page: 1 })
           }
         >
           <option value="">All Types</option>
