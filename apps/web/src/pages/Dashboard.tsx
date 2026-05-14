@@ -23,7 +23,7 @@ function WorkoutTypeBar({ data }: { data: Record<string, number> }) {
     Core:        "bg-purple-500",
   };
   return (
-    <div className="bg-elevated rounded-xl p-5">
+    <div className="bg-gray-900 rounded-xl p-5">
       <p className="text-text-secondary text-sm mb-3">Workouts by Type</p>
       <div className="flex flex-col gap-2">
         {Object.entries(data).map(([type, count]) => (
@@ -160,6 +160,9 @@ export default function Dashboard() {
           </div>
         )}
       </div>
+
+      {/* heatmap testing */}
+      {/* <Heatmap /> */}
     </div>
   )
 }

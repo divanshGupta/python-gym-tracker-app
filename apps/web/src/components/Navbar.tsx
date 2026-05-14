@@ -21,10 +21,10 @@ export default function Navbar() {
         <Link to="/" className="hover:text-green-400">Dashboard</Link>
         <Link to="/workouts" className="hover:text-green-400">Workouts</Link>
         <Link to="/exercises" className="hover:text-green-400">Exercises</Link>
-        <Link to="/progress" className="hover:text-green-400 text-sm">Progress</Link>
-        <Link to="/profile" className="hover:text-green-400 text-sm">Profile</Link>
-        <Link to="/goals" className="hover:text-green-400 text-sm">Goals</Link>
-        <Link to="/measurements" className="hover:text-green-400 text-sm">Measurements</Link>
+        <Link to="/progress" className="hover:text-green-400">Progress</Link>
+        <Link to="/profile" className="hover:text-green-400">Profile</Link>
+        <Link to="/goals" className="hover:text-green-400">Goals</Link>
+        <Link to="/measurements" className="hover:text-green-400">Measurements</Link>
         <button
           onClick={logout}
           className="bg-danger px-3 py-1 rounded hover:bg-red-700"
