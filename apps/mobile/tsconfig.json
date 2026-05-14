@@ -4,6 +4,11 @@
   
     "strict": true,
     "ignoreDeprecations": "6.0",
+    "paths": {
+      "@gymtracker/tailwind-config":          ["../../packages/tailwind-config/tokens.ts"],
+      "@gymtracker/tailwind-config/tokens":   ["../../packages/tailwind-config/tokens.ts"],
+      "@gymtracker/tailwind-config/native":   ["../../packages/tailwind-config/native.js"]
+    }
   },
   "include": [
     "**/*.ts",

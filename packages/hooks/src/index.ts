@@ -4,3 +4,4 @@ export * from "./useWorkouts";
 export * from "./useStats";
 export * from "./useWorkoutSession";
 export * from "./useGoals"
+export * from "./useMeasurements";

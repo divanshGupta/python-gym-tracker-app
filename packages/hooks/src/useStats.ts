@@ -1,3 +1,4 @@
+// packages/hooks/src/useStats.ts
 import { useQuery } from "@tanstack/react-query";
 import { statsApi } from "@gymtracker/api-client";
 import { STALE_TIMES } from "@gymtracker/constants";

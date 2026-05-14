@@ -77,7 +77,7 @@ export interface WorkoutInput {
 
   date: string
 
-  type: WorkoutType
+  type: string
 
   duration?: number | null
 

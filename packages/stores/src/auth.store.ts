@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import { authApi } from "@gymtracker/api-client"
+import { apiEvents, API_EVENTS } from "@gymtracker/api-client";
 import type {
     User,
     LoginPayload,
@@ -47,6 +48,12 @@ interface AuthState {
     clearError: () => void;
 }
 
+// Subscribe ONCE when the module loads — not inside restoreSession
+apiEvents.on(API_EVENTS.UNAUTHORIZED, () => {
+  useAuthStore.setState({ user: null, isAuthenticated: false, error: null });
+});
+
+
 // Store-------------------------------------
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -58,8 +65,8 @@ export const useAuthStore = create<AuthState>((set) => ({
 
     // ---- called once on app mount --------
     restoreSession: async () => {
-    try {
-      const token = await _storage.get();
+      try {
+        const token = await _storage.get();
       if (!token) {
         set({ isRestoringSession: false });
         return;

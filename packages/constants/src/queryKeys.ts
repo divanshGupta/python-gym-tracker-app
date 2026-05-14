@@ -1,3 +1,4 @@
+// packages/constants/src/queryKeys.ts
 import type { ExerciseCategoryValue } from "./exercise.constants";
 
 // Single source of truth for all React Query cache keys.

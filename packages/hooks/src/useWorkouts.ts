@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { workoutsApi } from "@gymtracker/api-client";
 import { queryKeys, STALE_TIMES } from "@gymtracker/constants";
-import type { WorkoutInput, UpdateWorkoutPayload, WorkoutFilters, Exercise } from "@gymtracker/types";
+import type { WorkoutInput, UpdateWorkoutPayload, WorkoutFilters } from "@gymtracker/types";
 
 export const useWorkouts = (filters?: WorkoutFilters) =>
   useQuery({

@@ -2,8 +2,6 @@
 import { apiClient } from "./client";
 import type { Exercise, ExerciseCategory, CreateExercisePayload } from "@gymtracker/types";
 
-
-
 export const exercisesApi = {
 
   // GET /exercises  →  optional ?category= filter

@@ -1,2 +1,2 @@
-@config "../tailwind.config.js";
 @import "tailwindcss";
+@import "@gymtracker/tailwind-config/web";

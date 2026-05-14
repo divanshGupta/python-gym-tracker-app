@@ -1,24 +1,11 @@
-/** @type {import('tailwindcss').Config} */
-const {
-  colors,
-  fontFamily,
-  radius,
-  spacing,
-} = require("../../packages/constants/token");
-
+// apps/mobile/tailwind.config.js
+const { theme } = require("@gymtracker/tailwind-config/native");
 
 module.exports = {
   content: [
     "./App.{js,jsx,ts,tsx}",
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
-
-  theme: {
-    extend: {
-      colors,
-      fontFamily,
-      borderRadius: radius,
-      spacing,
-    },
-  },
+  theme,   // ← spread the shared theme directly
+  plugins: [],
 };

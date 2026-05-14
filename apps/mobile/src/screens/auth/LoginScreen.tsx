@@ -68,8 +68,8 @@ export const LoginScreen = ({ navigation }: NativeStackScreenProps<any>) => {
                     Username
                   </Text>
                   <TextInput
-                    className={`bg-elevated border rounded-md px-4 py-3.5 text-sm text-text-primary ${
-                      errors.email ? "border-danger" : "border-border-default"
+                    className={`bg-gray-50 border rounded-xl px-4 py-3.5 text-sm text-gray-900 pr-12 ${
+                        errors.email ? "border-red-300" : "border-gray-200"
                     }`}
                     placeholder="you@example.com"
                     keyboardType="email-address"

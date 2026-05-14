@@ -1,28 +1,31 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { measurementsApi } from "@gymtracker/api-client"; 
-import type { Measurement, CreateMeasurementPayload } from "@gymtracker/types";
-import { queryKeys, STALE_TIMES } from "@gymtracker/constants";
+import { measurementsApi } from "@gymtracker/api-client";
+import { queryKeys } from "@gymtracker/constants";
 
-
-// Queries
-export function useMeasurements() {
-  return useQuery({
+export const useMeasurements = () =>
+  useQuery({
     queryKey: queryKeys.measurements.all(),
-    queryFn: measurementsApi.getAll,
-  })
-}
+    // ← unwrap .data — was missing, causing type mismatch
+    queryFn:  () => measurementsApi.getAll().then((r) => r.data),
+    staleTime: 1000 * 60 * 2,
+  });
 
-// Mutations
-export function useLogMeasurement() {
-  const queryClient = useQueryClient()
-
+export const useLogMeasurement = () => {
+  const qc = useQueryClient();
   return useMutation({
-    mutationFn: measurementsApi.create,
+    // ← unwrap .data
+    mutationFn: (data: Parameters<typeof measurementsApi.create>[0]) =>
+      measurementsApi.create(data).then((r) => r.data),
+    onSuccess: () =>
+      qc.invalidateQueries({ queryKey: queryKeys.measurements.all() }),
+  });
+};
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.measurements.all(),
-      })
-    },
-  })
-}
+export const useDeleteMeasurement = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => measurementsApi.delete(id),
+    onSuccess:  () =>
+      qc.invalidateQueries({ queryKey: queryKeys.measurements.all() }),
+  });
+};

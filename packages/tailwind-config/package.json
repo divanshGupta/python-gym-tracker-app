@@ -1,0 +1,26 @@
+{
+  "name": "@gymtracker/tailwind-config",
+  "version": "0.0.1",
+  "main": "tokens.js",
+  "peerDependencies": {
+    "tailwindcss": "^4.2.4"
+  },
+  "exports": {
+    ".": {
+      "require": "./tokens.js",
+      "import":  "./tokens.js",
+      "types":   "./tokens.d.ts"
+    },
+    "./tokens": {
+      "require": "./tokens.js",
+      "import":  "./tokens.js",
+      "types":   "./tokens.d.ts"
+    },
+    "./native": {
+      "require": "./native.js",
+      "import":  "./native.js",
+      "types":   "./native.d.ts"
+    },
+    "./web": "./web.css"
+  }
+}
