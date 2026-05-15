@@ -29,6 +29,8 @@ const colors = {
   success:          "#22C55E",
   danger:           "#EF4444",
   warning:          "#F59E0B",
+
+  // focus
 };
 
 const fontFamily = {

@@ -11,8 +11,7 @@
     "@gymtracker/types":      "workspace:*",
     "@gymtracker/constants":  "workspace:*",
     "@gymtracker/stores": "workspace:*",
-    "@gymtracker/utils": "workspace:*",
-    "@gymtracker/utils/src/contributions": "workspace:*"
+    "@gymtracker/utils": "workspace:*"
 
   },
   "peerDependencies": {

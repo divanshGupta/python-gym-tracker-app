@@ -163,7 +163,7 @@ export default function Dashboard() {
       </div>
 
       {/* heatmap testing */}
-      <ContributionHeatmap />
+      {/* <ContributionHeatmap /> */}
     </div>
   )
 }

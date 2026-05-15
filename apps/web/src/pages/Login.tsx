@@ -39,10 +39,10 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-      <div className="bg-gray-900 p-8 rounded-xl w-full max-w-md">
-        <h1 className="text-2xl font-bold text-green-400 mb-6">GymTracker</h1>
-        <h2 className="text-white text-xl mb-4">Login</h2>
+    <div className="min-h-screen bg-void flex items-center justify-center">
+      <div className="bg-surface p-8 rounded-xl w-full max-w-md border-border-default">
+        <h1 className="text-2xl font-bold text-accent-text mb-6">GymTracker</h1>
+        <h2 className="text-text-primary text-xl mb-4">Login</h2>
 
         {error && (
           <p className="text-red-400 text-sm mb-4">
@@ -56,10 +56,17 @@ export default function Login() {
               {...register("email")}
               type="email"
               placeholder="Email"
-              className="w-full bg-gray-800 text-white px-4 py-2 rounded outline-none focus:ring-2 focus:ring-green-400"
+              className="w-full 
+              bg-elevated
+              border-border-default
+              text-text-primary
+              placeholder:text-text-tertiary
+              px-4 py-2 rounded outline-none 
+              focus:ring-2 
+              focus:ring-accent-light"
             />
             {errors.email && (
-              <p className="text-red-400 text-xs mt-1">
+              <p className="text-danger text-sm mt-1">
                 {errors.email.message}
               </p>
             )}
@@ -70,10 +77,18 @@ export default function Login() {
               {...register("password")}
               type="password"
               placeholder="Password"
-              className="w-full bg-gray-800 text-white px-4 py-2 rounded outline-none focus:ring-2 focus:ring-green-400"
+              className="
+              w-full 
+              bg-elevated
+              border-border-default
+              text-text-primary
+              placeholder:text-text-tertiary
+              px-4 py-2 rounded outline-none 
+              focus:ring-2 
+              focus:ring-accent-light"
             />
             {errors.password && (
-              <p className="text-red-400 text-xs mt-1">
+              <p className="text-danger text-sm mt-1">
                 {errors.password.message}
               </p>
             )}
@@ -82,15 +97,21 @@ export default function Login() {
           <button
             type="submit"
             disabled={isLoading}
-            className="bg-green-500 hover:bg-green-600 text-white py-2 rounded font-semibold disabled:opacity-50"
+            className="
+            bg-accent
+            hover:bg-accent-light
+            text-text-primary 
+            py-2 rounded 
+            font-semibold 
+            disabled:opacity-50"
           >
             {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <p className="text-gray-400 text-sm mt-4">
+        <p className="text-text-secondary text-sm mt-4">
           No account?{" "}
-          <Link to="/register" className="text-green-400 hover:underline">
+          <Link to="/register" className="text-accent-light hover:underline">
             Register
           </Link>
         </p>
