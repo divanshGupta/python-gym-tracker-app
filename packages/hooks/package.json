@@ -10,7 +10,10 @@
     "@gymtracker/api-client": "workspace:*",
     "@gymtracker/types":      "workspace:*",
     "@gymtracker/constants":  "workspace:*",
-    "@gymtracker/stores": "workspace:*"
+    "@gymtracker/stores": "workspace:*",
+    "@gymtracker/utils": "workspace:*",
+    "@gymtracker/utils/src/contributions": "workspace:*"
+
   },
   "peerDependencies": {
     "@tanstack/react-query": "^5.0.0",

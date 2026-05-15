@@ -94,7 +94,7 @@ async def get_streak(
 ):
     # Get all workout dates for user, ordered descending
     result = await db.execute(
-        select(Workout.date)
+        select(func.distinct(Workout.date))  # ← add distinct
         .where(Workout.user_id == current_user.id)
         .order_by(Workout.date.desc())
     )

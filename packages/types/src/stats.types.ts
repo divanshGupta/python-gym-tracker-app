@@ -40,3 +40,15 @@ export interface ExerciseProgress {
   max_weight_over_time: ProgressPoint[];
   volume_over_time:     VolumePoint[];
 }
+
+export interface ContributionDay {
+  date: string   // "YYYY-MM-DD"
+  count: number
+}
+
+export interface ContributionsResponse {
+  source: string
+  from: string
+  to: string
+  contributions: ContributionDay[]
+}

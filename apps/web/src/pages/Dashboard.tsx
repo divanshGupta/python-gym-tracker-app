@@ -1,6 +1,7 @@
 // apps/web/src/pages/Dashboard.tsx
 import { Link } from "react-router-dom"
 import { useWorkouts, useWorkoutStats, usePersonalBests, useStreak } from "@gymtracker/hooks";
+import { ContributionHeatmap } from "../components/contributions/ContributionHeatmap";
 
 function StatCard({ label, value, unit }: { label: string; value: any; unit?: string }) {
   return (
@@ -162,7 +163,7 @@ export default function Dashboard() {
       </div>
 
       {/* heatmap testing */}
-      {/* <Heatmap /> */}
+      <ContributionHeatmap />
     </div>
   )
 }

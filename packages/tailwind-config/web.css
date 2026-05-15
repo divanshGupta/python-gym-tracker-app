@@ -50,4 +50,11 @@
 
   /* ── Spacing ─────────────────────────────────────────────────────── */
   --spacing: 4px;  /* base unit — all spacing multiplied from this */
+
+  /* heatmap intensity colors */
+  --color-contribution-0: var(--color-surface-secondary);
+  --color-contribution-1: oklch(70% 0.15 142);
+  --color-contribution-2: oklch(55% 0.18 142);
+  --color-contribution-3: oklch(40% 0.20 142);
+  --color-contribution-4: oklch(25% 0.22 142);
 }

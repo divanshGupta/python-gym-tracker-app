@@ -15,6 +15,8 @@
     "@gymtracker/hooks":      "workspace:*",
     "@gymtracker/stores":     "workspace:*",
     "@gymtracker/types":      "workspace:*",
+    "@gymtracker/utils":      "workspace:*",
+
     "@hookform/resolvers":    "^5.2.2",
     "@tanstack/react-query":           "^5.100.6",
     "@tanstack/react-query-devtools":  "^5.100.6",

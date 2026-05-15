@@ -1,5 +1,6 @@
 // packages/constants/src/queryKeys.ts
 import type { ExerciseCategoryValue } from "./exercise.constants";
+import type { ContributionRange } from "./contributions";
 
 // Single source of truth for all React Query cache keys.
 // Changing a key here invalidates cache on both web and mobile.
@@ -28,5 +29,13 @@ export const queryKeys = {
     all: () => ["measurements"] as const,
     detail: (id: number) =>
       ["measurements", "detail", id] as const,
+  },
+
+  stats: {
+    summary:      ()                        => ["stats", "summary"] as const,
+    personalBests:()                        => ["stats", "personalBests"] as const,
+    streak:       ()                        => ["stats", "streak"] as const,
+    progress:     (exerciseId: number)      => ["stats", "progress", exerciseId] as const,
+    contributions:(range: ContributionRange)=> ["stats", "contributions", range] as const,
   },
 } as const;
