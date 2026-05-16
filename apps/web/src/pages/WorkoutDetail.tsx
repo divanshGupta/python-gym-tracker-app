@@ -9,8 +9,8 @@ export default function WorkoutDetail() {
   const { data: workout, isLoading } = useWorkout(Number(id));
   const { mutate: deleteWorkout, isPending, error } = useDeleteWorkout();
 
-  if (isLoading) return <div className="min-h-screen bg-gray-950 text-gray-400 p-6">Loading...</div>
-  if (!workout) return <div className="min-h-screen bg-gray-950 text-gray-400 p-6">Workout not found.</div>
+  if (isLoading) return <div className="min-h-screen bg-void px-6 py-8 text-text-secondary">Loading...</div>
+  if (!workout) return <div className="min-h-screen bg-void px-6 py-8 text-text-secondary">Workout not found.</div>
 
   const handleDelete = () => {
     const confirmed = confirm("Delete this workout?");
@@ -24,30 +24,30 @@ export default function WorkoutDetail() {
     })
   }
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-6 max-w-2xl mx-auto">
+    <div className="min-h-screen max-w-3xl mx-auto bg-void px-6 py-8 text-text-primary">
 
       {error && (
-        <p className="text-red-400 text-sm mb-4">
+        <p className="mb-6 rounded-lg border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">
           Failed to update workout. Try again.
         </p>
       )}
       {/* Header */}
-      <div className="flex justify-between items-start mb-6">
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold">{workout.type} Workout</h1>
-          <p className="text-gray-400 text-sm mt-1">{workout.date}</p>
+          <h1 className="text-2xl font-semibold tracking-tight capitalize text-text-primary">{workout.type} Workout</h1>
+          <p className="mt-1 text-sm text-text-secondary">{workout.date}</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex items-center gap-3">
           <Link
             to={`/workouts/${workout.id}/edit`}
-            className="bg-gray-800 hover:bg-gray-700 px-3 py-1.5 rounded text-sm"
+            className="rounded-lg border border-border-default bg-surface px-4 py-2 text-sm font-medium text-text-primary transition-all duration-200 hover:bg-elevated"
           >
             Edit
           </Link>
           <button
             onClick={handleDelete}
             disabled={isPending}
-            className="bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded text-sm disabled:opacity-50"
+            className="rounded-lg bg-danger px-4 py-2 text-sm font-medium text-text-primary transition-all duration-200 hover:opacity-90 disabled:opacity-50"
           >
             {isPending ? "Deleting..." : "Delete"}
           </button>
@@ -55,70 +55,70 @@ export default function WorkoutDetail() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
         {[
           { label: "Duration", value: workout.duration ? `${workout.duration} min` : "--" },
           { label: "Calories", value: workout.calories ? `${workout.calories} kcal` : "--" },
           { label: "Exercises", value: workout.workout_exercises.length },
         ].map((s) => (
-          <div key={s.label} className="bg-gray-900 rounded-xl p-4 text-center">
-            <p className="text-gray-400 text-xs mb-1">{s.label}</p>
-            <p className="text-white font-bold text-lg">{s.value}</p>
+          <div key={s.label} className="rounded-xl border border-border-default bg-surface p-5 text-center">
+            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-text-tertiary">{s.label}</p>
+            <p className="text-lg font-semibold text-text-primary">{s.value}</p>
           </div>
         ))}
       </div>
 
       {/* Notes */}
       {workout.notes && (
-        <div className="bg-gray-900 rounded-xl p-4 mb-6">
-          <p className="text-gray-400 text-xs mb-1">Notes</p>
-          <p className="text-white text-sm">{workout.notes}</p>
+        <div className="mb-8 rounded-xl border border-border-default bg-surface p-5">
+          <p className="mb-2 text-xs font-medium uppercase tracking-wide text-text-tertiary">Notes</p>
+          <p className="text-sm leading-relaxed text-text-primary">{workout.notes}</p>
         </div>
       )}
 
       {/* Exercises */}
       <Link
         to="/progress" 
-        className="bg-gray-900 rounded-xl p-5"
+        className="block rounded-xl border border-border-default bg-surface p-5"
       >
-        <p className="text-gray-400 text-sm mb-4">Exercises</p>
+        <p className="mb-5 text-sm font-medium text-text-secondary">Exercises</p>
         {workout.workout_exercises.length === 0 ? (
-          <p className="text-gray-500 text-sm">No exercises logged.</p>
+          <p className="text-sm text-text-tertiary">No exercises logged.</p>
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-4">
             {workout.workout_exercises.map((we) => (
               <Link
                 key={we.id}
                 to={`/progress?exercise=${we.exercise.id}`}
-                className="bg-gray-800 hover:bg-gray-700 rounded-lg px-4 py-3 block transition-colors group"
+                className="group block rounded-xl border border-border-default bg-elevated/40 px-5 py-4 transition-all duration-200 hover:border-accent/30 hover:bg-elevated"
               >
-                <p className="text-white font-medium mb-2 flex items-center justify-between">
+                <p className="mb-3 flex items-center justify-between font-medium text-text-primary">
                   <span>
                     {we.exercise.name}
-                    <span className="text-xs text-gray-400 ml-2">({we.exercise.category})</span>
+                    <span className="ml-2 text-xs text-text-tertiary">({we.exercise.category})</span>
                   </span>
-                  <span className="text-xs text-green-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className="text-xs font-medium text-accent opacity-0 transition-opacity group-hover:opacity-100">
                     View progress →
                   </span>
                 </p>
 
-                <div className="flex gap-6 text-sm">
+                <div className="flex flex-wrap gap-6 text-sm">
                   {we.sets && (
                     <div>
-                      <p className="text-gray-400 text-xs">Sets</p>
-                      <p className="text-white font-semibold">{we.sets}</p>
+                      <p className="text-xs text-text-tertiary">Sets</p>
+                      <p className="font-semibold text-text-primary">{we.sets}</p>
                     </div>
                   )}
                   {we.reps && (
                     <div>
-                      <p className="text-gray-400 text-xs">Reps</p>
-                      <p className="text-white font-semibold">{we.reps}</p>
+                      <p className="text-xs text-text-tertiary">Reps</p>
+                      <p className="font-semibold text-text-primary">{we.reps}</p>
                     </div>
                   )}
                   {we.weight && (
                     <div>
-                      <p className="text-gray-400 text-xs">Weight</p>
-                      <p className="text-white font-semibold">{we.weight} kg</p>
+                      <p className="text-xs text-text-tertiary">Weight</p>
+                      <p className="font-semibold text-text-primary">{we.weight} kg</p>
                     </div>
                   )}
                 </div>
@@ -130,7 +130,7 @@ export default function WorkoutDetail() {
 
       <button
         onClick={() => navigate("/workouts")}
-        className="mt-6 text-gray-400 text-sm hover:text-white"
+        className="mt-8 text-sm text-text-secondary transition-colors hover:text-text-primary"
       >
         ← Back to Workouts
       </button>

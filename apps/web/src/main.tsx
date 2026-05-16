@@ -7,6 +7,10 @@ import { configureAuthStore } from "@gymtracker/stores";
 import { STALE_TIMES } from "@gymtracker/constants";
 import App from "./App";
 import "./index.css";
+import "@fontsource/inter/400.css";
+import "@fontsource/inter/500.css";
+import "@fontsource/inter/600.css";
+import "@fontsource/inter/700.css";
 
 // ── Inject web token storage ───────────────────────────────────────────────
 // localStorage is web-only — never imported in shared packages

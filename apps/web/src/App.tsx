@@ -25,9 +25,9 @@ export default function App() {
   // Full-screen spinner while checking localStorage token
   if (isRestoringSession) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-950">
+      <div className="flex h-screen items-center justify-center bg-void">
         <div className="h-8 w-8 animate-spin rounded-full border-2
-                        border-violet-500 border-t-transparent" />
+                        border-accent border-t-transparent" />
       </div>
     );
   }
@@ -67,7 +67,10 @@ export default function App() {
         <Route path="/measurements" element={
           <ProtectedRoute><Navbar /><Measurements /></ProtectedRoute>
         }/>
-        <Route path="*" element={<Navigate to="/" />} />
+
+        <Route path="*" element={
+          <Navigate to="/" />
+        }/>
 
         <Route path="/workouts/:id/edit" element={
           <ProtectedRoute><Navbar /><EditWorkout /> </ProtectedRoute>

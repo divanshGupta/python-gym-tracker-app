@@ -3,7 +3,6 @@
 import {
   ContributionRange,
   CONTRIBUTION_RANGES,
-  DEFAULT_CONTRIBUTION_RANGE
 } from '@gymtracker/constants'
 
 interface RangeSelectorProps {

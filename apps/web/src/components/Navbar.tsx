@@ -15,22 +15,21 @@ export default function Navbar() {
   useEffect(()=> { return () => clearError(); }, [])
 
   return (
-    <nav className="bg-gray-900 text-white px-6 py-4 flex justify-between items-center">
-      <Link to="/" className="text-xl font-bold text-accent">GymTracker</Link>
+    <nav className="bg-surface text-text-primary px-6 py-4 flex justify-between items-center">
+      <Link to="/" className="text-lg font-semibold text-accent">GymTracker</Link>
       <div className="flex gap-6 items-center">
-        <Link to="/" className="hover:text-green-400">Dashboard</Link>
-        <Link to="/workouts" className="hover:text-green-400">Workouts</Link>
-        <Link to="/exercises" className="hover:text-green-400">Exercises</Link>
-        <Link to="/progress" className="hover:text-green-400">Progress</Link>
-        <Link to="/profile" className="hover:text-green-400">Profile</Link>
-        <Link to="/goals" className="hover:text-green-400">Goals</Link>
-        <Link to="/measurements" className="hover:text-green-400">Measurements</Link>
-        <button
+        <Link to="/" className="hover:text-accent-light">Dashboard</Link>
+        <Link to="/workouts" className="hover:text-accent-light">Workouts</Link>
+        <Link to="/exercises" className="hover:text-accent-light">Exercises</Link>
+        <Link to="/progress" className="hover:text-accent-light">Progress</Link>
+        <Link to="/goals" className="hover:text-accent-light">Goals</Link>
+        <Link to="/measurements" className="hover:text-accent-light">Measurements</Link>
+        {/* <button
           onClick={logout}
-          className="bg-danger px-3 py-1 rounded hover:bg-red-700"
+          className="bg-danger px-3 py-1 rounded-xl hover:scale-105"
         >
           Logout
-        </button>
+        </button> */}
       </div>
     </nav>
   )

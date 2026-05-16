@@ -1,5 +1,7 @@
 # apps/api/app/routers/stats.py
 from fastapi import APIRouter, Depends
+from fastapi import Query, HTTPException
+from typing import Literal
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, and_
 from app.database import get_db
@@ -58,7 +60,6 @@ async def get_summary(
         "most_logged_exercise": top[0] if top else None,
     }
 
-
 @router.get("/personal_bests")
 async def get_personal_bests(
     db: AsyncSession = Depends(get_db),
@@ -86,8 +87,7 @@ async def get_personal_bests(
         ]
     }
     
-
-@router.get("/streak")
+@router.get("/streak", deprecated=True,)
 async def get_streak(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
@@ -134,6 +134,69 @@ async def get_streak(
         "last_workout": str(dates[0]),
     }
 
+@router.get("/contributions")
+async def get_contributions(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+    source: Literal["workouts"] = Query(default="workouts"),
+    from_date: date = Query(
+        default=None,
+        alias="from",
+        description="Start date YYYY-MM-DD"
+    ),
+    to_date: date = Query(
+        default=None,
+        alias="to",
+        description="End date YYYY-MM-DD"
+    ),
+):
+    today = date.today()
+
+    if to_date is None:
+        to_date = today
+    if from_date is None:
+        from_date = today - timedelta(days=30)
+
+    # Validate range
+    if from_date > to_date:
+        raise HTTPException(
+            status_code=400,
+            detail="'from' date must be before 'to' date"
+        )
+
+    if (to_date - from_date).days > 366:
+        raise HTTPException(
+            status_code=400,
+            detail="Date range cannot exceed 366 days"
+        )
+
+    result = await db.execute(
+        select(
+            Workout.date,
+            func.count(Workout.id).label("count")
+        )
+        .where(
+            and_(
+                Workout.user_id == current_user.id,
+                Workout.date >= from_date,
+                Workout.date <= to_date,
+            )
+        )
+        .group_by(Workout.date)
+        .order_by(Workout.date.asc())
+    )
+    rows = result.all()
+
+    return {
+        "source": source,
+        "from": str(from_date),
+        "to": str(to_date),
+        "contributions": [
+            {"date": str(row[0]), "count": row[1]}
+            for row in rows
+        ]
+    }
+    
 @router.get("/progress/{exercise_id}")
 async def get_exercise_progress(
     exercise_id: int,

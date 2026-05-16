@@ -13,7 +13,6 @@ import {
 import {
   WORKOUT_TYPES,
   type WorkoutInput,
-  type WorkoutType,
 } from "@gymtracker/types"
 
 /* =========================
@@ -23,7 +22,7 @@ import {
 const exerciseSchema = z.object({
   exercise_id: z
     .number({
-      required_error: "Exercise is required",
+      error: "Exercise is required",
     })
     .min(1, "Exercise is required"),
 
@@ -37,11 +36,7 @@ const exerciseSchema = z.object({
 const schema = z.object({
   date: z.string().min(1, "Date is required"),
 
-  type: z.enum(WORKOUT_TYPES, {
-    errorMap: () => ({
-      message: "Workout type is required",
-    }),
-  }),
+  type: z.enum(WORKOUT_TYPES, { error: "Invalid workout type" }),
 
   duration: z
     .number()
@@ -161,23 +156,23 @@ export default function CreateWorkout() {
   ========================= */
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
-      <div className="max-w-3xl mx-auto p-6">
+    <div className="min-h-screen bg-void text-text-primary">
+      <div className="max-w-3xl mx-auto px-6 py-8">
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold">
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-text-primary">
             Create Workout
           </h1>
 
-          <p className="text-gray-400 mt-2 text-sm">
+          <p className="mt-2 text-sm text-text-secondary">
             Track your training session and exercises.
           </p>
         </div>
 
         {/* Error */}
         {error && (
-          <div className="mb-6 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+          <div className="mb-6 rounded-lg border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">
             Failed to create workout. Please try again.
           </div>
         )}
@@ -189,9 +184,9 @@ export default function CreateWorkout() {
         >
 
           {/* Workout Details */}
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 space-y-5">
+          <div className="bg-surface border border-border-default rounded-xl p-6 space-y-6">
 
-            <h2 className="text-lg font-semibold">
+            <h2 className="text-lg font-semibold tracking-tight text-text-primary">
               Workout Details
             </h2>
 
@@ -200,18 +195,18 @@ export default function CreateWorkout() {
 
               {/* Date */}
               <div>
-                <label className="block text-sm text-gray-400 mb-1">
+                <label className="mb-1.5 block text-sm font-medium text-text-secondary">
                   Date
                 </label>
 
                 <input
                   type="date"
                   {...register("date")}
-                  className="w-full rounded-lg bg-gray-800 border border-gray-700 px-4 py-2 outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full rounded-lg bg-elevated border border-border-default px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
                 />
 
                 {errors.date && (
-                  <p className="mt-1 text-xs text-red-400">
+                  <p className="mt-1 text-xs text-danger">
                     {errors.date.message}
                   </p>
                 )}
@@ -225,7 +220,7 @@ export default function CreateWorkout() {
 
                 <select
                   {...register("type")}
-                  className="w-full rounded-lg bg-gray-800 border border-gray-700 px-4 py-2 outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full rounded-lg bg-elevated border border-border-default px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
                 >
                   {WORKOUT_TYPES.map((type) => (
                     <option
@@ -239,7 +234,7 @@ export default function CreateWorkout() {
                 </select>
 
                 {errors.type && (
-                  <p className="mt-1 text-xs text-red-400">
+                  <p className="mt-1 text-xs text-danger">
                     {errors.type.message}
                   </p>
                 )}
@@ -264,11 +259,11 @@ export default function CreateWorkout() {
                       parseOptionalNumber(e.target.value)
                     )
                   }
-                  className="w-full rounded-lg bg-gray-800 border border-gray-700 px-4 py-2 outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full rounded-lg bg-elevated border border-border-default px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
                 />
 
                 {errors.duration && (
-                  <p className="mt-1 text-xs text-red-400">
+                  <p className="mt-1 text-xs text-danger">
                     {errors.duration.message}
                   </p>
                 )}
@@ -289,11 +284,11 @@ export default function CreateWorkout() {
                       parseOptionalNumber(e.target.value)
                     )
                   }
-                  className="w-full rounded-lg bg-gray-800 border border-gray-700 px-4 py-2 outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full rounded-lg bg-elevated border border-border-default px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
                 />
 
                 {errors.calories && (
-                  <p className="mt-1 text-xs text-red-400">
+                  <p className="mt-1 text-xs text-danger">
                     {errors.calories.message}
                   </p>
                 )}
@@ -310,11 +305,11 @@ export default function CreateWorkout() {
                 rows={4}
                 {...register("notes")}
                 placeholder="How was today's workout?"
-                className="w-full rounded-lg bg-gray-800 border border-gray-700 px-4 py-3 outline-none resize-none focus:ring-2 focus:ring-green-500"
+                className="w-full rounded-lg bg-elevated border border-border-default px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
               />
 
               {errors.notes && (
-                <p className="mt-1 text-xs text-red-400">
+                <p className="mt-1 text-xs text-danger">
                   {errors.notes.message}
                 </p>
               )}
@@ -322,7 +317,7 @@ export default function CreateWorkout() {
           </div>
 
           {/* Exercises */}
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
+          <div className="bg-surface border border-border-default rounded-xl p-5">
 
             <div className="flex items-center justify-between mb-5">
               <div>
@@ -330,7 +325,7 @@ export default function CreateWorkout() {
                   Exercises
                 </h2>
 
-                <p className="text-sm text-gray-400 mt-1">
+                <p className="mt-1 text-sm text-text-secondary">
                   Add exercises performed during this workout.
                 </p>
               </div>
@@ -345,14 +340,14 @@ export default function CreateWorkout() {
                     weight: undefined,
                   })
                 }
-                className="rounded-lg bg-green-500 hover:bg-green-600 px-4 py-2 text-sm font-medium transition-colors"
+                className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-text-primary transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
               >
                 Add Exercise
               </button>
             </div>
 
             {errors.exercises?.message && (
-              <p className="mb-4 text-sm text-red-400">
+              <p className="mb-4 text-sm text-danger">
                 {errors.exercises.message}
               </p>
             )}
@@ -362,20 +357,20 @@ export default function CreateWorkout() {
               {fields.map((field, index) => (
                 <div
                   key={field.id}
-                  className="rounded-xl border border-gray-800 bg-gray-950 p-4"
+                  className="rounded-xl border border-border-default bg-elevated/40 p-5"
                 >
 
                   {/* Header */}
                   <div className="flex items-center justify-between mb-4">
 
-                    <h3 className="text-sm font-medium text-gray-300">
+                    <h3 className="text-sm font-medium text-text-secondary">
                       Exercise #{index + 1}
                     </h3>
 
                     <button
                       type="button"
                       onClick={() => remove(index)}
-                      className="text-sm text-red-400 hover:text-red-300"
+                      className="text-sm text-danger transition-colors hover:opacity-80"
                     >
                       Remove
                     </button>
@@ -400,7 +395,7 @@ export default function CreateWorkout() {
                         )
                       }
                       disabled={exercisesLoading}
-                      className="w-full rounded-lg bg-gray-800 border border-gray-700 px-4 py-2 outline-none focus:ring-2 focus:ring-green-500"
+                      className="w-full rounded-lg bg-elevated border border-border-default px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
                     >
                       <option value={0}>
                         Select exercise
@@ -419,7 +414,7 @@ export default function CreateWorkout() {
 
                     {errors.exercises?.[index]
                       ?.exercise_id && (
-                      <p className="mt-1 text-xs text-red-400">
+                      <p className="mt-1 text-xs text-danger">
                         {
                           errors.exercises[index]
                             ?.exercise_id?.message
@@ -448,7 +443,7 @@ export default function CreateWorkout() {
                             )
                           )
                         }
-                        className="w-full rounded-lg bg-gray-800 border border-gray-700 px-4 py-2 outline-none focus:ring-2 focus:ring-green-500"
+                        className="w-full rounded-lg bg-elevated border border-border-default px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
                       />
                     </div>
 
@@ -469,7 +464,7 @@ export default function CreateWorkout() {
                             )
                           )
                         }
-                        className="w-full rounded-lg bg-gray-800 border border-gray-700 px-4 py-2 outline-none focus:ring-2 focus:ring-green-500"
+                        className="w-full rounded-lg bg-elevated border border-border-default px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
                       />
                     </div>
 
@@ -490,7 +485,7 @@ export default function CreateWorkout() {
                             )
                           )
                         }
-                        className="w-full rounded-lg bg-gray-800 border border-gray-700 px-4 py-2 outline-none focus:ring-2 focus:ring-green-500"
+                        className="w-full rounded-lg bg-elevated border border-border-default px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
                       />
                     </div>
                   </div>
@@ -505,15 +500,14 @@ export default function CreateWorkout() {
             <button
               type="button"
               onClick={() => navigate("/workouts")}
-              className="flex-1 rounded-xl border border-gray-700 bg-gray-900 py-3 font-medium hover:bg-gray-800 transition-colors"
-            >
+              className="flex-1 rounded-xl border border-border-default bg-surface py-3 font-medium text-text-primary transition-all duration-200 hover:bg-elevated">
               Cancel
             </button>
 
             <button
               type="submit"
               disabled={isPending}
-              className="flex-1 rounded-xl bg-green-500 py-3 font-semibold text-black hover:bg-green-400 disabled:opacity-50 transition-colors"
+              className="flex-1 rounded-xl bg-accent py-3 font-semibold text-text-primary transition-all duration-200 hover:opacity-90 active:scale-[0.99] disabled:opacity-50"
             >
               {isPending
                 ? "Saving Workout..."

@@ -12,7 +12,6 @@ export function processContributions(
   from: string,
   to: string
 ): ContributionSummary {
-  // Each step is explicit — easy to debug, easy to test individually
   const normalized = normalizeContributions(raw)
   const filled = fillContributionGaps(normalized, from, to)
   const withIntensity = applyIntensity(filled)
@@ -27,13 +26,3 @@ export function processContributions(
     totalActiveDays: filled.filter((d) => d.count > 0).length,
   }
 }
-
-// Named exports for consumers who need individual functions
-export * from './types'
-export * from './normalize'
-export * from './fill'
-export * from './streaks'
-export * from './intensity'
-export * from './heatmap'
-export * from './range'
-export * from './dateUtils'

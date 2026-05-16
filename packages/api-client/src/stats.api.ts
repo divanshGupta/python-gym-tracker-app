@@ -6,6 +6,13 @@ import type {
   StreakData,
   ExerciseProgress,
 } from "@gymtracker/types";
+import { ContributionsResponse } from "@gymtracker/types";
+
+interface ContributionsParams {
+  from: string
+  to: string
+  source?: 'workouts' | 'habits' | 'nutrition'
+}
 
 export const statsApi = {
   // GET /stats/summary
@@ -19,6 +26,10 @@ export const statsApi = {
   // GET /stats/streak
   getStreak: () =>
     apiClient.get<StreakData>("/stats/streak"),
+
+  // GET /stats/contributions
+  getContributions: (params: ContributionsParams) =>
+    apiClient.get<ContributionsResponse>("/stats/contributions", { params }),
 
   // GET /stats/progress/:exercise_id
   getExerciseProgress: (exerciseId: number) =>

@@ -6,7 +6,6 @@ import { statsApi } from '@gymtracker/api-client'
 import { queryKeys } from '@gymtracker/constants'
 import {
   CONTRIBUTION_RANGES,
-  DEFAULT_CONTRIBUTION_RANGE,
   type ContributionRange,
 } from '@gymtracker/constants'
 import {

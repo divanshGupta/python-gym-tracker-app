@@ -13,7 +13,7 @@ export interface ContributionEntry {
 
 // A single week column in the heatmap grid
 export interface ContributionWeek {
-  days: (ContributionEntry | null)[]  // null = padding day
+  days: ContributionEntry[]  // null = padding day
 }
 
 // The full processed result — what components consume

@@ -4,7 +4,6 @@ import type {
   CreateGoalPayload,
   UpdateGoalPayload,
   LogGoalProgressPayload,
-  GoalStatus,
 } from "@gymtracker/types";
 
 const goalKeys = {

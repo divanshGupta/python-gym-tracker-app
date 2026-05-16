@@ -2,6 +2,7 @@
 
 import { ContributionWeek } from '@gymtracker/utils'
 import { HeatmapCell } from './HeatmapCell'
+import type { ContributionEntry } from '@gymtracker/utils'
 
 const DAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
@@ -28,7 +29,7 @@ export function HeatmapGrid({ weeks }: HeatmapGridProps) {
       {/* Week columns */}
       {weeks.map((week, weekIndex) => (
         <div key={weekIndex} className="flex flex-col gap-1">
-          {week.days.map((entry, dayIndex) => (
+          {week.days.map((entry: ContributionEntry, dayIndex: number) => (
             entry
               ? <HeatmapCell key={entry.date} entry={entry} />
               : <div key={dayIndex} className="w-3 h-3" /> // empty padding
