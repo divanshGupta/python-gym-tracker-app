@@ -1,6 +1,6 @@
 // apps/web/src/pages/Dashboard.tsx
 import { Link } from "react-router-dom"
-import { useWorkouts, useWorkoutStats, usePersonalBests, useStreak } from "@gymtracker/hooks";
+import { useWorkouts, useWorkoutStats, usePersonalBests, useContributions } from "@gymtracker/hooks";
 import { useAuthStore } from "@gymtracker/stores";
 import { Bell, Flame, Trophy } from "lucide-react";
 import { ContributionHeatmap } from "../components/contributions/ContributionHeatmap";
@@ -53,10 +53,16 @@ export default function Dashboard() {
   const { data: stats, isLoading: statsLoading } = useWorkoutStats();
   const { data: recentWorkouts = [], isLoading: workoutsLoading } = useWorkouts({ page: 1, limit: 5 });
   const { data: pbData } = usePersonalBests();
-  const { data: streak } = useStreak();
+  const { summary } = useContributions('monthly');
   const { user } = useAuthStore();
 
   const personalBests = pbData?.personal_bests ?? [];
+
+  // Streak
+  const currentStreak = summary?.currentStreak 
+  const longestStreak = summary?.longestStreak  
+  // const totalWorkoutsCount = summary?.totalCount  
+  // const totalActiveDays = summary?.totalActiveDays  
 
   // Username
   const username = user?.username;
@@ -180,14 +186,14 @@ export default function Dashboard() {
       </div>
 
       {/* Streak Cards */}
-      {streak && (
+      {currentStreak && (
         <div className="grid grid-cols-2 gap-4 mb-8">
           <div className="bg-surface rounded-xl p-5 flex items-center gap-4">
             <Flame className="h-10 w-10 text-text-secondary" />
             <div>
               <p className="text-text-tertiary text-sm">Current Streak</p>
               <p className="text-text-primary text-3xl font-bold">
-                {streak.current_streak}
+                {currentStreak}
                 <span className="text-text-tertiary text-lg ml-1">days</span>
               </p>
             </div>
@@ -197,7 +203,7 @@ export default function Dashboard() {
             <div>
               <p className="text-text-tertiary text-sm">Longest Streak</p>
               <p className="text-text-primary text-3xl font-bold">
-                {streak.longest_streak}
+                {longestStreak}
                 <span className="text-text-tertiary text-lg ml-1">days</span>
               </p>
             </div>

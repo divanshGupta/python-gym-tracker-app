@@ -48,26 +48,29 @@ export default function Register() {
    }
    
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-      <div className="bg-gray-900 p-8 rounded-xl w-full max-w-md">
-        <h1 className="text-2xl font-bold text-green-400 mb-6">GymTracker</h1>
-        <h2 className="text-white text-xl mb-4">Create Account</h2>
+    <div className="min-h-screen bg-void flex items-center justify-center px-6 py-10">
+      <div className="w-full max-w-md rounded-2xl border border-border-default bg-surface p-8 shadow-sm">
+        <h1 className="mb-2 text-2xl font-semibold tracking-tight text-accent">GymTracker</h1>
+        <h2 className="text-xl font-semibold text-text-primary">Create Account</h2>
+        <p className="mt-1 mb-6 text-sm text-text-secondary">
+          Start tracking your workouts and progress.
+        </p>
 
         {error && (
-          <p className="text-red-400 text-sm mb-4">
+          <p className="mb-4 rounded-lg border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">
             {error}
           </p>
         )}
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
           <div>
             <input
               {...register("username")}
               placeholder="Username"
-              className="w-full bg-gray-800 text-white px-4 py-2 rounded outline-none focus:ring-2 focus:ring-green-400"
+              className="w-full rounded-lg border border-border-default bg-elevated px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
             />
             {errors.username && (
-              <p className="text-red-400 text-xs mt-1">
+              <p className="mt-1 text-xs text-danger">
                 {errors.username.message}
               </p>
             )}
@@ -78,10 +81,10 @@ export default function Register() {
               {...register("email")}
               type="email"
               placeholder="Email"
-              className="w-full bg-gray-800 text-white px-4 py-2 rounded outline-none focus:ring-2 focus:ring-green-400"
+              className="w-full rounded-lg border border-border-default bg-elevated px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
             />
             {errors.email && (
-              <p className="text-red-400 text-xs mt-1">
+              <p className="mt-1 text-xs text-danger">
                 {errors.email.message}
               </p>
             )}
@@ -92,10 +95,10 @@ export default function Register() {
               {...register("password")}
               type="password"
               placeholder="Password"
-              className="w-full bg-gray-800 text-white px-4 py-2 rounded outline-none focus:ring-2 focus:ring-green-400"
+              className="w-full rounded-lg border border-border-default bg-elevated px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
             />
             {errors.password && (
-              <p className="text-red-400 text-xs mt-1">
+              <p className="mt-1 text-xs text-danger">
                 {errors.password.message}
               </p>
             )}
@@ -106,7 +109,7 @@ export default function Register() {
               {...register("confirmPassword")}
               type="password"
               placeholder="Confirm Password"
-              className="w-full bg-gray-800 text-white px-4 py-2 rounded outline-none focus:ring-2 focus:ring-green-400"
+              className="w-full rounded-lg border border-border-default bg-elevated px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
             />
             {errors.confirmPassword && (
               <p className="text-red-400 text-xs mt-1">
@@ -118,15 +121,15 @@ export default function Register() {
           <button
             type="submit"
             disabled={isLoading}
-            className="bg-green-500 hover:bg-green-600 text-white py-2 rounded font-semibold disabled:opacity-50"
+            className="rounded-lg bg-accent py-2.5 font-semibold text-text-primary transition-all duration-200 hover:opacity-90 active:scale-[0.99] disabled:opacity-50"
           >
             {isLoading ? "Creating account..." : "Register"}
           </button>
         </form>
 
-        <p className="text-gray-400 text-sm mt-4">
+        <p className="mt-6 text-center text-sm text-text-secondary">
           Already have an account?{" "}
-          <Link to="/login" className="text-green-400 hover:underline">
+          <Link to="/login" className="font-medium text-accent transition-colors hover:opacity-80">
             Login
           </Link>
         </p>

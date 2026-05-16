@@ -39,34 +39,30 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-void flex items-center justify-center">
-      <div className="bg-surface p-8 rounded-xl w-full max-w-md border-border-default">
-        <h1 className="text-2xl font-bold text-accent-text mb-6">GymTracker</h1>
-        <h2 className="text-text-primary text-xl mb-4">Login</h2>
+    <div className="min-h-screen bg-void flex items-center justify-center px-6 py-10">
+      <div className="w-full max-w-md rounded-2xl border border-border-default bg-surface p-6 sm:p-8 shadow-sm">
+        <h1 className="mb-2 text-2xl font-semibold tracking-tight text-accent">GymTracker</h1>
+        <h2 className="text-xl font-semibold text-text-primary">Login</h2>
+        <p className="mt-1 mb-6 text-sm text-text-secondary">
+          Welcome back. Continue your fitness journey.
+        </p>
 
         {error && (
-          <p className="text-red-400 text-sm mb-4">
+          <p className="mb-4 rounded-lg border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">
             {error}
           </p>
         )}
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
           <div>
             <input
               {...register("email")}
               type="email"
               placeholder="Email"
-              className="w-full 
-              bg-elevated
-              border-border-default
-              text-text-primary
-              placeholder:text-text-tertiary
-              px-4 py-2 rounded outline-none 
-              focus:ring-2 
-              focus:ring-accent-light"
+              className="w-full rounded-lg border border-border-default bg-elevated px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
             />
             {errors.email && (
-              <p className="text-danger text-sm mt-1">
+              <p className="mt-1 text-xs text-danger">
                 {errors.email.message}
               </p>
             )}
@@ -78,17 +74,10 @@ export default function Login() {
               type="password"
               placeholder="Password"
               className="
-              w-full 
-              bg-elevated
-              border-border-default
-              text-text-primary
-              placeholder:text-text-tertiary
-              px-4 py-2 rounded outline-none 
-              focus:ring-2 
-              focus:ring-accent-light"
+              w-full rounded-lg border border-border-default bg-elevated px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
             />
             {errors.password && (
-              <p className="text-danger text-sm mt-1">
+              <p className="mt-1 text-xs text-danger">
                 {errors.password.message}
               </p>
             )}
@@ -98,20 +87,15 @@ export default function Login() {
             type="submit"
             disabled={isLoading}
             className="
-            bg-accent
-            hover:bg-accent-light
-            text-text-primary 
-            py-2 rounded 
-            font-semibold 
-            disabled:opacity-50"
+           rounded-lg bg-accent py-2.5 font-semibold text-text-primary transition-all duration-200 hover:opacity-90 active:scale-[0.99] disabled:opacity-50"
           >
             {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <p className="text-text-secondary text-sm mt-4">
+        <p className="mt-6 text-center text-sm text-text-secondary">
           No account?{" "}
-          <Link to="/register" className="text-accent-light hover:underline">
+          <Link to="/register" className="font-medium text-accent transition-colors hover:opacity-80">
             Register
           </Link>
         </p>
