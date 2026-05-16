@@ -53,7 +53,7 @@ export default function Dashboard() {
   const { data: stats, isLoading: statsLoading } = useWorkoutStats();
   const { data: recentWorkouts = [], isLoading: workoutsLoading } = useWorkouts({ page: 1, limit: 5 });
   const { data: pbData } = usePersonalBests();
-  const { summary } = useContributions('monthly');
+  const { summary } = useContributions('yearly');
   const { user } = useAuthStore();
 
   const personalBests = pbData?.personal_bests ?? [];

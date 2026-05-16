@@ -68,12 +68,12 @@ export default function Exercises() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Exercises</h1>
+    <div className="min-h-screen bg-void px-6 py-8 text-text-primary">
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-2xl font-semibold tracking-tight text-text-primary">Exercises</h1>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-sm font-semibold"
+          className="rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-text-primary transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
         >
           {showForm ? "Cancel" : "+ Add Exercise"}
         </button>
@@ -81,24 +81,24 @@ export default function Exercises() {
 
       {/* Add Exercise Form */}
       {showForm && (
-        <div className="bg-gray-900 rounded-xl p-5 mb-6">
-          <h2 className="text-white font-semibold mb-4">New Exercise</h2>
+        <div className="mb-8 rounded-2xl border border-border-default bg-surface p-6">
+          <h2 className="mb-5 text-lg font-semibold tracking-tight text-text-primary">New Exercise</h2>
           {error && (
-            <p className="text-red-400 text-sm mb-3">
+            <p className="mb-4 rounded-lg border border-danger/20 bg-danger/10 px-4 py-3 text-sm text-danger">
               {(error as any)?.response?.data?.detail ?? "Failed to create exercise"}
             </p>
           )}
-          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
 
             {/* Name */}
             <div>
               <input
                 {...register("name")}
                 placeholder="Exercise name (e.g. Running, Squat)"
-                className="w-full bg-gray-800 text-white px-4 py-2 rounded outline-none focus:ring-2 focus:ring-green-400"
+                className="w-full rounded-lg border border-border-default bg-elevated px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
               />
               {errors.name && (
-                <p className="text-red-400 text-xs mt-1">{errors.name.message}</p>
+                <p className="mt-1 text-xs text-danger">{errors.name.message}</p>
               )}
             </div>
 
@@ -106,7 +106,7 @@ export default function Exercises() {
             <div>
               <select
                 {...register("category")}
-                className="w-full bg-gray-800 text-white px-4 py-2 rounded outline-none focus:ring-2 focus:ring-green-400"
+                className="w-full rounded-lg border border-border-default bg-elevated px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
               >
                 <option value="">Select category</option>
                 {CATEGORIES.map((c) => (
@@ -116,7 +116,7 @@ export default function Exercises() {
                 ))}
               </select>
               {errors.category && (
-                <p className="text-red-400 text-xs mt-1">{errors.category.message}</p>
+                <p className="mt-1 text-xs text-danger">{errors.category.message}</p>
               )}
             </div>
 
@@ -125,7 +125,7 @@ export default function Exercises() {
               <div>
                 <select
                   {...register("muscle_group")}
-                  className="w-full bg-gray-800 text-white px-4 py-2 rounded outline-none focus:ring-2 focus:ring-green-400"
+                  className="w-full rounded-lg border border-border-default bg-elevated px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
                 >
                   <option value="">Muscle group (optional)</option>
                   {MUSCLE_GROUPS.map((m) => (
@@ -141,7 +141,7 @@ export default function Exercises() {
             <div>
               <select
                 {...register("equipment")}
-                className="w-full bg-gray-800 text-white px-4 py-2 rounded outline-none focus:ring-2 focus:ring-green-400"
+                className="w-full rounded-lg border border-border-default bg-elevated px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
               >
                 <option value="">Equipment (optional)</option>
                 {EQUIPMENT.map((eq) => (
@@ -155,7 +155,7 @@ export default function Exercises() {
             <button
               type="submit"
               disabled={isPending}
-              className="bg-green-500 hover:bg-green-600 py-2 rounded font-semibold text-sm disabled:opacity-50"
+              className="rounded-lg bg-accent py-2.5 text-sm font-semibold text-text-primary transition-all duration-200 hover:opacity-90 active:scale-[0.99] disabled:opacity-50"
             >
               {isPending ? "Adding..." : "Add Exercise"}
             </button>
@@ -164,18 +164,18 @@ export default function Exercises() {
       )}
 
       {/* Search + Filter */}
-      <div className="flex gap-3 mb-5">
+      <div className="mb-8 flex flex-col gap-3 rounded-xl border border-border-default bg-surface p-4 sm:flex-row">
         <input
           type="text"
           placeholder="Search exercises..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 bg-gray-800 text-white px-4 py-2 rounded outline-none focus:ring-2 focus:ring-green-400 text-sm"
+          className="flex-1 rounded-lg border border-border-default bg-elevated px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
         />
         <select
           value={filterCategory}
           onChange={(e) => setFilterCategory(e.target.value)}
-          className="bg-gray-800 text-white px-3 py-2 rounded text-sm outline-none"
+          className="rounded-lg border border-border-default bg-elevated px-4 py-2.5 text-sm text-text-primary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
         >
           <option value="">All Categories</option>
           {CATEGORIES.map((c) => (
@@ -188,26 +188,26 @@ export default function Exercises() {
 
       {/* Exercise Grid */}
       {isLoading ? (
-        <p className="text-gray-400">Loading...</p>
+        <p className="text-text-secondary">Loading...</p>
       ) : filtered.length === 0 ? (
-        <p className="text-gray-400">No exercises found.</p>
+        <p className="rounded-xl border border-border-default bg-surface py-16 text-center text-text-secondary">No exercises found.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((e) => (
             <div
               key={e.id}
-              className="bg-gray-900 rounded-xl px-4 py-3 flex justify-between items-center"
+              className="group rounded-xl border border-border-default bg-surface p-5 transition-all duration-200 hover:border-accent/30 hover:bg-elevated/40"
             >
-              <div>
-                <p className="text-white font-medium capitalize">{e.name}</p>
+              <div className="space-y-1">
+                <p className="text-base font-semibold capitalize text-text-primary">{e.name}</p>
                 {e.muscle_group && e.muscle_group !== "none" && (
-                  <p className="text-gray-500 text-xs capitalize mt-0.5">
+                  <p className="text-xs capitalize text-text-tertiary">
                     {e.muscle_group.replace("_", " ")}
                   </p>
                 )}
               </div>
               <span
-                className={`text-xs px-2 py-1 rounded-full font-medium capitalize ${
+                className={`mt-4 inline-flex w-fit rounded-full px-2.5 py-1 text-xs font-medium capitalize ${
                   CATEGORY_COLORS[e.category] ?? "bg-gray-700 text-gray-300"
                 }`}
               >
@@ -218,7 +218,7 @@ export default function Exercises() {
         </div>
       )}
 
-      <p className="text-gray-600 text-xs mt-6">{filtered.length} exercises</p>
+      <p className="mt-8 text-xs text-text-tertiary">{filtered.length} exercises</p>
     </div>
   );
 }

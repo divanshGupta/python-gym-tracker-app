@@ -20,63 +20,66 @@ export default function Profile() {
     navigate("/login")
   }
 
-  if (isLoading) return <div className="min-h-screen bg-void text-text-secondary p-6">Loading...</div>
-  if (!user) return <div className="min-h-screen bg-void text-text-secondary p-6">User not found.</div>
+  if (isLoading) return <div className="min-h-screen bg-void px-6 py-8 text-text-secondary">Loading...</div>
+  if (!user) return <div className="min-h-screen bg-void px-6 py-8 text-text-secondary">User not found.</div>
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-6 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Profile</h1>
 
-      {/* Avatar + Info */}
-      <div className="bg-gray-900 rounded-xl p-6 flex items-center gap-5 mb-6">
-        <div className="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center text-2xl font-bold text-white">
-          {user.username.charAt(0).toUpperCase()}
+    <div className="bg-void">
+      <div className="min-h-screen max-w-4xl mx-auto bg-void px-4 py-6 sm:px-6 sm:py-8 text-text-primary">
+        <h1 className="mb-8 text-2xl font-semibold tracking-tight text-text-primary">Profile</h1>
+
+        {/* Avatar + Info */}
+        <div className="mb-8 flex flex-col gap-5 rounded-2xl border border-border-default bg-surface p-6 sm:flex-row sm:items-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent-subtle text-2xl font-semibold text-accent">
+            {user.username.charAt(0).toUpperCase()}
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-xl font-semibold text-text-primary">{user.username}</p>
+            <p className="truncate text-sm text-text-secondary">{user.email}</p>
+            <p className="mt-2 text-xs text-text-tertiary">
+              Member since {new Date(user.created_at).toLocaleDateString()}
+            </p>
+          </div>
         </div>
-        <div>
-          <p className="text-white text-xl font-semibold">{user.username}</p>
-          <p className="text-gray-400 text-sm">{user.email}</p>
-          <p className="text-gray-500 text-xs mt-1">
-            Member since {new Date(user.created_at).toLocaleDateString()}
-          </p>
-        </div>
+
+        {/* Stats Summary */}
+        {stats && (
+          <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+            {[
+              { label: "Workouts", value: stats.total_workouts },
+              { label: "Minutes", value: stats.total_duration_minutes },
+              { label: "Calories", value: stats.total_calories_burned },
+            ].map((s) => (
+              <div key={s.label} className="rounded-2xl border border-border-default bg-surface p-5 text-center transition-all duration-200 hover:bg-elevated/30">
+                <p className="text-2xl font-semibold tracking-tight text-text-primary">{s.value}</p>
+                <p className="mt-2 text-xs font-medium uppercase tracking-wide text-text-tertiary">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Workout Type Breakdown */}
+        {stats && Object.keys(stats.workouts_by_type).length > 0 && (
+          <div className="mb-8 rounded-2xl border border-border-default bg-surface p-6">
+            <p className="mb-5 text-sm font-medium text-text-secondary">Workout Breakdown</p>
+            {Object.entries(stats.workouts_by_type).map(([type, count]) => (
+              <div key={type} className="flex items-center justify-between border-b border-border-default py-3 text-sm last:border-0">
+                <span className="capitalize text-text-primary">{type}</span>
+                <span className="font-medium text-accent">{count} sessions</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Logout */}
+        <button
+          onClick={handleLogout}
+          className="w-full rounded-xl bg-danger py-3 text-sm font-semibold text-text-primary transition-all duration-200 hover:opacity-90 active:scale-[0.99]"
+        >
+          Logout
+        </button>
       </div>
-
-      {/* Stats Summary */}
-      {stats && (
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          {[
-            { label: "Workouts", value: stats.total_workouts },
-            { label: "Minutes", value: stats.total_duration_minutes },
-            { label: "Calories", value: stats.total_calories_burned },
-          ].map((s) => (
-            <div key={s.label} className="bg-gray-900 rounded-xl p-4 text-center">
-              <p className="text-white text-xl font-bold">{s.value}</p>
-              <p className="text-gray-400 text-xs mt-1">{s.label}</p>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Workout Type Breakdown */}
-      {stats && Object.keys(stats.workouts_by_type).length > 0 && (
-        <div className="bg-gray-900 rounded-xl p-5 mb-6">
-          <p className="text-gray-400 text-sm mb-3">Workout Breakdown</p>
-          {Object.entries(stats.workouts_by_type).map(([type, count]) => (
-            <div key={type} className="flex justify-between text-sm py-1 border-b border-gray-800 last:border-0">
-              <span className="text-white">{type}</span>
-              <span className="text-green-400 font-semibold">{count} sessions</span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Logout */}
-      <button
-        onClick={handleLogout}
-        className="w-full bg-red-600 hover:bg-red-700 py-2 rounded font-semibold text-sm"
-      >
-        Logout
-      </button>
     </div>
   )
 }

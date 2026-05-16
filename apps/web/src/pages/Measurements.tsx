@@ -77,12 +77,12 @@ export default function Measurements() {
 
   // ── Render ─────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Body Measurements</h1>
+    <div className="min-h-screen bg-void px-4 py-6 sm:px-6 sm:py-8 text-text-primary">
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-2xl font-semibold tracking-tight text-text-primary">Body Measurements</h1>
         <button
           onClick={() => setShowForm(true)}
-          className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-sm font-semibold"
+          className="rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-text-primary transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
         >
           + Log Entry
         </button>
@@ -90,19 +90,19 @@ export default function Measurements() {
 
       {/* Summary cards */}
       {latest && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
-          <div className="bg-gray-900 rounded-xl px-4 py-3">
-            <p className="text-gray-400 text-xs mb-1">Current Weight</p>
-            <p className="text-xl font-bold">
+        <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="rounded-2xl border border-border-default bg-surface p-5 transition-all duration-200 hover:bg-elevated/30">
+            <p className="mb-2 text-xs font-medium uppercase tracking-wide text-text-tertiary">Current Weight</p>
+            <p className="text-2xl font-semibold tracking-tight text-text-primary">
               {latest.weight_kg}{" "}
-              <span className="text-sm font-normal text-gray-400">kg</span>
+              <span className="text-sm font-normal text-text-secondary">kg</span>
             </p>
           </div>
 
           {latest.bmi && (
-            <div className="bg-gray-900 rounded-xl px-4 py-3">
-              <p className="text-gray-400 text-xs mb-1">BMI</p>
-              <p className="text-xl font-bold">
+            <div className="rounded-2xl border border-border-default bg-surface p-5 transition-all duration-200 hover:bg-elevated/30">
+              <p className="mb-2 text-xs font-medium uppercase tracking-wide text-text-tertiary">BMI</p>
+              <p className="text-2xl font-semibold tracking-tight text-text-primary">
                 {latest.bmi}{" "}
                 <span className={`text-sm font-normal ${bmiCategory(latest.bmi).color}`}>
                   {bmiCategory(latest.bmi).label}
@@ -112,9 +112,9 @@ export default function Measurements() {
           )}
 
           {weightChange && (
-            <div className="bg-gray-900 rounded-xl px-4 py-3">
-              <p className="text-gray-400 text-xs mb-1">Change</p>
-              <p className={`text-xl font-bold ${weightChange.color}`}>
+            <div className="rounded-2xl border border-border-default bg-surface p-5 transition-all duration-200 hover:bg-elevated/30">
+              <p className="mb-2 text-xs font-medium uppercase tracking-wide text-text-tertiary">Change</p>
+              <p className={`text-2xl font-semibold tracking-tight text-text-primary ${weightChange.color}`}>
                 {weightChange.sign}{weightChange.diff.toFixed(1)} kg
               </p>
             </div>
@@ -124,14 +124,14 @@ export default function Measurements() {
 
       {/* Log form */}
       {showForm && (
-        <div className="bg-gray-900 rounded-xl p-5 mb-6">
-          <h2 className="font-semibold mb-4">New Entry</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="mb-8 rounded-2xl border border-border-default bg-surface p-6">
+          <h2 className="mb-5 text-lg font-semibold tracking-tight text-text-primary">New Entry</h2>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <input
               type="date"
               value={form.date}
               onChange={(e) => setForm({ ...form, date: e.target.value })}
-              className="bg-gray-800 px-3 py-2 rounded text-sm outline-none"
+              className="rounded-lg border border-border-default bg-elevated px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
             />
             <input
               type="number"
@@ -139,7 +139,7 @@ export default function Measurements() {
               placeholder="Weight (kg)"
               value={form.weight_kg}
               onChange={(e) => setForm({ ...form, weight_kg: e.target.value })}
-              className="bg-gray-800 px-3 py-2 rounded text-sm outline-none"
+              className="rounded-lg border border-border-default bg-elevated px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
             />
             <input
               type="number"
@@ -147,26 +147,26 @@ export default function Measurements() {
               placeholder="Height cm (optional — used for BMI)"
               value={form.height_cm}
               onChange={(e) => setForm({ ...form, height_cm: e.target.value })}
-              className="bg-gray-800 px-3 py-2 rounded text-sm outline-none"
+              className="rounded-lg border border-border-default bg-elevated px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
             />
             <input
               placeholder="Notes (optional)"
               value={form.notes}
               onChange={(e) => setForm({ ...form, notes: e.target.value })}
-              className="bg-gray-800 px-3 py-2 rounded text-sm outline-none"
+              className="rounded-lg border border-border-default bg-elevated px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
             />
           </div>
-          <div className="flex gap-2 mt-4">
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row">
             <button
               onClick={handleSubmit}
               disabled={isPending}
-              className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-sm font-semibold disabled:opacity-50"
+              className="rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-text-primary transition-all duration-200 hover:opacity-90 disabled:opacity-50"
             >
               {isPending ? "Saving..." : "Save"}
             </button>
             <button
               onClick={() => setShowForm(false)}
-              className="text-gray-400 text-sm hover:text-white px-4 py-2"
+              className="rounded-lg border border-border-default bg-surface px-4 py-2.5 text-sm text-text-secondary transition-all duration-200 hover:bg-elevated hover:text-text-primary"
             >
               Cancel
             </button>
@@ -176,21 +176,21 @@ export default function Measurements() {
 
       {/* Weight chart */}
       {chartData.length > 1 && (
-        <div className="bg-gray-900 rounded-xl p-5 mb-6">
-          <h2 className="font-semibold mb-4 text-sm text-gray-400">
+        <div className="mb-8 rounded-2xl border border-border-default bg-surface p-6">
+          <h2 className="mb-5 text-sm font-medium text-text-secondary">
             Weight over time
           </h2>
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-              <XAxis dataKey="date" tick={{ fill: "#9ca3af", fontSize: 11 }} />
-              <YAxis tick={{ fill: "#9ca3af", fontSize: 11 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#2C2C2E" />
+              <XAxis dataKey="date" tick={{ fill: "#8E8E93", fontSize: 11 }} />
+              <YAxis tick={{ fill: "#8E8E93", fontSize: 11 }} />
               <Tooltip
-                contentStyle={{ background: "#111827", border: "none", borderRadius: 8 }}
+                contentStyle={{ background: "#1C1C1E", border: "none", borderRadius: 12 }}
               />
               <Line
                 type="monotone" dataKey="Weight"
-                stroke="#22c55e" dot={false} strokeWidth={2}
+                stroke="#7C5CFC" dot={false} strokeWidth={2}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -199,8 +199,8 @@ export default function Measurements() {
 
       {/* BMI chart — only if we have BMI data */}
       {chartData.some((d) => d.BMI !== undefined) && chartData.length > 1 && (
-        <div className="bg-gray-900 rounded-xl p-5 mb-6">
-          <h2 className="font-semibold mb-4 text-sm text-gray-400">BMI over time</h2>
+        <div className="mb-8 rounded-2xl border border-border-default bg-surface p-6">
+          <h2 className="mb-5 text-sm font-medium text-text-secondary">BMI over time</h2>
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -211,7 +211,7 @@ export default function Measurements() {
               />
               <Line
                 type="monotone" dataKey="BMI"
-                stroke="#60a5fa" dot={false} strokeWidth={2}
+                stroke="#9B7EFD" dot={false} strokeWidth={2}
               />
             </LineChart>
           </ResponsiveContainer>
@@ -222,43 +222,43 @@ export default function Measurements() {
       {isLoading ? (
         <p className="text-gray-400">Loading...</p>
       ) : entries.length === 0 ? (
-        <div className="text-center py-16">
-          <p className="text-gray-400 mb-4">No measurements logged yet</p>
+        <div className="rounded-2xl border border-border-default bg-surface py-20 text-center">
+          <p className="text-sm text-text-secondary">No measurements logged yet</p>
         </div>
       ) : (
-        <div className="bg-gray-900 rounded-xl overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="overflow-hidden rounded-2xl border border-border-default bg-surface">
+          <table className="min-w-full text-sm">
             <thead>
-              <tr className="text-gray-400 text-xs border-b border-gray-800">
-                <th className="text-left px-5 py-3">Date</th>
-                <th className="text-left px-5 py-3">Weight</th>
-                <th className="text-left px-5 py-3">BMI</th>
-                <th className="text-left px-5 py-3">Notes</th>
-                <th className="px-5 py-3" />
+              <tr className="border-b border-border-default text-xs uppercase tracking-wide text-text-tertiary">
+                <th className="px-4 py-4 sm:px-5">Date</th>
+                <th className="px-4 py-4 sm:px-5">Weight</th>
+                <th className="px-4 py-4 sm:px-5">BMI</th>
+                <th className="px-4 py-4 sm:px-5">Notes</th>
+                <th className="px-4 py-4 sm:px-5" />
               </tr>
             </thead>
             <tbody>
               {entries.map((e: Measurement) => (
                 <tr
                   key={e.id}
-                  className="border-b border-gray-800/50 hover:bg-gray-800/40"
+                  className="border-b border-border-default/50 transition-colors hover:bg-elevated/30"
                 >
-                  <td className="px-5 py-3">{e.date}</td>
-                  <td className="px-5 py-3">{e.weight_kg} kg</td>
-                  <td className="px-5 py-3">
+                  <td className="px-4 py-4 sm:px-5">{e.date}</td>
+                  <td className="px-4 py-4 sm:px-5">{e.weight_kg} kg</td>
+                  <td className="px-4 py-4 sm:px-5">
                     {e.bmi ? (
                       <span className={bmiCategory(e.bmi).color}>{e.bmi}</span>
                     ) : (
-                      <span className="text-gray-600">—</span>
+                      <span className="text-text-tertiary">—</span>
                     )}
                   </td>
-                  <td className="px-5 py-3 text-gray-400 max-w-xs truncate">
+                  <td className="px-5 py-3 max-w-45 truncate text-text-secondary sm:max-w-xs">
                     {e.notes || "—"}
                   </td>
                   <td className="px-5 py-3 text-right">
                     <button
                       onClick={() => confirm("Delete entry?") && remove(e.id)}
-                      className="text-red-400 hover:underline text-sm"
+                      className="text-sm font-medium text-danger transition-colors hover:opacity-80"
                     >
                       Delete
                     </button>
