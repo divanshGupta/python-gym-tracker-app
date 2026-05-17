@@ -1,20 +1,35 @@
 import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { useAuthStore } from "@gymtracker/stores"
+import { AppShell } from "./components/Appshell";
 import ProtectedRoute from "./components/ProtectedRoute"
+
+// PAGES
 import Login from "./pages/Login"
 import Register from "./pages/Register"
 import Dashboard from "./pages/Dashboard"
 import Workouts from "./pages/Workouts"
 import WorkoutDetail from "./pages/WorkoutDetail"
 import Exercises from "./pages/Exercises"
-import Navbar from "./components/Navbar"
 import CreateWorkout from "./pages/CreateWorkout"
 import Profile from "./pages/Profile"
 import Progress from "./pages/Progress"
 import Goals from "./pages/Goals"
 import Measurements from "./pages/Measurements"
 import EditWorkout from "./pages/EditWorkout"
+
+/**
+ * Helper: wraps a page in ProtectedRoute + AppShell.
+ * This replaces the old pattern of:
+ *   <ProtectedRoute><Navbar /><PageComponent /></ProtectedRoute>
+ */
+function Protected({ children }: { children: React.ReactNode }) {
+  return (
+    <ProtectedRoute>
+      <AppShell>{children}</AppShell>
+    </ProtectedRoute>
+  );
+}
 
 export default function App() {
 
@@ -36,46 +51,24 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         {/* Public */}
+        {/* ── Auth (no shell) ── */}
         <Route path="/login"    element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Protected */}
-        <Route path="/" element={
-          <ProtectedRoute><Navbar /><Dashboard /></ProtectedRoute>
-        }/>
-        <Route path="/workouts" element={
-          <ProtectedRoute><Navbar /><Workouts /></ProtectedRoute>
-        }/>
-        <Route path="/workouts/create" element={
-          <ProtectedRoute><Navbar /><CreateWorkout /></ProtectedRoute>
-        }/>
-        <Route path="/workouts/:id" element={
-          <ProtectedRoute><Navbar /><WorkoutDetail /></ProtectedRoute>
-        }/>
-        <Route path="/exercises" element={
-          <ProtectedRoute><Navbar /><Exercises /></ProtectedRoute>
-        }/>
-        <Route path="/profile" element={
-          <ProtectedRoute><Navbar /><Profile /></ProtectedRoute>
-        }/>
-        <Route path="/progress" element={
-          <ProtectedRoute><Navbar /><Progress /></ProtectedRoute>
-        }/>
-        <Route path="/goals" element={
-          <ProtectedRoute><Navbar /><Goals /></ProtectedRoute>
-        }/>
-        <Route path="/measurements" element={
-          <ProtectedRoute><Navbar /><Measurements /></ProtectedRoute>
-        }/>
+        {/* ── Protected routes (with sidebar shell) ── */}
+        <Route path="/"               element={<Protected><Dashboard /></Protected>} />
+        <Route path="/workouts"       element={<Protected><Workouts /></Protected>} />
+        <Route path="/workouts/create" element={<Protected><CreateWorkout /></Protected>} />
+        <Route path="/workouts/:id/edit" element={<Protected><EditWorkout /></Protected>} />
+        <Route path="/workouts/:id"   element={<Protected><WorkoutDetail /></Protected>} />
+        <Route path="/exercises"      element={<Protected><Exercises /></Protected>} />
+        <Route path="/progress"       element={<Protected><Progress /></Protected>} />
+        <Route path="/goals"          element={<Protected><Goals /></Protected>} />
+        <Route path="/measurements"   element={<Protected><Measurements /></Protected>} />
+        <Route path="/profile"        element={<Protected><Profile /></Protected>} /> 
 
-        <Route path="*" element={
-          <Navigate to="/" />
-        }/>
-
-        <Route path="/workouts/:id/edit" element={
-          <ProtectedRoute><Navbar /><EditWorkout /> </ProtectedRoute>
-        }/>
-        
+        {/* ── Fallback ── */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );

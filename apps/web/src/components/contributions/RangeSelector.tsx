@@ -12,17 +12,17 @@ interface RangeSelectorProps {
 
 export function RangeSelector({ selected, onChange }: RangeSelectorProps) {
   return (
-    <div className="flex gap-1 p-1 bg-surface-secondary rounded-lg">
+    <div className="flex gap-1 p-1 rounded md:rounded-lg">
       {(Object.keys(CONTRIBUTION_RANGES) as ContributionRange[]).map((key) => (
         <button
           key={key}
           onClick={() => onChange(key)}
           className={`
-            px-3 py-1 rounded-md text-sm font-medium
+            text-text-primary border border-text-tertiary px-1 py-1 md:px-3 md:py-1 rounded-md text-sm font-medium
             transition-colors duration-150
             ${selected === key
-              ? 'bg-surface text-primary shadow-sm'
-              : 'text-muted hover:text-primary'
+              ? 'bg-elevated text-text-primary shadow-sm'
+              : 'text-text-secondary hover:text-primary'
             }
           `}
         >

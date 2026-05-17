@@ -27,7 +27,7 @@ export function HeatmapCell({ entry }: HeatmapCellProps) {
   return (
     <div
       className={`
-        w-3 h-3 rounded-sm cursor-pointer
+        w-3 h-3 md:w-4 md:h-4 rounded cursor-pointer border border-text-tertiary
         transition-opacity duration-100
         hover:opacity-80
         ${colorClass}

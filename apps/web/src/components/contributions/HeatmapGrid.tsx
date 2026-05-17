@@ -1,5 +1,4 @@
 // apps/web/src/components/contributions/HeatmapGrid.tsx
-
 import { ContributionWeek } from '@gymtracker/utils'
 import { HeatmapCell } from './HeatmapCell'
 import type { ContributionEntry } from '@gymtracker/utils'
@@ -12,7 +11,7 @@ interface HeatmapGridProps {
 
 export function HeatmapGrid({ weeks }: HeatmapGridProps) {
   return (
-    <div className="flex gap-1">
+    <div className="text-text-primary flex gap-1">
       {/* Day labels column */}
       <div className="flex flex-col gap-1 mr-1">
         {DAY_LABELS.map((label, i) => (

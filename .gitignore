@@ -9,6 +9,7 @@ frontend/.env
 frontend/.env.development
 frontend/.env.local
 
+old-codes/
 dist/
 build/
 .venv/

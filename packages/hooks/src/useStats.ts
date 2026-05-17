@@ -25,12 +25,13 @@ export const usePersonalBests = () =>
     staleTime: STALE_TIMES.workouts,
   });
 
-export const useStreak = () =>
-  useQuery({
-    queryKey:  statsKeys.streak(),
-    queryFn:   () => statsApi.getStreak().then((r) => r.data),
-    staleTime: STALE_TIMES.workouts,
-  });
+  // Deprecated
+// export const useStreak = () =>
+//   useQuery({
+//     queryKey:  statsKeys.streak(),
+//     queryFn:   () => statsApi.getStreak().then((r) => r.data),
+//     staleTime: STALE_TIMES.workouts,
+//   });
 
 export const useExerciseProgress = (exerciseId: number) =>
   useQuery({

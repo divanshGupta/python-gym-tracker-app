@@ -1,5 +1,4 @@
 // apps/web/src/components/contributions/ContributionHeatmap.tsx
-
 import { useState } from 'react'
 import {
   ContributionRange,
@@ -19,9 +18,9 @@ export function ContributionHeatmap() {
   const { summary, isLoading, error } = useContributions(range)
 
   return (
-    <div className="flex flex-col gap-4 p-4 bg-surface rounded-xl border border-border">
+    <div className="flex flex-col gap-4 p-4 bg-surface rounded-xl border border-border-default">
       <div className="flex items-center justify-between">
-        <h2 className="font-semibold text-primary">Activity</h2>
+        <h2 className="font-semibold text-text-primary">Activity</h2>
         <RangeSelector selected={range} onChange={setRange} />
       </div>
 
@@ -35,7 +34,7 @@ export function ContributionHeatmap() {
       )}
 
       {summary && summary.totalActiveDays === 0 && (
-        <div className="py-8 text-center text-muted text-sm">
+        <div className="py-8 text-center text-text-secondary text-muted text-sm">
           No workouts logged in this period.
           <br />
           <span className="text-xs">Start logging to see your streak!</span>

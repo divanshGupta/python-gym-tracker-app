@@ -1,261 +1,233 @@
-// apps/web/src/pages/Dashboard.tsx
-import { Link } from "react-router-dom"
-import { useWorkouts, useWorkoutStats, usePersonalBests, useContributions } from "@gymtracker/hooks";
+import { Link, useNavigate } from "react-router-dom";
+import { Plus } from "lucide-react";
+import { useWorkouts, useStreak } from "@gymtracker/hooks";
 import { useAuthStore } from "@gymtracker/stores";
-import { Bell, Flame, Trophy } from "lucide-react";
 import { ContributionHeatmap } from "../components/contributions/ContributionHeatmap";
+import { Button } from "../components/ui";
+import { PageSkeleton } from "../components/ui";
 
-function StatCard({ label, value, unit }: { label: string; value: any; unit?: string }) {
+// ── Helpers ────────────────────────────────────────────────────────────────
+
+function greeting(): string {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 17) return "Good afternoon";
+  return "Good evening";
+}
+
+function formatDate(): string {
+  return new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    day:     "numeric",
+    month:   "long",
+    year:    "numeric",
+  });
+}
+
+function relativeDay(dateStr: string): string {
+  const today = new Date();
+  const d     = new Date(dateStr);
+  today.setHours(0, 0, 0, 0);
+  d.setHours(0, 0, 0, 0);
+  const diff = Math.round((today.getTime() - d.getTime()) / 86400000);
+  if (diff === 0) return "Today";
+  if (diff === 1) return "Yesterday";
+  if (diff < 7)  return `${diff} days ago`;
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+// Workout type → badge colours (all using design tokens)
+const TYPE_STYLES: Record<string, string> = {
+  Strength:    "bg-accent/10 text-accent-light",
+  Cardio:      "bg-success/10 text-success",
+  Flexibility: "bg-warning/10 text-warning",
+  Core:        "bg-accent/10 text-accent-light",
+};
+
+const TYPE_ICON: Record<string, string> = {
+  Strength:    "dumbbell",
+  Cardio:      "run",
+  Flexibility: "yoga",
+  Core:        "circles",
+};
+
+// ── Sub-components ─────────────────────────────────────────────────────────
+
+function StreakPill({ count }: { count: number }) {
+  if (!count) return null;
   return (
-    <div className="bg-surface rounded-xl p-5 flex flex-col gap-1">
-      <p className="text-text-tertiary text-base">{label}</p>
-      <p className="text-text-primary text-3xl font-bold">
-        {value ?? "--"}
-        {unit && <span className="text-text-secondary text-lg ml-1">{unit}</span>}
-      </p>
-    </div>
+    <span className="inline-flex items-center gap-1.5 mt-2.5 px-3 py-1 rounded-full bg-warning/8 border border-warning/18 text-warning text-[13px] font-semibold">
+      {/* Flame — inline SVG to avoid lucide size inconsistency */}
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M12 2c0 6-6 8-6 14a6 6 0 0 0 12 0c0-3-1.5-5-3-7-1 2-2 3-3 7-1-2-1-4 0-7z"/>
+      </svg>
+      {count}
+      <span className="font-normal text-text-secondary text-[12px]">day streak</span>
+    </span>
   );
 }
 
-function WorkoutTypeBar({ data }: { data: Record<string, number> }) {
-  const total = Object.values(data).reduce((a, b) => a + b, 0);
-  const colors: Record<string, string> = {
-    Strength:    "bg-green-500",
-    Cardio:      "bg-blue-500",
-    Flexibility: "bg-yellow-500",
-    Core:        "bg-purple-500",
-  };
+function WorkoutRow({ workout }: { workout: any }) {
+  const type       = workout.type ?? "Strength";
+  const badgeClass = TYPE_STYLES[type] ?? "bg-elevated text-text-secondary";
+
   return (
-    <div className="bg-surface rounded-xl p-5">
-      <p className="text-text-secondary text-base mb-3">Workouts by Type</p>
-      <div className="flex flex-col gap-2">
-        {Object.entries(data).map(([type, count]) => (
-          <div key={type}>
-            <div className="flex justify-between text-base text-text-primary mb-1">
-              <span>{type}</span>
-              <span>{count}</span>
-            </div>
-            <div className="w-full bg-gray-700 rounded-full h-2">
-              <div
-                className={`${colors[type] || "bg-gray-400"} h-2 rounded-full`}
-                style={{ width: `${(count / total) * 100}%` }}
-              />
-            </div>
-          </div>
-        ))}
+    <Link
+      to={`/workouts/${workout.id}`}
+      className="flex items-center gap-3.5 px-3 py-2.5 rounded-lg hover:bg-elevated transition-colors duration-150 group"
+    >
+      {/* Icon box */}
+      <div className="w-9 h-9 rounded-lg bg-elevated border border-border-default flex items-center justify-center shrink-0 text-text-tertiary group-hover:border-border-strong transition-colors">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          {type === "Cardio" ? (
+            <><path d="M13 4v6l3 3-3 3v4"/><path d="M11 4v6l-3 3 3 3v4"/></>
+          ) : (
+            <><path d="M6 5v14"/><path d="M18 5v14"/><path d="M6 12h12"/><rect x="2" y="9" width="4" height="6" rx="1"/><rect x="18" y="9" width="4" height="6" rx="1"/></>
+          )}
+        </svg>
       </div>
+
+      {/* Name + date */}
+      <div className="flex-1 min-w-0">
+        <p className="text-[13px] font-semibold text-text-primary leading-snug truncate">
+          {workout.name ?? workout.type ?? "Workout"}
+        </p>
+        <p className="text-[11px] text-text-tertiary mt-0.5">
+          {relativeDay(workout.date)}
+        </p>
+      </div>
+
+      {/* Duration + type badge */}
+      <div className="flex flex-col items-end gap-1 shrink-0">
+        {workout.duration && (
+          <span className="text-[12px] text-text-secondary">{workout.duration} min</span>
+        )}
+        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${badgeClass}`}>
+          {type}
+        </span>
+      </div>
+    </Link>
+  );
+}
+
+function FriendsPlaceholder() {
+  return (
+    <div className="flex items-center justify-between px-1 py-1 opacity-40 select-none">
+      <div className="flex items-center gap-3">
+        {/* Ghost avatars */}
+        <div className="flex">
+          {["A", "K", "R"].map((l, i) => (
+            <div
+              key={l}
+              className="w-6 h-6 rounded-full bg-elevated border-2 border-void flex items-center justify-center text-[9px] font-semibold text-text-tertiary"
+              style={{ marginLeft: i === 0 ? 0 : -6 }}
+            >
+              {l}
+            </div>
+          ))}
+        </div>
+        <span className="text-[13px] text-text-tertiary">Friends activity</span>
+      </div>
+      <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-elevated text-text-tertiary border border-border-default">
+        Coming soon
+      </span>
     </div>
   );
 }
+
+// ── Page ───────────────────────────────────────────────────────────────────
 
 export default function Dashboard() {
-  
-  const { data: stats, isLoading: statsLoading } = useWorkoutStats();
-  const { data: recentWorkouts = [], isLoading: workoutsLoading } = useWorkouts({ page: 1, limit: 5 });
-  const { data: pbData } = usePersonalBests();
-  const { summary } = useContributions('yearly');
-  const { user } = useAuthStore();
+  const navigate = useNavigate();
+  const { user }                                               = useAuthStore();
+  const { data: recentWorkouts = [], isLoading: wLoading }     = useWorkouts({ page: 1, limit: 3 });
+  const { currentStreak, isLoading: sLoading }                 = useStreak();
 
-  const personalBests = pbData?.personal_bests ?? [];
+  const firstName = user?.username
+    ? user.username.charAt(0).toUpperCase() + user.username.slice(1)
+    : "Athlete";
 
-  // Streak
-  const currentStreak = summary?.currentStreak 
-  const longestStreak = summary?.longestStreak  
-  // const totalWorkoutsCount = summary?.totalCount  
-  // const totalActiveDays = summary?.totalActiveDays  
+  const isLoading = wLoading || sLoading;
 
-  // Username
-  const username = user?.username;
-  const capitalizeName = username ? username.charAt(0).toUpperCase() + username.slice(1) : "Athlete";
-  const initial = username?.charAt(0).toUpperCase();
+  if (isLoading) return <PageSkeleton stats={0} rows={3} />;
 
   return (
-    <div className="min-h-screen bg-void text-text-primary p-6">
+    <div className="flex flex-col gap-7 px-6 py-8">
 
-      {/* -------------------- HEADER ----------------------- */}
-      <div className="flex items-center justify-between mb-4">
-        {/* LEFT SIDE */}
-        <div className="space-y-1">
-          <h1 className="text-xl md:text-2xl font-semibold text-text-primary tracking-tight">
-            Welcome back,
-            <span className="text-accent">{capitalizeName}</span> 👋
-          </h1>
-
-          <p className="text-sm text-text-secondary">
-            Ready to crush your goals today?
+      {/* ── Header ── */}
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-[11px] font-medium text-text-tertiary uppercase tracking-widest mb-1.5">
+            {formatDate()}
           </p>
+          <h1 className="text-[24px] md:text-[30px] font-bold text-text-primary tracking-tight leading-tight">
+            {greeting()},{" "}
+            <span className="text-accent">{firstName}</span>
+          </h1>
+          <StreakPill count={currentStreak ?? 0} />
         </div>
 
-        {/* RIGHT SIDE */}
-        <div className="flex items-center gap-3">
-
-          {/* Notification */}
-          <button
-            className="
-              relative
-              h-10 w-10
-              rounded-full
-              bg-surface
-              border border-border-default
-              flex items-center justify-center
-              text-text-secondary
-              transition-all duration-200
-              hover:bg-elevated
-              hover:text-text-primary
-            "
+        <div className="shrink-0 pt-1">
+          <Button
+            icon={<Plus size={14} />}
+            onClick={() => navigate("/workouts/create")}
           >
-            <Bell className="h-5 w-5" />
+            Log workout
+          </Button>
+        </div>
+      </div>
 
-            {/* Notification Dot */}
-            <span
-              className="
-                absolute
-                top-2 right-2
-                h-2 w-2
-                rounded-full
-                bg-accent
-              "
-            />
-          </button>
+      {/* ── Activity heatmap ── */}
+      <ContributionHeatmap />
 
-          {/* Profile */}
+      {/* ── Recent workouts ── */}
+      <div className="bg-surface border border-border-default rounded-xl overflow-hidden">
+        {/* Section header */}
+        <div className="flex items-center justify-between px-5 pt-4 pb-2">
+          <h2 className="text-[13px] font-semibold text-text-primary">Recent workouts</h2>
           <Link
-            to="/profile"
-            className="
-              flex items-center gap-2
-              rounded-full
-              p-2
-              bg-surface
-              border border-border-default
-              hover:bg-elevated
-              hover:scale-[1.02]
-              active:scale-[0.98]
-              transition-all duration-200
-            "
+            to="/workouts"
+            className="text-[12px] text-accent font-medium hover:text-accent-light transition-colors"
           >
-            {/* Avatar */}
-            <div
-              className="
-                h-9 w-9
-                rounded-full
-                bg-accent-subtle
-                flex items-center justify-center
-                text-accent
-                font-semibold
-                text-sm
-              "
-            >
-              {initial}
-            </div>
-          </Link>
-        </div>
-      </div>
-
-      {/* Stats Cards */}
-      {statsLoading ? (
-        <p className="text-text-tertiary">Loading stats...</p>
-      ) : (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <StatCard label="Total Workouts" value={stats?.total_workouts} />
-          <StatCard label="Total Duration" value={stats?.total_duration_minutes} unit="min" />
-          <StatCard label="Calories Burned" value={stats?.total_calories_burned} unit="kcal" />
-          <StatCard label="Top Exercise" value={stats?.most_logged_exercise} />
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        {/* Workout Type Breakdown */}
-        {stats?.workouts_by_type && Object.keys(stats.workouts_by_type).length > 0 && (
-          <WorkoutTypeBar data={stats.workouts_by_type} />
-        )}
-
-        {/* Personal Bests */}
-        {personalBests.length > 0 && (
-          <div className="bg-surface rounded-xl p-5">
-            <p className="text-text-tertiary text-base mb-3">Personal Bests</p>
-            <div className="flex flex-col gap-2">
-              {personalBests.slice(0, 5).map((pb) => (
-                <div key={pb.exercise} className="flex justify-between text-sm">
-                  <span className="text-text-primary text-lg">{pb.exercise}</span>
-                  <span className="text-accent font-semibold text-base">{pb.max_weight_kg} kg</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Streak Cards */}
-      {currentStreak && (
-        <div className="grid grid-cols-2 gap-4 mb-8">
-          <div className="bg-surface rounded-xl p-5 flex items-center gap-4">
-            <Flame className="h-10 w-10 text-text-secondary" />
-            <div>
-              <p className="text-text-tertiary text-sm">Current Streak</p>
-              <p className="text-text-primary text-3xl font-bold">
-                {currentStreak}
-                <span className="text-text-tertiary text-lg ml-1">days</span>
-              </p>
-            </div>
-          </div>
-          <div className="bg-surface rounded-xl p-5 flex items-center gap-4">
-            <Trophy className="h-10 w-10 text-text-secondary" />
-            <div>
-              <p className="text-text-tertiary text-sm">Longest Streak</p>
-              <p className="text-text-primary text-3xl font-bold">
-                {longestStreak}
-                <span className="text-text-tertiary text-lg ml-1">days</span>
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Recent Workouts */}
-      <div className="bg-void rounded-xl ">
-        <div className="flex justify-between items-center mb-4">
-          <p className="text-text-tertiary text-sm">Recent Workouts</p>
-          <Link to="/workouts" className="text-accent text-sm hover:underline">
             View all
           </Link>
         </div>
 
-        {workoutsLoading ? (
-          <p className="text-text-tertiary text-sm">Loading...</p>
-        ) : recentWorkouts.length === 0 ? (
-          <div className="text-center py-8">
-            <p className="text-text-tertiary mb-3">No workouts yet</p>
-            <Link
-              to="/workouts"
-              className="bg-accent hover:bg-accent-light text-text-primary px-4 py-2 rounded text-sm"
-            >
-              Log your first workout
-            </Link>
+        {/* Rows */}
+        {recentWorkouts.length === 0 ? (
+          <div className="flex flex-col items-center text-center px-6 py-10">
+            <div className="w-10 h-10 rounded-xl bg-elevated flex items-center justify-center text-text-tertiary mb-3">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="2" y="9" width="4" height="6" rx="1"/><rect x="18" y="9" width="4" height="6" rx="1"/><path d="M6 12h12"/><path d="M6 5v14"/><path d="M18 5v14"/>
+              </svg>
+            </div>
+            <p className="text-[14px] font-semibold text-text-primary mb-1">No workouts yet</p>
+            <p className="text-[12px] text-text-secondary mb-4 max-w-55">
+              Log your first session to start building your streak.
+            </p>
+            <Button size="sm" onClick={() => navigate("/workouts/create")}>
+              Start now
+            </Button>
           </div>
         ) : (
-          <div className="flex flex-col gap-3">
-            {recentWorkouts.map((w) => (
-              <Link
-                key={w.id}
-                to={`/workouts/${w.id}`}
-                className="flex justify-between items-center bg-surface px-4 py-3 rounded-lg hover:bg-elevated"
-              >
-                <div>
-                  <p className="text-text-primary font-medium">{w.type}</p>
-                  <p className="text-text-tertiary text-xs">{w.date}</p>
-                </div>
-                <div className="text-right text-sm text-text-tertiary">
-                  {w.duration && <p>{w.duration} min</p>}
-                  {w.calories && <p>{w.calories} kcal</p>}
-                </div>
-              </Link>
+          <div className="px-2 pb-2">
+            {recentWorkouts.map((w, i) => (
+              <div key={w.id}>
+                <WorkoutRow workout={w} />
+                {i < recentWorkouts.length - 1 && (
+                  <div className="h-px bg-border-default mx-3" />
+                )}
+              </div>
             ))}
           </div>
         )}
       </div>
 
-      {/* heatmap testing */}
-      <ContributionHeatmap />
+      {/* ── Social scaffold (future) ── */}
+      <div className="bg-surface border border-border-default rounded-xl px-5 py-4">
+        <FriendsPlaceholder />
+      </div>
+
     </div>
-  )
+  );
 }

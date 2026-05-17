@@ -12,29 +12,77 @@ import {
   useExerciseProgress,
   useExercises,
 } from "@gymtracker/hooks";
+import StreakSkeleton from "../components/skeletons/StreakSkeleton";
 
 // ── Sub-components ─────────────────────────────────────────────────────────
 
-function StatCard({ label, value, unit, icon }: {
-  label: string; value: any; unit?: string; icon: string;
-}) {
+function StatCard({ label, value, unit, icon, }: { label: string; value: any; unit?: string; icon: string; }) {
   return (
-    <div className="bg-void rounded-xl p-5 flex items-start gap-4 border-border-default">
-      <span className="text-2xl">{icon}</span>
-      <div>
-        <p className="text-gray-400 text-xs mb-1">{label}</p>
-        <p className="text-white text-2xl font-bold">
-          {value ?? "--"}
-          {unit && <span className="text-gray-400 text-sm ml-1">{unit}</span>}
-        </p>
+    <div
+      className="
+        rounded-2xl
+        border border-border-default
+        bg-surface
+        p-5
+        transition-all duration-200
+        hover:bg-elevated/30
+      "
+    >
+      <div className="flex items-start gap-4">        
+        {/* Icon */}
+        <div
+          className="
+            flex h-11 w-11 shrink-0
+            items-center justify-center
+            rounded-xl
+            bg-accent-subtle
+            text-xl
+          "
+        >
+          {icon}
+        </div>
+        {/* Content */}
+        <div className="min-w-0">
+          <p
+            className="
+              mb-2
+              text-xs font-medium
+              uppercase tracking-wide
+              text-text-tertiary
+            "
+          >
+            {label}
+          </p>
+          <p
+            className="
+              flex flex-wrap items-end
+              text-2xl font-semibold
+              tracking-tight
+              text-text-primary
+            "
+          >
+            {value ?? "--"}
+            {unit && (
+              <span
+                className="
+                  ml-1
+                  text-sm font-normal
+                  text-text-secondary
+                "
+              >
+                {unit}
+              </span>
+            )}
+          </p>
+        </div>
       </div>
     </div>
   );
 }
 
-function SectionTitle({ children }: { children: React.ReactNode }) {
+function SectionTitle({ children }: { children: React.ReactNode; }) {
   return (
-    <h2 className="text-gray-400 text-xs font-medium uppercase tracking-wider mb-3">
+    <h2 className="mb-4 text-xs font-mediumn uppercase tracking-[0.14em] text-text-tertiary">
       {children}
     </h2>
   );
@@ -46,13 +94,11 @@ export default function Progress() {
   const [selectedExerciseId, setSelectedExerciseId] = useState<number | "">("");
 
   // ── Data ──────────────────────────────────────────────────────────────
-  const { data: stats,    isLoading: statsLoading   } = useWorkoutStats();
-  const { data: pbData,   isLoading: pbLoading      } = usePersonalBests();
-  const { data: streak                               } = useStreak();
-  const { data: exercises = []                       } = useExercises();
-  const { data: progress, isLoading: progressLoading } = useExerciseProgress(
-    selectedExerciseId ? Number(selectedExerciseId) : 0
-  );
+  const { data: stats, isLoading: statsLoading } = useWorkoutStats();
+  const { data: pbData, isLoading: pbLoading } = usePersonalBests();
+  const { data: exercises = [] } = useExercises();
+  const { data: progress, isLoading: progressLoading } = useExerciseProgress(selectedExerciseId ? Number(selectedExerciseId) : 0);
+  const { currentStreak, longestStreak, isLoading, error } = useStreak();
 
   const personalBests = pbData?.personal_bests ?? [];
 
@@ -62,6 +108,14 @@ export default function Progress() {
         type, count,
       }))
     : [];
+
+    if (isLoading) {
+      return <StreakSkeleton />;
+    }
+
+    if (error) {
+      return <p>Something went wrong</p>;
+    }
 
   return (
     <div className="min-h-screen bg-void px-4 py-6 sm:px-6 sm:py-8 text-text-primary">
@@ -101,33 +155,37 @@ export default function Progress() {
       )}
 
       {/* ── Streak ─────────────────────────────────────────────────────── */}
-      {streak && (
-        <>
-          <SectionTitle>Streak</SectionTitle>
-          <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="flex items-center gap-4 rounded-2xl border border-border-default bg-surface p-5 transition-all duration-200 hover:bg-elevated/30">
-              <span className="text-3xl sm:text-4xl">🔥</span>
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-text-tertiary">Current Streak</p>
-                <p className="text-2xl sm:text-3xl font-semibold tracking-tight text-text-primary">
-                  {streak.current_streak}
-                  <span className="ml-1 text-sm font-normal text-text-secondary">days</span>
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 rounded-2xl border border-border-default bg-surface p-5 transition-all duration-200 hover:bg-elevated/30">
-              <span className="text-4xl">🏆</span>
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-text-tertiary">Longest Streak</p>
-                <p className="text-2xl sm:text-3xl font-semibold tracking-tight text-text-primary">
-                  {streak.longest_streak}
-                  <span className="ml-1 text-sm font-normal text-text-secondary">days</span>
-                </p>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+      {
+      isLoading ? (
+        <StreakSkeleton />
+       ) : (
+              <>
+                <SectionTitle>Streak</SectionTitle>
+                <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="flex items-center gap-4 rounded-2xl border border-border-default bg-surface p-5 transition-all duration-200 hover:bg-elevated/30">
+                    <span className="text-3xl sm:text-4xl">🔥</span>
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-wide text-text-tertiary">Current Streak</p>
+                      <p className="text-2xl sm:text-3xl font-semibold tracking-tight text-text-primary">
+                        {currentStreak}
+                        <span className="ml-1 text-sm font-normal text-text-secondary">days</span>
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 rounded-2xl border border-border-default bg-surface p-5 transition-all duration-200 hover:bg-elevated/30">
+                    <span className="text-4xl">🏆</span>
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-wide text-text-tertiary">Longest Streak</p>
+                      <p className="text-2xl sm:text-3xl font-semibold tracking-tight text-text-primary">
+                        {longestStreak}
+                        <span className="ml-1 text-sm font-normal text-text-secondary">days</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )
+        }
 
       {/* ── Workout type breakdown ──────────────────────────────────────── */}
       {typeChartData.length > 0 && (
@@ -187,7 +245,7 @@ export default function Progress() {
       {/* ── Exercise progress chart ─────────────────────────────────────── */}
       <div className="mb-8">
         <SectionTitle>Exercise Progress</SectionTitle>
-        <div className="bg-gray-900 rounded-xl p-5">
+        <div className="rounded-2xl border border-border-default bg-surface p-5">
           {/* Exercise picker */}
           <select
             value={selectedExerciseId}

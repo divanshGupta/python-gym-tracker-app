@@ -192,7 +192,7 @@ export default function Exercises() {
       ) : filtered.length === 0 ? (
         <p className="rounded-xl border border-border-default bg-surface py-16 text-center text-text-secondary">No exercises found.</p>
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 xl:grid-cols-6">
           {filtered.map((e) => (
             <div
               key={e.id}

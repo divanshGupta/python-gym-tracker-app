@@ -20,7 +20,7 @@ export function ContributionStats({ summary }: ContributionStatsProps) {
 // Internal — not exported, only used here
 function Stat({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="flex flex-col gap-0.5">
+    <div className="hidden md:flex text-text-primary flex-col gap-0.5">
       <span className="text-muted text-xs">{label}</span>
       <span className="font-semibold tabular-nums">{value}</span>
     </div>
