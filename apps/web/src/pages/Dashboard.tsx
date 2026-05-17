@@ -44,12 +44,12 @@ const TYPE_STYLES: Record<string, string> = {
   Core:        "bg-accent/10 text-accent-light",
 };
 
-const TYPE_ICON: Record<string, string> = {
-  Strength:    "dumbbell",
-  Cardio:      "run",
-  Flexibility: "yoga",
-  Core:        "circles",
-};
+// const TYPE_ICON: Record<string, string> = {
+//   Strength:    "dumbbell",
+//   Cardio:      "run",
+//   Flexibility: "yoga",
+//   Core:        "circles",
+// };
 
 // ── Sub-components ─────────────────────────────────────────────────────────
 
@@ -152,7 +152,7 @@ export default function Dashboard() {
   if (isLoading) return <PageSkeleton stats={0} rows={3} />;
 
   return (
-    <div className="flex flex-col gap-7 px-6 py-8">
+    <div className="flex flex-col gap-5">
 
       {/* ── Header ── */}
       <div className="flex items-start justify-between gap-4">

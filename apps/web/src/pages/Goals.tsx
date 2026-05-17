@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Plus, X, Flag, Trash2 } from "lucide-react";
+
 import {
   useGoals,
   useCreateGoal,
@@ -8,7 +10,9 @@ import {
 } from "@gymtracker/hooks";
 import type { Goal, GoalType } from "@gymtracker/types";
 
-// Constants
+import { Button, Input, Select, EmptyState, PageSkeleton } from "../components/ui";
+
+// ── Constants ──────────────────────────────────────────────────────────────
 
 const GOAL_TYPE_LABELS: Record<GoalType, string> = {
   workout_frequency:    "Workout Frequency",
@@ -24,29 +28,242 @@ const GOAL_TYPE_UNITS: Record<GoalType, string> = {
   progressive_overload: "%",
 };
 
-const STATUS_COLORS: Record<string, string> = {
-  active:    "bg-green-500/20 text-green-400",
-  completed: "bg-blue-500/20 text-blue-400",
-  abandoned: "bg-gray-600/40 text-gray-400",
-};
+const STATUS_FILTERS = [
+  { value: "active",    label: "Active"    },
+  { value: "completed", label: "Completed" },
+  { value: "abandoned", label: "Abandoned" },
+  { value: "",          label: "All"       },
+] as const;
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
-const progressPercent = (goal: Goal): number => {
-  if (!goal.current_value) return 0;
+function progressPercent(goal: Goal): number {
+  if (!goal.current_value || !goal.target_value) return 0;
   return Math.min(100, Math.round((goal.current_value / goal.target_value) * 100));
+}
+
+function formatDeadline(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString("en-US", {
+    month: "short", day: "numeric", year: "numeric",
+  });
+}
+
+// ── Status badge ───────────────────────────────────────────────────────────
+
+const STATUS_BADGE: Record<string, string> = {
+  active:    "bg-success/10 text-success border border-success/15",
+  completed: "bg-accent/10 text-accent-light border border-accent/15",
+  abandoned: "bg-elevated text-text-tertiary border border-border-default",
 };
 
-// ── Page ───────────────────────────────────────────────────────────────────
-
-export default function Goals() {
-  const [statusFilter, setStatusFilter] = useState<string>("active");
-  const [showForm,     setShowForm]     = useState(false);
-  const [logModal,     setLogModal]     = useState<Goal | null>(null);
-  const [logValue,     setLogValue]     = useState("");
-  const [logDate,      setLogDate]      = useState(
-    new Date().toISOString().split("T")[0]
+function StatusBadge({ status }: { status: string }) {
+  return (
+    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full capitalize ${STATUS_BADGE[status] ?? STATUS_BADGE.abandoned}`}>
+      {status}
+    </span>
   );
+}
+
+// ── Progress bar ───────────────────────────────────────────────────────────
+
+function ProgressBar({ goal }: { goal: Goal }) {
+  const pct       = progressPercent(goal);
+  const isComplete = goal.status === "completed" || pct >= 100;
+  const barColor  = isComplete ? "bg-success" : "bg-accent";
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      <div className="flex items-center justify-between">
+        <span className="text-[11px] text-text-tertiary">Progress</span>
+        <span className={`text-[12px] font-semibold ${isComplete ? "text-success" : "text-text-primary"}`}>
+          {pct}%
+        </span>
+      </div>
+      <div className="h-1.5 bg-elevated rounded-full overflow-hidden">
+        <div
+          className={`h-full rounded-full transition-all duration-500 ${barColor}`}
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <div className="flex items-center justify-between">
+        <span className="text-[10px] text-text-tertiary">0 {goal.unit}</span>
+        <span className="text-[10px] text-text-tertiary">{goal.target_value} {goal.unit}</span>
+      </div>
+    </div>
+  );
+}
+
+// ── Goal card ──────────────────────────────────────────────────────────────
+
+interface GoalCardProps {
+  goal:      Goal;
+  onLog:     (g: Goal) => void;
+  onAbandon: (id: number) => void;
+  onDelete:  (id: number) => void;
+}
+
+function GoalCard({ goal: g, onLog, onAbandon, onDelete }: GoalCardProps) {
+  const isActive = g.status === "active";
+
+  return (
+    <div className={[
+      "bg-surface border border-border-default rounded-xl p-4 flex flex-col gap-4",
+      "hover:border-border-strong transition-colors duration-150",
+      !isActive ? "opacity-60" : "",
+    ].join(" ")}>
+
+      {/* Top row */}
+      <div className="flex items-start justify-between gap-3">
+        {/* Left — title + meta */}
+        <div className="flex flex-col gap-2 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[14px] font-semibold text-text-primary leading-snug">
+              {g.title}
+            </span>
+            <StatusBadge status={g.status} />
+          </div>
+
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {/* Type tag */}
+            <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-elevated text-text-secondary">
+              {GOAL_TYPE_LABELS[g.goal_type]}
+            </span>
+            <span className="text-[10px] text-border-strong">·</span>
+            <span className="text-[11px] text-text-tertiary">
+              Target: {g.target_value} {g.unit}
+            </span>
+            {g.current_value != null && (
+              <>
+                <span className="text-[10px] text-border-strong">·</span>
+                <span className="text-[11px] text-text-tertiary">
+                  Current: {g.current_value} {g.unit}
+                </span>
+              </>
+            )}
+            {g.deadline && (
+              <>
+                <span className="text-[10px] text-border-strong">·</span>
+                <span className="text-[11px] text-text-tertiary">
+                  Due {formatDeadline(g.deadline)}
+                </span>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Right — action buttons */}
+        <div className="flex items-center gap-1 shrink-0">
+          {isActive && (
+            <button
+              onClick={() => onLog(g)}
+              className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-lg bg-accent/10 text-accent text-[11px] font-semibold hover:bg-accent/20 transition-colors"
+            >
+              <Plus size={11} /> Log
+            </button>
+          )}
+          {isActive && (
+            <button
+              onClick={() => onAbandon(g.id)}
+              className="w-7 h-7 rounded-lg flex items-center justify-center text-text-tertiary hover:bg-warning/10 hover:text-warning transition-colors"
+              aria-label="Abandon goal"
+            >
+              <Flag size={13} />
+            </button>
+          )}
+          <button
+            onClick={() => onDelete(g.id)}
+            className="w-7 h-7 rounded-lg flex items-center justify-center text-text-tertiary hover:bg-danger/10 hover:text-danger transition-colors"
+            aria-label="Delete goal"
+          >
+            <Trash2 size={13} />
+          </button>
+        </div>
+      </div>
+
+      {/* Progress bar */}
+      <ProgressBar goal={g} />
+    </div>
+  );
+}
+
+// ── Log progress modal ─────────────────────────────────────────────────────
+
+interface LogModalProps {
+  goal:     Goal;
+  onClose:  () => void;
+}
+
+function LogModal({ goal, onClose }: LogModalProps) {
+  const [value, setValue] = useState("");
+  const [date,  setDate]  = useState(new Date().toISOString().split("T")[0]);
+  const { mutate: logProgress, isPending } = useLogGoalProgress();
+
+  const handleSave = () => {
+    if (!value) return;
+    logProgress(
+      { goalId: goal.id, data: { value: parseFloat(value), date } },
+      { onSuccess: onClose }
+    );
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-void/70 backdrop-blur-sm"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div className="w-full max-w-sm bg-surface border border-border-default rounded-2xl p-6 flex flex-col gap-5 shadow-xl">
+        {/* Header */}
+        <div className="flex items-start justify-between">
+          <div>
+            <h2 className="text-[15px] font-bold text-text-primary">Log progress</h2>
+            <p className="text-[12px] text-text-secondary mt-0.5">{goal.title}</p>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-7 h-7 rounded-lg flex items-center justify-center text-text-tertiary hover:text-text-primary hover:bg-elevated transition-colors"
+            aria-label="Close"
+          >
+            <X size={15} />
+          </button>
+        </div>
+
+        {/* Fields */}
+        <div className="flex flex-col gap-3">
+          <Input
+            label={`Current value (${goal.unit ?? ""})`}
+            type="number"
+            placeholder={`e.g. ${goal.current_value ?? goal.target_value}`}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+          />
+          <Input
+            label="Date"
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+          />
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center gap-2">
+          <Button variant="secondary" size="sm" onClick={onClose}>Cancel</Button>
+          <Button size="sm" loading={isPending} onClick={handleSave} className="flex-1">
+            Save progress
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Create goal form ───────────────────────────────────────────────────────
+
+interface CreateGoalFormProps {
+  onClose: () => void;
+}
+
+function CreateGoalForm({ onClose }: CreateGoalFormProps) {
+  const { mutate: create } = useCreateGoal();
   const [form, setForm] = useState({
     title:        "",
     goal_type:    "workout_frequency" as GoalType,
@@ -54,17 +271,6 @@ export default function Goals() {
     unit:         "",
     deadline:     "",
   });
-
-  // ── Data ──────────────────────────────────────────────────────────────
-  const { data: goals = [], isLoading } = useGoals(statusFilter || undefined);
-
-  // ── Mutations ─────────────────────────────────────────────────────────
-  const { mutate: create }  = useCreateGoal();
-  const { mutate: update }  = useUpdateGoal();
-  const { mutate: remove }  = useDeleteGoal();
-  const { mutate: logProgress, isPending: logging } = useLogGoalProgress();
-
-  // ── Handlers ──────────────────────────────────────────────────────────
 
   const handleCreate = () => {
     if (!form.title || !form.target_value) return;
@@ -78,246 +284,173 @@ export default function Goals() {
       },
       {
         onSuccess: () => {
-          setShowForm(false);
-          setForm({
-            title: "", goal_type: "workout_frequency",
-            target_value: "", unit: "", deadline: "",
-          });
+          onClose();
+          setForm({ title: "", goal_type: "workout_frequency", target_value: "", unit: "", deadline: "" });
         },
       }
     );
   };
-
-  const handleAbandon = (id: number) => {
-    update({ id, data: { status: "abandoned" } });
-  };
-
-  const handleDelete = (id: number) => {
-    if (confirm("Delete this goal?")) remove(id);
-  };
-
-  const handleLog = () => {
-    if (!logModal || !logValue) return;
-    logProgress(
-      {
-        goalId: logModal.id,
-        data: {
-          value: parseFloat(logValue),
-          date:  logDate,
-        },
-      },
-      {
-        onSuccess: () => {
-          setLogModal(null);
-          setLogValue("");
-        },
-      }
-    );
-  };
-
-  // ── Render ─────────────────────────────────────────────────────────────
 
   return (
-    <div className="min-h-screen bg-void px-4 py-6 sm:px-6 sm:py-8 text-text-primary">
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-semibold tracking-tight text-text-primary">Goals</h1>
+    <div className="bg-surface border border-border-default rounded-xl p-5 flex flex-col gap-4">
+      {/* Form header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-[14px] font-semibold text-text-primary">New goal</p>
+          <p className="text-[11px] text-text-tertiary mt-0.5">Set a target to work towards</p>
+        </div>
         <button
-          onClick={() => setShowForm(true)}
-          className="rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-text-primary transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
+          onClick={onClose}
+          className="w-7 h-7 rounded-lg flex items-center justify-center text-text-tertiary hover:text-text-primary hover:bg-elevated transition-colors"
+          aria-label="Close"
         >
-          + New Goal
+          <X size={15} />
         </button>
       </div>
 
-      {/* Status filter */}
-      <div className="mb-8 flex flex-wrap gap-2 rounded-xl border border-border-default bg-surface p-3">
-        {["active", "completed", "abandoned", ""].map((s) => (
+      {/* Row 1 — title + type */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <Input
+          label="Goal title"
+          placeholder="e.g. Bench Press 100kg"
+          value={form.title}
+          onChange={(e) => setForm({ ...form, title: e.target.value })}
+        />
+        <Select
+          label="Goal type"
+          value={form.goal_type}
+          onChange={(e) => setForm({ ...form, goal_type: e.target.value as GoalType })}
+        >
+          {Object.entries(GOAL_TYPE_LABELS).map(([k, v]) => (
+            <option key={k} value={k}>{v}</option>
+          ))}
+        </Select>
+      </div>
+
+      {/* Row 2 — target + deadline */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <Input
+          label={`Target value (${GOAL_TYPE_UNITS[form.goal_type]})`}
+          type="number"
+          placeholder="e.g. 100"
+          value={form.target_value}
+          onChange={(e) => setForm({ ...form, target_value: e.target.value })}
+        />
+        <Input
+          label="Deadline (optional)"
+          type="date"
+          value={form.deadline}
+          onChange={(e) => setForm({ ...form, deadline: e.target.value })}
+        />
+      </div>
+
+      {/* Actions */}
+      <div className="flex items-center gap-2 pt-1">
+        <Button variant="secondary" size="sm" onClick={onClose}>Cancel</Button>
+        <Button size="sm" onClick={handleCreate}>Create goal</Button>
+      </div>
+    </div>
+  );
+}
+
+// ── Page ───────────────────────────────────────────────────────────────────
+
+export default function Goals() {
+  const [statusFilter, setStatusFilter] = useState<string>("active");
+  const [showForm,     setShowForm]     = useState(false);
+  const [logModal,     setLogModal]     = useState<Goal | null>(null);
+
+  const { data: goals = [], isLoading } = useGoals(statusFilter || undefined);
+  const { mutate: update } = useUpdateGoal();
+  const { mutate: remove } = useDeleteGoal();
+
+  const handleAbandon = (id: number) => update({ id, data: { status: "abandoned" } });
+  const handleDelete  = (id: number) => { if (confirm("Delete this goal?")) remove(id); };
+
+  if (isLoading) return <PageSkeleton stats={0} rows={3} />;
+
+  return (
+    <div className="flex flex-col gap-5">
+
+      {/* ── Header ── */}
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-[24px] font-bold text-text-primary tracking-tight">Goals</h1>
+          <p className="text-[13px] text-text-secondary mt-1">Track your targets</p>
+        </div>
+        <Button
+          icon={showForm ? <X size={14} /> : <Plus size={14} />}
+          variant={showForm ? "secondary" : "primary"}
+          onClick={() => setShowForm((v) => !v)}
+        >
+          {showForm ? "Cancel" : "New goal"}
+        </Button>
+      </div>
+
+      {/* ── Create form ── */}
+      {showForm && <CreateGoalForm onClose={() => setShowForm(false)} />}
+
+      {/* ── Status filter tabs ── */}
+      <div className="flex items-center gap-1 p-1 bg-surface border border-border-default rounded-xl w-fit">
+        {STATUS_FILTERS.map(({ value, label }) => (
           <button
-            key={s}
-            onClick={() => setStatusFilter(s)}
-            className={`rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
-              statusFilter === s
-                ? "bg-accent text-text-primary"
-                : "text-text-secondary hover:text-text-primary"
-            }`}
+            key={label}
+            onClick={() => setStatusFilter(value)}
+            className={[
+              "px-3 py-1.5 rounded-lg text-[12px] font-medium transition-colors duration-150",
+              statusFilter === value
+                ? "bg-elevated text-text-primary"
+                : "text-text-tertiary hover:text-text-secondary",
+            ].join(" ")}
           >
-            {s === "" ? "All" : s.charAt(0).toUpperCase() + s.slice(1)}
+            {label}
           </button>
         ))}
       </div>
 
-      {/* Create form */}
-      {showForm && (
-        <div className="mb-8 rounded-2xl border border-border-default bg-surface p-6">
-          <h2 className="mb-5 text-lg font-semibold tracking-tight text-text-primary">New Goal</h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <input
-              placeholder="Title"
-              value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
-              className="rounded-lg border border-border-default bg-elevated px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
-            />
-            <select
-              value={form.goal_type}
-              onChange={(e) =>
-                setForm({ ...form, goal_type: e.target.value as GoalType })
-              }
-              className="rounded-lg border border-border-default bg-elevated px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
-            >
-              {Object.entries(GOAL_TYPE_LABELS).map(([k, v]) => (
-                <option key={k} value={k}>{v}</option>
-              ))}
-            </select>
-            <input
-              type="number"
-              placeholder={`Target (${GOAL_TYPE_UNITS[form.goal_type]})`}
-              value={form.target_value}
-              onChange={(e) => setForm({ ...form, target_value: e.target.value })}
-              className="rounded-lg border border-border-default bg-elevated px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
-            />
-            <input
-              type="date"
-              value={form.deadline}
-              onChange={(e) => setForm({ ...form, deadline: e.target.value })}
-              className="rounded-lg border border-border-default bg-elevated px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
-            />
-          </div>
-          <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-            <button
-              onClick={handleCreate}
-              className="rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-text-primary transition-all duration-200 hover:opacity-90 active:scale-[0.99]"
-            >
-              Create
-            </button>
-            <button
-              onClick={() => setShowForm(false)}
-              className="rounded-lg border border-border-default bg-surface px-4 py-2.5 text-sm text-text-secondary transition-all duration-200 hover:bg-elevated hover:text-text-primary"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Goals list */}
-      {isLoading ? (
-        <p className="text-gray-400">Loading...</p>
-      ) : goals.length === 0 ? (
-        <div className="rounded-2xl border border-border-default bg-surface py-20 text-center">
-          <p className="text-sm text-text-secondary">No goals found</p>
+      {/* ── Goals list ── */}
+      {goals.length === 0 ? (
+        <div className="bg-surface border border-border-default rounded-xl">
+          <EmptyState
+            icon={
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>
+              </svg>
+            }
+            title={statusFilter === "active" ? "No active goals" : "No goals found"}
+            description={
+              statusFilter === "active"
+                ? "Create a goal to start tracking your progress."
+                : "Try a different filter."
+            }
+            action={
+              statusFilter === "active" ? (
+                <Button size="sm" onClick={() => setShowForm(true)}>
+                  Create first goal
+                </Button>
+              ) : undefined
+            }
+          />
         </div>
       ) : (
-        <div className="flex flex-col gap-4">
-          {goals.map((g: Goal) => {
-            const pct = progressPercent(g);
-            return (
-              <div key={g.id} className="rounded-2xl border border-border-default bg-surface p-5 transition-all duration-200 hover:border-accent/20 hover:bg-elevated/30">
-                <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <div className="mb-2 flex flex-wrap items-center gap-2">
-                      <span className="text-base font-semibold text-text-primary">{g.title}</span>
-                      <span
-                        className={`rounded-full px-2.5 py-1 text-xs font-medium capitalize ${
-                          STATUS_COLORS[g.status]
-                        }`}
-                      >
-                        {g.status}
-                      </span>
-                    </div>
-                    <div className="flex flex-wrap gap-x-2 gap-y-1 text-sm text-text-secondary">
-                      {GOAL_TYPE_LABELS[g.goal_type]} · Target: {g.target_value}{" "}
-                      {g.unit}
-                      {g.current_value != null && (
-                        <span> · Current: {g.current_value} {g.unit}</span>
-                      )}
-                      {g.deadline && <span> · Due: {g.deadline}</span>}
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-4 text-sm">
-                    {g.status === "active" && (
-                      <button
-                        onClick={() => setLogModal(g)}
-                        className="font-medium text-accent transition-colors hover:opacity-80"
-                      >
-                        Log
-                      </button>
-                    )}
-                    {g.status === "active" && (
-                      <button
-                        onClick={() => handleAbandon(g.id)}
-                        className="font-medium text-warning transition-colors hover:opacity-80"
-                      >
-                        Abandon
-                      </button>
-                    )}
-                    <button
-                      onClick={() => handleDelete(g.id)}
-                      className="font-medium text-danger transition-colors hover:opacity-80"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-
-                {/* Progress bar */}
-                <div className="mt-5">
-                  <div className="mb-2 flex items-center justify-between text-xs text-text-tertiary">
-                    <span>Progress</span>
-                    <span>{pct}%</span>
-                  </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-elevated">
-                    <div
-                      className={`h-full rounded-full transition-all duration-300 ${
-                        g.status === "completed" ? "bg-accent-light" : "bg-accent"
-                      }`}
-                      style={{ width: `${pct}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+        <div className="flex flex-col gap-3">
+          {goals.map((g: Goal) => (
+            <GoalCard
+              key={g.id}
+              goal={g}
+              onLog={setLogModal}
+              onAbandon={handleAbandon}
+              onDelete={handleDelete}
+            />
+          ))}
         </div>
       )}
 
-      {/* Log progress modal */}
+      {/* ── Log modal ── */}
       {logModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm">
-          <div className="w-full max-w-sm rounded-2xl border border-border-default bg-surface p-6">
-            <h2 className="mb-1 text-lg font-semibold text-text-primary">Log Progress</h2>
-            <p className="mb-5 text-sm text-text-secondary">{logModal.title}</p>
-            <input
-              type="number"
-              placeholder={`Value (${logModal.unit ?? ""})`}
-              value={logValue}
-              onChange={(e) => setLogValue(e.target.value)}
-              className="w-full rounded-lg border border-border-default bg-elevated px-4 py-2.5 text-sm text-text-primary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
-            />
-            <input
-              type="date"
-              value={logDate}
-              onChange={(e) => setLogDate(e.target.value)}
-              className="w-full rounded-lg border border-border-default bg-elevated px-4 py-2.5 text-sm text-text-primary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
-            />
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <button
-                onClick={handleLog}
-                disabled={logging}
-                className="rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-text-primary transition-all duration-200 hover:opacity-90 disabled:opacity-50"
-              >
-                {logging ? "Saving..." : "Save"}
-              </button>
-              <button
-                onClick={() => setLogModal(null)}
-                className="rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-text-primary transition-all duration-200 hover:opacity-90 disabled:opacity-50"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
+        <LogModal goal={logModal} onClose={() => setLogModal(null)} />
       )}
+
     </div>
   );
 }

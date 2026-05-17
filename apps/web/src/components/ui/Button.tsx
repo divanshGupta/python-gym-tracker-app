@@ -1,4 +1,4 @@
-import { type ButtonHTMLAttributes, type ReactNode } from "react";
+import { type ButtonHTMLAttributes, type ReactNode, forwardRef } from "react";
 import { Loader2 } from "lucide-react";
 
 type Variant = "primary" | "secondary" | "ghost" | "danger";
@@ -29,20 +29,24 @@ const sizeClasses: Record<Size, string> = {
   lg: "h-11 px-5 text-[14px] gap-2   rounded-lg",
 };
 
-export function Button({
-  variant  = "primary",
-  size     = "md",
-  loading  = false,
-  icon,
-  children,
-  disabled,
-  className = "",
-  ...props
-}: ButtonProps) {
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+  {
+    variant  = "primary",
+    size     = "md",
+    loading  = false,
+    icon,
+    children,
+    disabled,
+    className = "",
+    ...props
+  },
+  ref
+) {
   const isDisabled = disabled || loading;
 
   return (
     <button
+      ref={ref}
       disabled={isDisabled}
       className={[
         "inline-flex items-center justify-center font-medium transition-all duration-150 select-none",
@@ -62,4 +66,4 @@ export function Button({
       {children}
     </button>
   );
-}
+});

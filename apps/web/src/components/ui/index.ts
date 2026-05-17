@@ -5,6 +5,7 @@ export { Badge } from "./Badge";
 export { StatCard } from "./StatCard";
 export { PageHeader } from "./PageHeader";
 export { EmptyState } from "./EmptyState";
+export { DeleteConfirmModal } from  "./DeleteConfirmModal"
 export {
   Skeleton,
   StatCardSkeleton,
