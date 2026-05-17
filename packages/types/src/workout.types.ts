@@ -27,13 +27,10 @@ export interface WorkoutExerciseDetail {
 
 export interface WorkoutExercise {
   id: number
-
   exercise_id: number
-  
   sets: number | null
   reps: number | null
   weight: number | null
-
   exercise: WorkoutExerciseDetail
 }
 
@@ -43,19 +40,12 @@ export interface WorkoutExercise {
 
 export interface Workout {
   id: number
-
   user_id: number
-
   date: string // YYYY-MM-DD
-
   type: WorkoutType
-
   duration: number | null
-
   calories: number | null
-
   notes: string | null
-
   workout_exercises: WorkoutExercise[]
 }
 
