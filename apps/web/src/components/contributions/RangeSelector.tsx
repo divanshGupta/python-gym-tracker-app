@@ -18,7 +18,7 @@ export function RangeSelector({ selected, onChange }: RangeSelectorProps) {
           key={key}
           onClick={() => onChange(key)}
           className={`
-            text-text-primary border border-text-tertiary px-1 py-1 md:px-3 md:py-1 rounded-md text-sm font-medium
+            text-text-primary border border-text-tertiary p-1 md:px-3 md:py-1 rounded-md text-xs md:text-sm font-medium
             transition-colors duration-150
             ${selected === key
               ? 'bg-elevated text-text-primary shadow-sm'

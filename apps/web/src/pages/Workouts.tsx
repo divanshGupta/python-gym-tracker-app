@@ -263,7 +263,7 @@ export default function Workouts() {
   if (isLoading) return <PageSkeleton stats={0} rows={6} />;
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 ">
 
       {/* Header */}
       <div className="flex items-start justify-between gap-4">

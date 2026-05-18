@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { useAuthStore } from "@gymtracker/stores"
-import { AppShell } from "./components/Appshell";
+import { AppShell } from "./components/AppShell";
 import ProtectedRoute from "./components/ProtectedRoute"
 
 // PAGES

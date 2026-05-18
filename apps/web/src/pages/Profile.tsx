@@ -103,7 +103,7 @@ export default function Profile() {
         </div>
 
         {/* Social stats row — scaffold for follower/following */}
-        <div className="flex items-center gap-5 pt-4 border-t border-border-default">
+        <div className="flex items-center gap-4 pt-4 border-t border-border-default">
           <div className="flex flex-col items-center gap-0.5">
             <span className="text-[16px] font-bold text-text-primary tabular-nums">
               {stats?.total_workouts ?? "—"}
