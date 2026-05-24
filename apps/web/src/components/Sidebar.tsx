@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import {
   LayoutDashboard,
@@ -55,7 +56,7 @@ export function Sidebar() {
       >
         <div className="h-full px-4 flex items-center justify-between">
           {/* Brand */}
-          <div className="flex items-center gap-2.5">
+          <Link to='/' className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-md bg-accent flex items-center justify-center">
               <Dumbbell
                 size={15}
@@ -67,7 +68,7 @@ export function Sidebar() {
             <span className="text-[15px] font-semibold tracking-tight text-text-primary">
               GymTracker
             </span>
-          </div>
+          </Link>
 
           {/* Hamburger */}
           <button

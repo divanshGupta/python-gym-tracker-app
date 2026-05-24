@@ -216,7 +216,7 @@ export default function Measurements() {
 
       {/* Summary stat cards */}
       {latest && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-3">
           <StatCard label="Current weight" value={latest.weight_kg} unit="kg" />
           {latest.bmi && (
             <StatCard

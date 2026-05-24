@@ -1,6 +1,5 @@
 import { type ReactNode } from "react";
 import { Sidebar } from "./Sidebar";
-import { MobileBottomBar } from "./mobile/MobileNavigation";
 
 interface AppShellProps {
   children: ReactNode;

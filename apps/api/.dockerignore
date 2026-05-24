@@ -1,0 +1,12 @@
+# apps/api/.dockerignore
+
+.venv
+__pycache__
+.pytest_cache
+.env
+.git
+.gitignore
+*.pyc
+tests
+alembic.ini
+pytest.ini
