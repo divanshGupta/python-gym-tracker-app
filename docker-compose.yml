@@ -52,7 +52,7 @@ services:
       - ./apps/api:/app
     
     env_file:
-      - .env
+      - ./.env
 
 volumes:
   pgdata:
