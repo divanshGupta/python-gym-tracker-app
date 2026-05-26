@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { tokens } from "../theme/tokens";
 import { LogWorkoutScreen } from "../screens/workout/LogWorkoutScreen";
 import { ExerciseLibraryScreen } from "../screens/exercise/ExerciseLibraryScreen";
-// import { WorkoutHistoryScreen } from "../screens/history/WorkoutHistoryScreen";
+import { WorkoutHistoryScreen } from "../screens/history/WorkoutHistoryScreen";
 import { ProfileScreen } from "../screens/profile/ProfileScreen";
 
 const Tab = createBottomTabNavigator();
@@ -28,7 +28,7 @@ export const TabNavigator = () => (
           Dashboard: "home-outline",
           Log: "add-circle-outline",
           Exercise: "barbell-outline",
-          History: "time-outlien",
+          History: "time-outline",
           Profile: "person-outline"
         }
         return (
@@ -44,7 +44,7 @@ export const TabNavigator = () => (
     <Tab.Screen name="Dashboard" component={DashboardScreen} />
     <Tab.Screen name="Log" component={LogWorkoutScreen} />
     <Tab.Screen name="Exercises" component={ExerciseLibraryScreen} />
-    {/* <Tab.Screen name="History" component={WorkoutHistoryScreen} /> */}
+    <Tab.Screen name="History" component={WorkoutHistoryScreen} />
     <Tab.Screen name="Profile" component={ProfileScreen} />
   </Tab.Navigator>
 );
