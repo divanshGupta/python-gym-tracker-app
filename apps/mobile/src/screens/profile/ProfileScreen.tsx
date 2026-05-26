@@ -24,8 +24,8 @@ export const ProfileScreen = ({ navigation }: any) => {
 
   const totalWorkouts = workouts.length;
   const totalKg = workouts.reduce((acc, w) =>
-    acc + w.exercises.reduce((eAcc, e) =>
-      eAcc + e.sets.reduce((sAcc, s) => sAcc + s.weight * s.reps, 0), 0), 0);
+    acc + (w.workout_exercises ?? []).reduce((eAcc, e) =>
+      eAcc + (e.sets ?? 0) * (e.reps ?? 0) * (e.weight ?? 0), 0), 0);
 
   const handleLogout = () => {
     Alert.alert(

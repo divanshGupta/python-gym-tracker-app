@@ -85,4 +85,40 @@ const fontSize = {
   "2xl": ["32px", { lineHeight: "38px", letterSpacing: "-0.5px" }],
 };
 
-module.exports = { colors, fontFamily, radius, spacing, fontSize };
+const tokens = {
+  colors: {
+    accent: colors.accent,
+    accentLight: colors["accent-light"],
+    accentSubtle: colors["accent-subtle"],
+    accentText: colors["accent-text"],
+    void: colors.void,
+    surface: colors.surface,
+    elevated: colors.elevated,
+    offWhite: colors["off-white"],
+    textPrimary: colors["text-primary"],
+    textSecondary: colors["text-secondary"],
+    textTertiary: colors["text-tertiary"],
+    textInverse: colors["text-inverse"],
+    borderDefault: colors["border-default"],
+    borderStrong: colors["border-strong"],
+    success: colors.success,
+    danger: colors.danger,
+    warning: colors.warning,
+  },
+  radius: {
+    xs: parseInt(radius.xs),
+    sm: parseInt(radius.sm),
+    md: parseInt(radius.md),
+    lg: parseInt(radius.lg),
+    xl: parseInt(radius.xl),
+    full: parseInt(radius.full),
+  },
+  spacing: Object.fromEntries(
+    Object.entries(spacing).map(([k, v]) => [k, parseInt(v)])
+  ),
+  fontSize: Object.fromEntries(
+    Object.entries(fontSize).map(([k, v]) => [k, parseInt(v[0])])
+  ),
+};
+
+module.exports = { colors, fontFamily, radius, spacing, fontSize, tokens };

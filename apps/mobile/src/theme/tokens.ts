@@ -1,6 +1,6 @@
 // apps/mobile/src/theme/tokens.ts
-import { tokens } from "@gymtracker/tailwind-config/tokens";
+// Import from the package root — Babel alias resolves this correctly
+import tokensData from "@gymtracker/tailwind-config";
 
-export { tokens };
-
-export type { Tokens } from "@gymtracker/tailwind-config/tokens";
+export const tokens = tokensData.tokens;
+export type { Tokens } from "@gymtracker/tailwind-config";

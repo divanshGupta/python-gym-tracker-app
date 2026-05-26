@@ -8,7 +8,7 @@ interface Props { workouts: Workout[]; }
 const computeStreak = (workouts: Workout[]): number => {
   if (!workouts.length) return 0;
   const workoutDays = new Set(
-    workouts.map((w) => startOfDay(new Date(w.started_at)).getTime())
+    workouts.map((w) => startOfDay(new Date(w.date)).getTime())
   );
   let streak = 0;
   let cursor = startOfDay(new Date());
@@ -29,7 +29,7 @@ export const StreakCard = ({ workouts }: Props) => {
   const last7 = Array.from({ length: 7 }, (_, i) => subDays(today, 6 - i));
 
   const workoutDaySet = new Set(
-    workouts.map((w) => startOfDay(new Date(w.started_at)).getTime())
+    workouts.map((w) => startOfDay(new Date(w.date)).getTime())
   );
 
   return (
