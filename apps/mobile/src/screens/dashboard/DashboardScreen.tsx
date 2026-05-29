@@ -89,18 +89,18 @@ export const DashboardScreen = ({ navigation }: any) => {
         }
       >
         {/* ── Header ───────────────────────────────────────────────────── */}
-        <View className="px-5 pb-4" style={{ paddingTop: insets.top + 12 }}>
+        <View className="px-5 pb-6" style={{ paddingTop: insets.top + 20 }}>
           <View className="flex-row items-center justify-between">
             <View>
-              <Text className="text-text-secondary text-sm">
+              <Text className="text-text-secondary text-sm font-medium">
                 {getGreeting()}
               </Text>
-              <Text className="text-text-primary text-xl font-semibold mt-0.5">
+              <Text className="text-text-primary text-2xl font-bold mt-1">
                 {user?.username ?? "Athlete"} 👋
               </Text>
             </View>
             <TouchableOpacity
-              className="w-10 h-10 rounded-full bg-accent items-center justify-center"
+              className="w-11 h-11 rounded-full bg-accent items-center justify-center"
               onPress={() => navigation.navigate("Profile")}
             >
               <Text className="text-white font-semibold text-base">
@@ -116,15 +116,19 @@ export const DashboardScreen = ({ navigation }: any) => {
           <StreakCard workouts={workouts} />
 
           {/* ── Stat cards ───────────────────────────────────────────────── */}
-          <View className="flex-row gap-3">
-            <StatCard
-              value={thisMonthCount.toString()}
-              label="Workouts this month"
-            />
-            <StatCard
-              value={formatVolume(totalKg)}
-              label="Total kg lifted"
-            />
+          <View className="flex-row justify-between">
+            <View className="flex-1 mr-2">
+              <StatCard
+                value={thisMonthCount.toString()}
+                label="Workouts this month"
+              />
+            </View>
+            <View className="flex-1 ml-2">
+              <StatCard
+                value={formatVolume(totalKg)}
+                label="Total kg lifted"
+              />
+            </View>
           </View>
 
           {/* ── Recent workouts ──────────────────────────────────────────── */}

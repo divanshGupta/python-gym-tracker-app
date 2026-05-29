@@ -11,8 +11,16 @@ from app.utils.dependencies import get_current_user
 router = APIRouter(prefix="/exercises", tags=["Exercises"])
 
 @router.get("/", response_model=list[ExerciseResponse])
-async def get_exercises(db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(Exercise))
+async def get_exercises(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    result = await db.execute(
+        select(Exercise).where(
+            (Exercise.is_custom == False) |          # global seeded exercises
+            (Exercise.created_by == current_user.id) # this user's custom ones
+        )
+    )
     return result.scalars().all()
 
 @router.post("/", response_model=ExerciseResponse, status_code=201)
@@ -23,7 +31,10 @@ async def create_exercise(
 ):
     # name is already lowercased by validator
     result = await db.execute(
-        select(Exercise).where(Exercise.name == data.name)
+        select(Exercise).where(
+            Exercise.name == data.name,
+            Exercise.created_by == current_user.id 
+        )
     )
     if result.scalar_one_or_none():
         raise HTTPException(status_code=400, detail="Exercise already exists")

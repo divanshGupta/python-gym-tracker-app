@@ -1,80 +1,154 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import {
   View, Text, TextInput, ScrollView, TouchableOpacity,
-  Alert, StatusBar, KeyboardAvoidingView, Platform,
+  Alert, StatusBar, KeyboardAvoidingView, Platform, ActivityIndicator
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useWorkoutSessionStore } from "@gymtracker/stores";
-import { ExercisePickerModal } from "../../components/workouts/ExercisePickerModal";
-import { ActiveExerciseSection } from "../../components/workouts/ActiveExerciseSection";
-import { tokens } from "../../theme/tokens";
+import { Ionicons } from "@expo/vector-icons";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
-const useElapsedTime = (startTime: Date | null) => {
-  const [elapsed, setElapsed] = useState(0);
-  useEffect(() => {
-    if (!startTime) return;
-    const interval = setInterval(() => {
-      setElapsed(Math.floor((Date.now() - startTime.getTime()) / 1000));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [startTime]);
-  const mins = Math.floor(elapsed / 60);
-  const secs = elapsed % 60;
-  return `${mins}:${secs.toString().padStart(2, "0")}`;
-};
+// shared packages
+import { useCreateWorkout } from "@gymtracker/hooks";
+import { WORKOUT_TYPES, type WorkoutInput, type WorkoutType } from "@gymtracker/types";
+import { tokens } from "../../theme/tokens";
+import { ExercisePickerModal } from "../../components/workouts/ExercisePickerModal";
+
+interface FormExercise {
+  exercise_id: number;
+  name: string;
+  category: string;
+  sets: string;
+  reps: string;
+  weight: string;
+}
 
 export const LogWorkoutScreen = ({ navigation }: any) => {
   const insets = useSafeAreaInsets();
-  const {
-    activeWorkoutName, activeExercises, sessionStartTime,
-    startSession, finishSession, cancelSession,
-  } = useWorkoutSessionStore();
+  const { mutate: createWorkout, isPending } = useCreateWorkout();
 
+  // Form State
+  const [date, setDate] = useState(() => new Date().toISOString().split("T")[0]);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [type, setType] = useState<WorkoutType>("strength");
+  const [duration, setDuration] = useState("");
+  const [calories, setCalories] = useState("");
+  const [notes, setNotes] = useState("");
+  const [exercises, setExercises] = useState<FormExercise[]>([]);
+
+  // Modal State
   const [pickerVisible, setPickerVisible] = useState(false);
-  const [workoutName, setWorkoutName] = useState("Morning workout");
-  const elapsed = useElapsedTime(sessionStartTime);
-  const hasStarted = !!sessionStartTime;
+  const [validationError, setValidationError] = useState<string | null>(null);
 
-  const handleStart = () => {
-    if (!workoutName.trim()) return;
-    startSession(workoutName.trim());
+  // Date handlers
+  const handleDateChange = (event: any, selectedDate?: Date) => {
+    setShowDatePicker(false);
+    if (event.type === "set" && selectedDate) {
+      const formatted = selectedDate.toISOString().split("T")[0];
+      setDate(formatted);
+    }
   };
 
-  const handleFinish = () => {
-    const completedSets = activeExercises.reduce(
-      (acc, e) => acc + e.sets.filter((s) => s.completed).length, 0
-    );
-    Alert.alert(
-      "Finish workout?",
-      `${completedSets} sets logged across ${activeExercises.length} exercise${activeExercises.length !== 1 ? "s" : ""}.`,
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Finish",
-          onPress: async () => {
-            await finishSession();
-            navigation.navigate("Dashboard");
-          },
-        },
-      ]
+  // Exercise handlers
+  const handleAddExercise = (exercise: any) => {
+    setExercises((prev) => [
+      ...prev,
+      {
+        exercise_id: exercise.id,
+        name: exercise.name,
+        category: exercise.category,
+        sets: "",
+        reps: "",
+        weight: "",
+      },
+    ]);
+  };
+
+  const handleRemoveExercise = (index: number) => {
+    setExercises((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleUpdateExercise = (index: number, field: keyof FormExercise, val: string) => {
+    setExercises((prev) =>
+      prev.map((item, idx) => (idx === index ? { ...item, [field]: val } : item))
     );
   };
 
-  const handleCancel = () => {
-    Alert.alert(
-      "Cancel workout?",
-      "All progress will be lost.",
-      [
-        { text: "Keep going", style: "cancel" },
-        { text: "Cancel workout", style: "destructive", onPress: () => { cancelSession(); } },
-      ]
-    );
+  // Submit form
+  const handleSubmit = () => {
+    setValidationError(null);
+
+    // Validation
+    if (!date) {
+      setValidationError("Date is required");
+      return;
+    }
+
+    if (duration && (isNaN(Number(duration)) || Number(duration) <= 0)) {
+      setValidationError("Duration must be a positive number");
+      return;
+    }
+
+    if (calories && (isNaN(Number(calories)) || Number(calories) <= 0)) {
+      setValidationError("Calories burned must be a positive number");
+      return;
+    }
+
+    if (exercises.length === 0) {
+      setValidationError("Please add at least one exercise");
+      return;
+    }
+
+    for (let i = 0; i < exercises.length; i++) {
+      const ex = exercises[i];
+      if (ex.sets && (isNaN(Number(ex.sets)) || Number(ex.sets) <= 0)) {
+        setValidationError(`Exercise #${i + 1} (${ex.name}) sets must be a positive number`);
+        return;
+      }
+      if (ex.reps && (isNaN(Number(ex.reps)) || Number(ex.reps) <= 0)) {
+        setValidationError(`Exercise #${i + 1} (${ex.name}) reps must be a positive number`);
+        return;
+      }
+      if (ex.weight && (isNaN(Number(ex.weight)) || Number(ex.weight) <= 0)) {
+        setValidationError(`Exercise #${i + 1} (${ex.name}) weight must be a positive number`);
+        return;
+      }
+    }
+
+    // Payload construction
+    const payload: WorkoutInput = {
+      date,
+      type,
+      duration: duration.trim() ? parseInt(duration, 10) : null,
+      calories: calories.trim() ? parseInt(calories, 10) : null,
+      notes: notes.trim() ? notes : null,
+      exercises: exercises.map((e) => ({
+        exercise_id: e.exercise_id,
+        sets: e.sets.trim() ? parseInt(e.sets, 10) : null,
+        reps: e.reps.trim() ? parseInt(e.reps, 10) : null,
+        weight: e.weight.trim() ? parseFloat(e.weight) : null,
+      })),
+    };
+
+    createWorkout(payload, {
+      onSuccess: () => {
+        Alert.alert("Success", "Workout logged successfully!");
+        setExercises([]);
+        setDuration("");
+        setCalories("");
+        setNotes("");
+        setDate(new Date().toISOString().split("T")[0]);
+        navigation.navigate("Dashboard");
+      },
+      onError: (err: any) => {
+        Alert.alert("Error", err?.response?.data?.detail ?? "Failed to save workout");
+      },
+    });
   };
 
   return (
     <KeyboardAvoidingView
       className="flex-1 bg-void"
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <StatusBar barStyle="light-content" backgroundColor={tokens.colors.void} />
 
@@ -83,94 +157,237 @@ export const LogWorkoutScreen = ({ navigation }: any) => {
         className="px-5 pb-3 border-b border-border-default"
         style={{ paddingTop: insets.top + 12 }}
       >
-        <View className="flex-row items-center justify-between mb-3">
-          <TouchableOpacity onPress={hasStarted ? handleCancel : () => navigation.goBack()}>
-            <Text className="text-accent text-sm">
-              {hasStarted ? "Cancel" : "← Back"}
-            </Text>
+        <View className="flex-row items-center justify-between mb-2">
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Text className="text-accent text-sm">Cancel</Text>
           </TouchableOpacity>
-          {hasStarted && (
-            <View className="bg-elevated rounded-sm px-3 py-1">
-              <Text className="text-accent-light text-xs font-medium">{elapsed}</Text>
+          <Text className="text-text-primary text-base font-semibold">Log Workout</Text>
+          <TouchableOpacity onPress={handleSubmit} disabled={isPending}>
+            {isPending ? (
+              <ActivityIndicator size="small" color={tokens.colors.accent} />
+            ) : (
+              <Text className="text-accent text-sm font-semibold">Save</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <ScrollView
+        className="flex-1 px-4 pt-4"
+        contentContainerStyle={{ paddingBottom: insets.bottom + 120 }}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        {/* Error message */}
+        {validationError && (
+          <View className="mb-4 rounded-xl border border-danger/20 bg-danger/10 px-4 py-3">
+            <Text className="text-sm text-danger font-medium">{validationError}</Text>
+          </View>
+        )}
+
+        {/* Workout Details Container */}
+        <View className="bg-surface border border-border-default rounded-xl p-4 mb-4">
+          <Text className="text-text-primary text-sm font-semibold mb-3">Workout Details</Text>
+
+          {/* Date Picker Button */}
+          <View className="mb-4">
+            <Text className="text-text-secondary text-xs mb-1.5 font-medium">Date</Text>
+            <TouchableOpacity
+              onPress={() => setShowDatePicker(true)}
+              className="flex-row items-center justify-between bg-elevated border border-border-default rounded-xl px-4 py-3"
+              activeOpacity={0.7}
+            >
+              <View className="flex-row items-center">
+                <Ionicons name="calendar-outline" size={16} color={tokens.colors.textSecondary} className="mr-2" />
+                <Text className="text-text-primary text-sm ml-2">{date}</Text>
+              </View>
+              <Ionicons name="chevron-down" size={14} color={tokens.colors.textTertiary} />
+            </TouchableOpacity>
+          </View>
+
+          {/* Workout Type Segmented Control */}
+          <View className="mb-4">
+            <Text className="text-text-secondary text-xs mb-1.5 font-medium">Workout Type</Text>
+            <View className="flex-row justify-between">
+              {WORKOUT_TYPES.map((t, idx) => {
+                const active = type === t;
+                return (
+                  <TouchableOpacity
+                    key={t}
+                    onPress={() => setType(t)}
+                    className={`flex-1 py-2.5 rounded-xl items-center border capitalize ${idx > 0 ? "ml-1.5" : ""}`}
+                    style={{
+                      backgroundColor: active ? tokens.colors.accent : "#1C1C1E",
+                      borderColor: active ? tokens.colors.accent : "#2C2C2E",
+                    }}
+                  >
+                    <Text className={`text-xs font-semibold ${active ? "text-white" : "text-text-secondary"}`}>
+                      {t}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
+          </View>
+
+          {/* Duration & Calories */}
+          <View className="flex-row justify-between mb-4">
+            <View className="flex-1 mr-2">
+              <Text className="text-text-secondary text-xs mb-1.5 font-medium">Duration (mins)</Text>
+              <TextInput
+                className="bg-elevated border border-border-default rounded-xl px-4 py-3 text-text-primary text-sm"
+                placeholder="60"
+                placeholderTextColor={tokens.colors.textTertiary}
+                keyboardType="numeric"
+                value={duration}
+                onChangeText={setDuration}
+              />
+            </View>
+            <View className="flex-1 ml-2">
+              <Text className="text-text-secondary text-xs mb-1.5 font-medium">Calories Burned</Text>
+              <TextInput
+                className="bg-elevated border border-border-default rounded-xl px-4 py-3 text-text-primary text-sm"
+                placeholder="400"
+                placeholderTextColor={tokens.colors.textTertiary}
+                keyboardType="numeric"
+                value={calories}
+                onChangeText={setCalories}
+              />
+            </View>
+          </View>
+
+          {/* Notes */}
+          <View>
+            <Text className="text-text-secondary text-xs mb-1.5 font-medium">Notes</Text>
+            <TextInput
+              className="bg-elevated border border-border-default rounded-xl px-4 py-3 text-text-primary text-sm min-h-[80px]"
+              multiline
+              numberOfLines={3}
+              placeholder="How was today's session?"
+              placeholderTextColor={tokens.colors.textTertiary}
+              value={notes}
+              onChangeText={setNotes}
+              textAlignVertical="top"
+            />
+          </View>
+        </View>
+
+        {/* Exercises Section */}
+        <View className="bg-surface border border-border-default rounded-xl p-4">
+          <View className="flex-row items-center justify-between mb-4">
+            <View>
+              <Text className="text-text-primary text-sm font-semibold">Exercises</Text>
+              <Text className="text-text-secondary text-[11px] mt-0.5">Performances logged today</Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => setPickerVisible(true)}
+              className="bg-accent rounded-xl px-4 py-2"
+              activeOpacity={0.85}
+            >
+              <Text className="text-white text-xs font-semibold">Add Exercise</Text>
+            </TouchableOpacity>
+          </View>
+
+          {exercises.length === 0 ? (
+            <View className="border border-dashed border-border-default rounded-xl p-6 items-center justify-center my-2">
+              <Ionicons name="barbell-outline" size={24} color={tokens.colors.textTertiary} className="mb-2" />
+              <Text className="text-text-secondary text-xs text-center">
+                No exercises added yet.{"\n"}Tap 'Add Exercise' to build your list.
+              </Text>
+            </View>
+          ) : (
+            exercises.map((e, index) => (
+              <View key={index} className="rounded-xl border border-border-default bg-elevated/30 p-4 mb-3">
+                {/* Exercise Header */}
+                <View className="flex-row items-center justify-between mb-3">
+                  <Text className="text-sm font-semibold text-text-primary capitalize truncate flex-1 mr-2" numberOfLines={1}>
+                    {index + 1}. {e.name}
+                  </Text>
+                  <TouchableOpacity onPress={() => handleRemoveExercise(index)} className="py-1 px-2">
+                    <Text className="text-danger text-xs font-medium">Remove</Text>
+                  </TouchableOpacity>
+                </View>
+
+                {/* Sets / Reps / Weight Inputs */}
+                <View className="flex-row justify-between">
+                  <View className="flex-1 mr-1.5">
+                    <Text className="text-text-secondary text-3xs uppercase mb-1 text-center">Sets</Text>
+                    <TextInput
+                      className="bg-surface border border-border-default rounded-lg px-2 py-2 text-text-primary text-xs text-center font-semibold"
+                      placeholder="4"
+                      placeholderTextColor={tokens.colors.textTertiary}
+                      keyboardType="numeric"
+                      value={e.sets}
+                      onChangeText={(val) => handleUpdateExercise(index, "sets", val)}
+                    />
+                  </View>
+                  <View className="flex-1 mx-1.5">
+                    <Text className="text-text-secondary text-3xs uppercase mb-1 text-center">Reps</Text>
+                    <TextInput
+                      className="bg-surface border border-border-default rounded-lg px-2 py-2 text-text-primary text-xs text-center font-semibold"
+                      placeholder="12"
+                      placeholderTextColor={tokens.colors.textTertiary}
+                      keyboardType="numeric"
+                      value={e.reps}
+                      onChangeText={(val) => handleUpdateExercise(index, "reps", val)}
+                    />
+                  </View>
+                  <View className="flex-1 ml-1.5">
+                    <Text className="text-text-secondary text-3xs uppercase mb-1 text-center">Weight (kg)</Text>
+                    <TextInput
+                      className="bg-surface border border-border-default rounded-lg px-2 py-2 text-text-primary text-xs text-center font-semibold"
+                      placeholder="80"
+                      placeholderTextColor={tokens.colors.textTertiary}
+                      keyboardType="numeric"
+                      value={e.weight}
+                      onChangeText={(val) => handleUpdateExercise(index, "weight", val)}
+                    />
+                  </View>
+                </View>
+              </View>
+            ))
           )}
         </View>
 
-        {!hasStarted ? (
-          <>
-            <Text className="text-text-primary text-lg font-semibold mb-3">
-              New workout
-            </Text>
-            <TextInput
-              className="bg-surface border border-border-default rounded-md px-4 py-3 text-text-primary text-sm mb-3"
-              placeholder="Workout name (e.g. Push Day A)"
-              placeholderTextColor={tokens.colors.textSecondary}
-              value={workoutName}
-              onChangeText={setWorkoutName}
-            />
-            <TouchableOpacity
-              className="bg-accent rounded-md py-3.5 items-center"
-              onPress={handleStart}
-              activeOpacity={0.85}
-            >
-              <Text className="text-white text-sm font-semibold">Start workout</Text>
-            </TouchableOpacity>
-          </>
-        ) : (
-          <View>
-            <Text className="text-text-primary text-lg font-semibold">
-              {activeWorkoutName}
-            </Text>
-            <Text className="text-text-secondary text-xs mt-0.5">
-              {activeExercises.length} exercise{activeExercises.length !== 1 ? "s" : ""}
-              {" · "}
-              {activeExercises.reduce((a, e) => a + e.sets.filter((s) => s.completed).length, 0)} sets done
-            </Text>
-          </View>
-        )}
-      </View>
-
-      {hasStarted && (
-        <>
-          <ScrollView
-            className="flex-1"
-            contentContainerStyle={{ padding: 16, paddingBottom: 120, gap: 12 }}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
+        {/* Submit Actions */}
+        <View className="flex-row justify-between mt-6" style={{ gap: 12 }}>
+          <TouchableOpacity
+            className="flex-1 bg-surface border border-border-default py-3.5 rounded-xl items-center"
+            onPress={() => navigation.goBack()}
+            activeOpacity={0.8}
           >
-            {activeExercises.map((ae) => (
-              <ActiveExerciseSection key={ae.localId} activeExercise={ae} />
-            ))}
-
-            {/* Add exercise */}
-            <TouchableOpacity
-              className="border border-dashed border-border-strong rounded-md py-3.5 items-center"
-              onPress={() => setPickerVisible(true)}
-              activeOpacity={0.7}
-            >
-              <Text className="text-text-tertiary text-sm">+ Add exercise</Text>
-            </TouchableOpacity>
-          </ScrollView>
-
-          {/* Bottom bar */}
-          <View
-            className="px-4 pt-3 border-t border-border-default bg-void"
-            style={{ paddingBottom: insets.bottom + 12 }}
+            <Text className="text-text-primary text-sm font-semibold">Cancel</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="flex-1 bg-accent py-3.5 rounded-xl items-center"
+            onPress={handleSubmit}
+            disabled={isPending}
+            activeOpacity={0.8}
           >
-            <TouchableOpacity
-              className="bg-accent rounded-md py-4 items-center"
-              onPress={handleFinish}
-              activeOpacity={0.85}
-            >
-              <Text className="text-white text-sm font-semibold">Finish workout</Text>
-            </TouchableOpacity>
-          </View>
-        </>
+            {isPending ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text className="text-white text-sm font-semibold">Save Workout</Text>
+            )}
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+
+      {/* Date Pickers */}
+      {showDatePicker && (
+        <DateTimePicker
+          value={new Date(date)}
+          mode="date"
+          display="default"
+          onChange={handleDateChange}
+        />
       )}
 
+      {/* Exercise Library Picker Modal */}
       <ExercisePickerModal
         visible={pickerVisible}
         onClose={() => setPickerVisible(false)}
+        onSelect={handleAddExercise}
       />
     </KeyboardAvoidingView>
   );

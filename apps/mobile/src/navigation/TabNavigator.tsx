@@ -17,8 +17,13 @@ export const TabNavigator = () => (
         backgroundColor: "#1C1C1E",
         borderTopColor: "#2C2C2E",
         borderTopWidth: 0.5,
-        height: 60,
-        paddingBottom: 8, 
+        height: 68,
+        paddingTop: 8,
+        paddingBottom: 12, 
+      },
+      tabBarLabelStyle: {
+        fontSize: 10,
+        fontWeight: "500",
       },
       tabBarActiveTintColor: tokens.colors.accent,
       tabBarInactiveTintColor: tokens.colors.textSecondary,
@@ -27,7 +32,7 @@ export const TabNavigator = () => (
         const icons: Record<string, string> = {
           Dashboard: "home-outline",
           Log: "add-circle-outline",
-          Exercise: "barbell-outline",
+          Exercises: "barbell-outline",
           History: "time-outline",
           Profile: "person-outline"
         }

@@ -12,9 +12,10 @@ import type { Exercise } from "@gymtracker/types";
 interface Props {
   visible: boolean;
   onClose: () => void;
+  onSelect?: (exercise: Exercise) => void;
 }
 
-export const ExercisePickerModal = ({ visible, onClose }: Props) => {
+export const ExercisePickerModal = ({ visible, onClose, onSelect }: Props) => {
   const { data: exercises = [], isLoading } = useExercises();
   const { addExercise } = useWorkoutSessionStore();
   const [query, setQuery] = useState("");
@@ -25,7 +26,11 @@ export const ExercisePickerModal = ({ visible, onClose }: Props) => {
   );
 
   const handlePick = (exercise: Exercise) => {
-    addExercise(exercise);
+    if (onSelect) {
+      onSelect(exercise);
+    } else {
+      addExercise(exercise);
+    }
     setQuery("");
     onClose();
   };

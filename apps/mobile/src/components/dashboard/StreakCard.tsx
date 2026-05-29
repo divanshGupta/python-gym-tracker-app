@@ -38,9 +38,9 @@ export const StreakCard = ({ workouts }: Props) => {
         Current streak
       </Text>
 
-      <View className="flex-row items-center gap-3">
+      <View className="flex-row items-center justify-between">
         {/* Number */}
-        <View className="mr-1">
+        <View className="mr-4">
           <Text className="text-accent text-xl font-semibold"
             style={{ fontSize: 32, letterSpacing: -1 }}>
             {streak}
@@ -51,23 +51,21 @@ export const StreakCard = ({ workouts }: Props) => {
         </View>
 
         {/* Dots */}
-        <View className="flex-1">
-          <View className="flex-row gap-1.5">
+        <View className="flex-1 ml-2">
+          <View className="flex-row justify-between">
             {last7.map((day, i) => {
               const isToday = isSameDay(day, today);
               const done = workoutDaySet.has(day.getTime());
               return (
                 <View
                   key={i}
-                  className="flex-1 aspect-square rounded-sm"
                   style={{
-                    aspectRatio: 1,
+                    width: 26,
+                    height: 26,
                     borderRadius: 6,
                     backgroundColor: done ? "#7C5CFC" : "#2C2C2E",
                     borderWidth: isToday ? 1.5 : 0,
                     borderColor: "#9B7EFD",
-                    maxWidth: 28,
-                    height: 24,
                   }}
                 />
               );
@@ -75,18 +73,18 @@ export const StreakCard = ({ workouts }: Props) => {
           </View>
 
           {/* Day labels */}
-          <View className="flex-row gap-1.5 mt-1">
+          <View className="flex-row justify-between mt-2">
             {last7.map((day, i) => {
               const isToday = isSameDay(day, today);
               const dayIndex = (day.getDay() + 6) % 7; // Mon=0
               return (
                 <Text
                   key={i}
-                  className="flex-1 text-center"
+                  className="text-center font-medium"
                   style={{
                     fontSize: 9,
                     color: isToday ? "#9B7EFD" : "#636366",
-                    maxWidth: 28,
+                    width: 26,
                   }}
                 >
                   {DAYS[dayIndex]}

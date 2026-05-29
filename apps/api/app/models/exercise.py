@@ -15,7 +15,7 @@ class Exercise(Base):
 
     name: Mapped[str] = mapped_column(
         String(100),
-        unique=True,
+        unique=False,
         nullable=False,
         index=True
     )
