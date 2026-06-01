@@ -96,3 +96,8 @@ export interface WorkoutFilters {
 
   date_to?: string
 }
+
+export interface WorkoutRowProps {
+  workout:  Workout;
+  onDelete?: (id: number) => void;
+}

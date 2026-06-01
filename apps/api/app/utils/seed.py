@@ -39,7 +39,7 @@ EXERCISES = [
 async def seed_exercises(db: AsyncSession):
     for item in EXERCISES:
         result = await db.execute(select(Exercise).where(Exercise.name == item["name"]))
-        if not result.scalar_one_or_none():
+        if not result.scalars().first(): 
             db.add(Exercise(
                 name=item["name"],
                 category=item["category"],

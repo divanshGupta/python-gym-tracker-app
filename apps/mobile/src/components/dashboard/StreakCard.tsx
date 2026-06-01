@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text } from "react-native";
 import { startOfDay, subDays, isSameDay } from "date-fns";
-import type { Workout } from "@gymtracker/types"; 
+import type { Workout } from "@gymtracker/types";
 
 interface Props { workouts: Workout[]; }
 
@@ -23,68 +23,81 @@ const DAYS = ["M", "T", "W", "T", "F", "S", "S"];
 
 export const StreakCard = ({ workouts }: Props) => {
   const streak = computeStreak(workouts);
-
-  // Build last-7-days dots
-  const today = startOfDay(new Date());
-  const last7 = Array.from({ length: 7 }, (_, i) => subDays(today, 6 - i));
+  const today  = startOfDay(new Date());
+  const last7  = Array.from({ length: 7 }, (_, i) => subDays(today, 6 - i));
 
   const workoutDaySet = new Set(
     workouts.map((w) => startOfDay(new Date(w.date)).getTime())
   );
 
   return (
-    <View className="bg-surface rounded-md border border-border-default p-4">
-      <Text className="text-text-secondary text-2xs font-medium uppercase tracking-wide mb-3">
-        Current streak
-      </Text>
+    <View className="bg-surface rounded-md border border-border-default px-4 py-3">
 
-      <View className="flex-row items-center justify-between">
-        {/* Number */}
-        <View className="mr-4">
-          <Text className="text-accent text-xl font-semibold"
-            style={{ fontSize: 32, letterSpacing: -1 }}>
+      {/* Header row — label + motivational text on same line */}
+      <View className="flex-row items-center justify-between mb-2">
+        <Text className="text-text-secondary text-2xs font-medium uppercase tracking-wide">
+          Current streak
+        </Text>
+        {streak >= 3 && (
+          <Text style={{ fontSize: 11, color: "#9B7EFD" }}>
+            🔥 {streak} days strong
+          </Text>
+        )}
+        {streak === 0 && (
+          <Text style={{ fontSize: 11, color: "#636366" }}>
+            Log a workout to start
+          </Text>
+        )}
+      </View>
+
+      {/* Content row — number + dots side by side */}
+      <View className="flex-row items-center">
+        {/* Streak number — smaller, tighter */}
+        <View style={{ width: 52 }}>
+          <Text style={{ fontSize: 28, fontWeight: "700",
+                         color: "#7C5CFC", letterSpacing: -1, lineHeight: 30 }}>
             {streak}
           </Text>
-          <Text className="text-text-secondary text-xs mt-0.5">
-            days in a row
+          <Text style={{ fontSize: 10, color: "#8E8E93", marginTop: 1 }}>
+            days
           </Text>
         </View>
 
-        {/* Dots */}
-        <View className="flex-1 ml-2">
+        {/* Dots + labels */}
+        <View className="flex-1">
           <View className="flex-row justify-between">
             {last7.map((day, i) => {
               const isToday = isSameDay(day, today);
-              const done = workoutDaySet.has(day.getTime());
+              const done    = workoutDaySet.has(day.getTime());
               return (
                 <View
                   key={i}
                   style={{
-                    width: 26,
-                    height: 26,
-                    borderRadius: 6,
+                    width:           28,
+                    height:          28,
+                    borderRadius:    7,
                     backgroundColor: done ? "#7C5CFC" : "#2C2C2E",
-                    borderWidth: isToday ? 1.5 : 0,
-                    borderColor: "#9B7EFD",
+                    borderWidth:     isToday ? 1.5 : 0,
+                    borderColor:     "#9B7EFD",
                   }}
                 />
               );
             })}
           </View>
 
-          {/* Day labels */}
-          <View className="flex-row justify-between mt-2">
+          <View className="flex-row justify-between mt-1">
             {last7.map((day, i) => {
-              const isToday = isSameDay(day, today);
-              const dayIndex = (day.getDay() + 6) % 7; // Mon=0
+              const isToday  = isSameDay(day, today);
+              const dayIndex = (day.getDay() + 6) % 7;
               return (
                 <Text
                   key={i}
-                  className="text-center font-medium"
                   style={{
-                    fontSize: 9,
-                    color: isToday ? "#9B7EFD" : "#636366",
-                    width: 26,
+                    width:      28,
+                    fontSize:   9,
+                    textAlign:  "center",
+                    fontWeight: "500",
+                    color:      isToday ? "#9B7EFD" : "#636366",
                   }}
                 >
                   {DAYS[dayIndex]}
@@ -95,17 +108,6 @@ export const StreakCard = ({ workouts }: Props) => {
         </View>
       </View>
 
-      {/* Motivational line */}
-      {streak === 0 && (
-        <Text className="text-text-tertiary text-xs mt-3">
-          Log a workout today to start your streak.
-        </Text>
-      )}
-      {streak >= 3 && (
-        <Text className="text-accent-light text-xs mt-3">
-          🔥 Keep it up — {streak} days strong!
-        </Text>
-      )}
     </View>
   );
 };

@@ -5,6 +5,7 @@ import { useAuthStore } from "@gymtracker/stores";
 import { ContributionHeatmap } from "../components/contributions/ContributionHeatmap";
 import { Button } from "../components/ui";
 import { PageSkeleton } from "../components/ui";
+import { WorkoutRow } from "../components/dashboard/WorkoutRow";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -24,33 +25,6 @@ function formatDate(): string {
   });
 }
 
-function relativeDay(dateStr: string): string {
-  const today = new Date();
-  const d     = new Date(dateStr);
-  today.setHours(0, 0, 0, 0);
-  d.setHours(0, 0, 0, 0);
-  const diff = Math.round((today.getTime() - d.getTime()) / 86400000);
-  if (diff === 0) return "Today";
-  if (diff === 1) return "Yesterday";
-  if (diff < 7)  return `${diff} days ago`;
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
-
-// Workout type → badge colours (all using design tokens)
-const TYPE_STYLES: Record<string, string> = {
-  Strength:    "bg-accent/10 text-accent-light",
-  Cardio:      "bg-success/10 text-success",
-  Flexibility: "bg-warning/10 text-warning",
-  Core:        "bg-accent/10 text-accent-light",
-};
-
-// const TYPE_ICON: Record<string, string> = {
-//   Strength:    "dumbbell",
-//   Cardio:      "run",
-//   Flexibility: "yoga",
-//   Core:        "circles",
-// };
-
 // ── Sub-components ─────────────────────────────────────────────────────────
 
 function StreakPill({ count }: { count: number }) {
@@ -64,49 +38,6 @@ function StreakPill({ count }: { count: number }) {
       {count}
       <span className="font-normal text-text-secondary text-[12px]">day streak</span>
     </span>
-  );
-}
-
-function WorkoutRow({ workout }: { workout: any }) {
-  const type       = workout.type ?? "Strength";
-  const badgeClass = TYPE_STYLES[type] ?? "bg-elevated text-text-secondary";
-
-  return (
-    <Link
-      to={`/workouts/${workout.id}`}
-      className="flex items-center gap-3.5 px-3 py-2.5 rounded-lg hover:bg-elevated transition-colors duration-150 group"
-    >
-      {/* Icon box */}
-      <div className="w-9 h-9 rounded-lg bg-elevated border border-border-default flex items-center justify-center shrink-0 text-text-tertiary group-hover:border-border-strong transition-colors">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          {type === "Cardio" ? (
-            <><path d="M13 4v6l3 3-3 3v4"/><path d="M11 4v6l-3 3 3 3v4"/></>
-          ) : (
-            <><path d="M6 5v14"/><path d="M18 5v14"/><path d="M6 12h12"/><rect x="2" y="9" width="4" height="6" rx="1"/><rect x="18" y="9" width="4" height="6" rx="1"/></>
-          )}
-        </svg>
-      </div>
-
-      {/* Name + date */}
-      <div className="flex-1 min-w-0">
-        <p className="text-[13px] font-semibold text-text-primary leading-snug truncate">
-          {workout.name ?? workout.type ?? "Workout"}
-        </p>
-        <p className="text-[11px] text-text-tertiary mt-0.5">
-          {relativeDay(workout.date)}
-        </p>
-      </div>
-
-      {/* Duration + type badge */}
-      <div className="flex flex-col items-end gap-1 shrink-0">
-        {workout.duration && (
-          <span className="text-[12px] text-text-secondary">{workout.duration} min</span>
-        )}
-        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${badgeClass}`}>
-          {type}
-        </span>
-      </div>
-    </Link>
   );
 }
 
@@ -203,17 +134,17 @@ export default function Dashboard() {
             </div>
             <p className="text-[14px] font-semibold text-text-primary mb-1">No workouts yet</p>
             <p className="text-[12px] text-text-secondary mb-4 max-w-55">
-              Log your first session to start building your streak.
+              Log your first session to start tracking progress.
             </p>
             <Button size="sm" onClick={() => navigate("/workouts/create")}>
-              Start now
+              Log first workout
             </Button>
           </div>
         ) : (
           <div className="px-2 pb-2">
             {recentWorkouts.map((w, i) => (
               <div key={w.id}>
-                <WorkoutRow workout={w} />
+                <WorkoutRow key={w.id} workout={w} />
                 {i < recentWorkouts.length - 1 && (
                   <div className="h-px bg-border-default mx-3" />
                 )}

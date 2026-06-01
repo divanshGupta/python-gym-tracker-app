@@ -59,7 +59,7 @@ def run_migrations_online() -> None:
     from sqlalchemy import create_engine
     from app.config import settings
 
-    sync_url = settings.DATABASE_URL.replace("+asyncpg", "")
+    sync_url = settings.DATABASE_URL.replace("+asyncpg", "").replace("@db:", "@localhost:")
     connectable = create_engine(sync_url)
 
     with connectable.connect() as connection:

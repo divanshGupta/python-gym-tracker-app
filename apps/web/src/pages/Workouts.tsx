@@ -102,12 +102,12 @@ function FilterBar({ filters, onChange, totalCount }: FilterBarProps) {
 
       {/* Date range — joined pill */}
       <div className="flex items-center gap-2 px-3 h-9 bg-surface border border-border-default rounded-xl text-[12px] text-text-tertiary">
-        <Calendar size={13} className="flex-shrink-0" />
+        <Calendar size={13} className="shrink-0" />
         <input
           type="date"
           value={filters.date_from || ""}
           onChange={(e) => onChange({ ...filters, date_from: e.target.value || undefined, page: 1 })}
-          className="bg-transparent outline-none text-[12px] text-text-secondary w-[100px] placeholder:text-text-tertiary"
+          className="bg-transparent outline-none text-[12px] text-text-secondary w-25 placeholder:text-text-tertiary"
           placeholder="From"
         />
         <span className="text-text-tertiary">—</span>
@@ -115,7 +115,7 @@ function FilterBar({ filters, onChange, totalCount }: FilterBarProps) {
           type="date"
           value={filters.date_to || ""}
           onChange={(e) => onChange({ ...filters, date_to: e.target.value || undefined, page: 1 })}
-          className="bg-transparent outline-none text-[12px] text-text-secondary w-[100px]"
+          className="bg-transparent outline-none text-[12px] text-text-secondary w-25"
           placeholder="To"
         />
       </div>
@@ -167,10 +167,10 @@ function WorkoutRow({ workout: w, onDelete }: WorkoutRowProps) {
     <div className="flex items-center bg-surface border border-border-default rounded-xl overflow-hidden hover:border-border-strong hover:bg-elevated/30 transition-all duration-150 group">
 
       {/* Type accent bar */}
-      <div className={`w-[3px] self-stretch flex-shrink-0 ${accentClass}`} />
+      <div className={`w-0.75 self-stretch shrink-0 ${accentClass}`} />
 
       {/* Icon */}
-      <div className="flex items-center justify-center w-[52px] flex-shrink-0">
+      <div className="flex items-center justify-center w-13 shrink-0">
         <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${iconClass}`}>
           <WorkoutIcon type={type} />
         </div>
@@ -215,14 +215,14 @@ function WorkoutRow({ workout: w, onDelete }: WorkoutRowProps) {
 
         {/* Notes */}
         {w.notes && (
-          <p className="mt-1.5 text-[11px] text-text-tertiary truncate max-w-[360px]">
+          <p className="mt-1.5 text-[11px] text-text-tertiary truncate max-w-90">
             {w.notes}
           </p>
         )}
       </Link>
 
       {/* Actions */}
-      <div className="flex items-center gap-1 px-3 flex-shrink-0">
+      <div className="flex items-center gap-1 px-3 shrink-0">
         <Link
           to={`/workouts/${w.id}`}
           className="w-8 h-8 rounded-lg flex items-center justify-center bg-accent/10 text-accent hover:bg-accent/20 transition-colors"
