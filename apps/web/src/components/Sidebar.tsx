@@ -188,21 +188,23 @@ export function Sidebar() {
         {/* User */}
         <div className="shrink-0 border-t border-border-default p-3">
           <div className="flex items-center gap-3 px-2 py-2 rounded-md">
-            <div className="w-7 h-7 rounded-full bg-accent/20 border border-accent/30 flex items-center justify-center flex-shrink-0">
-              <span className="text-[11px] font-semibold text-accent">
-                {initials}
-              </span>
-            </div>
+            <Link to="/profile" className="w-full flex items-center gap-3">
+              <div className="w-7 h-7 rounded-full bg-accent/20 border border-accent/30 flex items-center justify-center shrink-0">
+                <span className="text-[11px] font-semibold text-accent">
+                  {initials}
+                </span>
+              </div>
 
-            <div className="flex-1 min-w-0">
-              <p className="text-[13px] font-medium text-text-primary truncate leading-none">
-                {user?.username ?? "Athlete"}
-              </p>
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] font-medium text-text-primary truncate leading-none">
+                  {user?.username ?? "Athlete"}
+                </p>
 
-              <p className="text-[11px] text-text-tertiary truncate mt-0.5">
-                {user?.email ?? ""}
-              </p>
-            </div>
+                <p className="text-[11px] text-text-tertiary truncate mt-0.5">
+                  {user?.email ?? ""}
+                </p>
+              </div>
+            </Link>
 
             <button
               onClick={handleLogout}

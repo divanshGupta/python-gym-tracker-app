@@ -11,6 +11,7 @@ import { StreakCard }        from "../../components/dashboard/StreakCard";
 import { StatCard }          from "../../components/dashboard/StatCard";
 import { RecentWorkoutItem } from "../../components/dashboard/RecentWorkoutItem";
 import { tokens }            from "../../theme/tokens";
+import { Ionicons }          from "@expo/vector-icons";
 
 const getGreeting = (): string => {
   const h = new Date().getHours();
@@ -25,6 +26,10 @@ const formatVolume = (kg: number): string =>
 export const DashboardScreen = ({ navigation }: any) => {
   const insets = useSafeAreaInsets();
   const { user } = useAuthStore();
+
+  const firstName = user?.username
+    ? user.username.charAt(0).toUpperCase() + user.username.slice(1)
+    : "Athlete";
 
   const {
     data: workouts = [],
@@ -77,7 +82,7 @@ export const DashboardScreen = ({ navigation }: any) => {
               </Text>
               <Text style={{ fontSize: 22, color: "#FFFFFF",  // was text-2xl
                              fontWeight: "700", marginTop: 2, letterSpacing: -0.3 }}>
-                {user?.username ?? "Athlete"} 👋
+                {firstName ?? "Athlete"} 
               </Text>
             </View>
             <TouchableOpacity
@@ -97,45 +102,136 @@ export const DashboardScreen = ({ navigation }: any) => {
           </View>
         </View>
 
-        <View className="px-4" style={{ gap: 10 }}>  {/* was gap-3 = 12px → 10px */}
+        {isLoading ? (
+          <View className="px-4" style={{ gap: 10 }}>
+            <StreakCard workouts={workouts} />
 
-          <StreakCard workouts={workouts} />
-
-          <View className="flex-row" style={{ gap: 10 }}>
-            <View style={{ flex: 1 }}>
-              <StatCard value={thisMonthCount.toString()} label="Workouts this month" />
-            </View>
-            <View style={{ flex: 1 }}>
-              <StatCard value={formatVolume(totalKg)} label="Total kg lifted" />
-            </View>
-          </View>
-
-          {/* Recent workouts */}
-          <View>
-            <View className="flex-row items-center justify-between"
-                  style={{ marginBottom: 8 }}>
-              <Text style={{ fontSize: 11, color: "#8E8E93",
-                             fontWeight: "500", textTransform: "uppercase",
-                             letterSpacing: 0.8 }}>
-                Recent workouts
-              </Text>
-              <TouchableOpacity onPress={() => navigation.navigate("History")}>
-                <Text style={{ fontSize: 12, color: "#7C5CFC" }}>See all</Text>
-              </TouchableOpacity>
+            <View className="flex-row" style={{ gap: 10 }}>
+              <View style={{ flex: 1 }}>
+                <StatCard value={thisMonthCount.toString()} label="Workouts this month" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <StatCard value={formatVolume(totalKg)} label="Total kg lifted" />
+              </View>
             </View>
 
-            {isLoading ? (
+            <View>
+              <View className="flex-row items-center justify-between" style={{ marginBottom: 8 }}>
+                <Text style={{ fontSize: 11, color: "#8E8E93", fontWeight: "500", textTransform: "uppercase", letterSpacing: 0.8 }}>
+                  Recent workouts
+                </Text>
+              </View>
               <View style={{ alignItems: "center", paddingVertical: 24 }}>
                 <ActivityIndicator color={tokens.colors.accent} />
               </View>
-            ) : recentWorkouts.length === 0 ? (
-              <View className="bg-surface rounded-md border border-border-default"
-                    style={{ padding: 20, alignItems: "center" }}>
-                <Text style={{ color: "#8E8E93", fontSize: 13, textAlign: "center" }}>
-                  No workouts yet.{"\n"}Tap + to log your first session.
+            </View>
+          </View>
+        ) : workouts.length === 0 ? (
+          <View className="px-4" style={{ gap: 12 }}>
+            {/* Welcome / Onboarding Card */}
+            <View className="bg-surface rounded-md border border-border-default px-5 py-4">
+              <Text style={{ fontSize: 16, color: "#FFFFFF", fontWeight: "700", letterSpacing: -0.2 }}>
+                Welcome to GymTracker! 🚀
+              </Text>
+              <Text style={{ fontSize: 13, color: "#8E8E93", marginTop: 6, lineHeight: 18 }}>
+                Let's get you set up. Complete these quick steps to build your training habits and start logging your progress.
+              </Text>
+            </View>
+
+            <Text style={{ fontSize: 11, color: "#8E8E93", fontWeight: "600", textTransform: "uppercase", letterSpacing: 0.8, marginTop: 8, marginBottom: 4 }}>
+              Get Started
+            </Text>
+
+            {/* Step 1: Browse Exercise Library */}
+            <TouchableOpacity
+              className="bg-surface rounded-md border border-border-default p-4 flex-row items-center"
+              style={{ gap: 14 }}
+              onPress={() => navigation.navigate("Exercises")}
+              activeOpacity={0.8}
+            >
+              <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(124, 92, 252, 0.12)", alignItems: "center", justifyContent: "center" }}>
+                <Ionicons name="barbell-outline" size={18} color="#7C5CFC" />
+              </View>
+              <View className="flex-1">
+                <Text style={{ fontSize: 14, color: "#FFFFFF", fontWeight: "600" }}>
+                  1. Explore Exercises
+                </Text>
+                <Text style={{ fontSize: 12, color: "#8E8E93", marginTop: 2 }}>
+                  Browse 100+ movements with target muscles.
                 </Text>
               </View>
-            ) : (
+              <Ionicons name="chevron-forward-outline" size={16} color="#636366" />
+            </TouchableOpacity>
+
+            {/* Step 2: Log First Session */}
+            <TouchableOpacity
+              className="bg-surface rounded-md border border-border-default p-4 flex-row items-center"
+              style={{ gap: 14 }}
+              onPress={() => navigation.navigate("Log")}
+              activeOpacity={0.8}
+            >
+              <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(124, 92, 252, 0.12)", alignItems: "center", justifyContent: "center" }}>
+                <Ionicons name="add-circle-outline" size={18} color="#7C5CFC" />
+              </View>
+              <View className="flex-1">
+                <Text style={{ fontSize: 14, color: "#FFFFFF", fontWeight: "600" }}>
+                  2. Log Your First Workout
+                </Text>
+                <Text style={{ fontSize: 12, color: "#8E8E93", marginTop: 2 }}>
+                  Log your sets and reps to start your streak.
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward-outline" size={16} color="#636366" />
+            </TouchableOpacity>
+
+            {/* Step 3: Customize Profile */}
+            <TouchableOpacity
+              className="bg-surface rounded-md border border-border-default p-4 flex-row items-center"
+              style={{ gap: 14 }}
+              onPress={() => navigation.navigate("Profile")}
+              activeOpacity={0.8}
+            >
+              <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(124, 92, 252, 0.12)", alignItems: "center", justifyContent: "center" }}>
+                <Ionicons name="person-outline" size={18} color="#7C5CFC" />
+              </View>
+              <View className="flex-1">
+                <Text style={{ fontSize: 14, color: "#FFFFFF", fontWeight: "600" }}>
+                  3. Set Up Your Profile
+                </Text>
+                <Text style={{ fontSize: 12, color: "#8E8E93", marginTop: 2 }}>
+                  Update your training metrics and details.
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward-outline" size={16} color="#636366" />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View className="px-4" style={{ gap: 10 }}>
+            <StreakCard workouts={workouts} />
+
+            <View className="flex-row" style={{ gap: 10 }}>
+              <View style={{ flex: 1 }}>
+                <StatCard value={thisMonthCount.toString()} label="Workouts this month" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <StatCard value={formatVolume(totalKg)} label="Total kg lifted" />
+              </View>
+            </View>
+
+            {/* Recent workouts */}
+            <View>
+              <View className="flex-row items-center justify-between"
+                    style={{ marginBottom: 8 }}>
+                <Text style={{ fontSize: 11, color: "#8E8E93",
+                               fontWeight: "500", textTransform: "uppercase",
+                               letterSpacing: 0.8 }}>
+                  Recent workouts
+                </Text>
+                <TouchableOpacity onPress={() => navigation.navigate("History")}>
+                  <Text style={{ fontSize: 12, color: "#7C5CFC" }}>See all</Text>
+                </TouchableOpacity>
+              </View>
+
               <View className="bg-surface rounded-md border border-border-default overflow-hidden">
                 {recentWorkouts.map((w, i) => (
                   <RecentWorkoutItem
@@ -148,10 +244,9 @@ export const DashboardScreen = ({ navigation }: any) => {
                   />
                 ))}
               </View>
-            )}
+            </View>
           </View>
-
-        </View>
+        )}
       </ScrollView>
 
       {/* FAB */}

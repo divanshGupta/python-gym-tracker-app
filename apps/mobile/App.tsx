@@ -2,7 +2,7 @@
 import React, { useEffect } from "react"
 import { ActivityIndicator, View } from "react-native"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { useAuthStore } from "@gymtracker/stores"
+import { useAuthStore, useWorkoutSessionStore } from "@gymtracker/stores"
 import { STALE_TIMES } from "@gymtracker/constants"
 import { RootNavigator } from "./src/navigation/RootNavigator"
 import { tokens } from "./src/theme/tokens"
@@ -21,6 +21,17 @@ const queryClient = new QueryClient({
     }
   }
 })
+
+// Clear react-query cache and reset workout session on logout/unauthorization to prevent state leak
+let wasAuthenticated = useAuthStore.getState().isAuthenticated;
+useAuthStore.subscribe((state) => {
+  const isAuth = state.isAuthenticated;
+  if (wasAuthenticated && !isAuth) {
+    queryClient.clear();
+    useWorkoutSessionStore.getState().cancelSession();
+  }
+  wasAuthenticated = isAuth;
+});
 
 // -------- Session gate - shows spinner until stored token is resolved ---------
 

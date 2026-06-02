@@ -17,7 +17,7 @@ export const StatCard = ({ value, label, accent = false }: Props) => (
         lineHeight:    26,
       }}
     >
-      {value}
+      {value ?? 0}
     </Text>
     <Text
       style={{ fontSize: 11, color: "#8E8E93", marginTop: 2 }}

@@ -1,0 +1,5 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+// apps/web/src/components/contributions/HeatmapSkeleton.tsx
+export function HeatmapSkeleton() {
+    return (_jsxs("div", { className: "flex flex-col gap-6 animate-pulse", children: [_jsxs("div", { className: "flex gap-1", children: [_jsx("div", { className: "flex flex-col gap-1 mr-1", children: Array.from({ length: 7 }).map((_, i) => (_jsx("div", { className: "h-3 w-6 rounded bg-elevated" }, i))) }), Array.from({ length: 16 }).map((_, weekIndex) => (_jsx("div", { className: "flex flex-col gap-1", children: Array.from({ length: 7 }).map((_, dayIndex) => (_jsx("div", { className: "w-3 h-3 rounded-sm bg-elevated" }, dayIndex))) }, weekIndex)))] }), _jsx("div", { className: "flex gap-6", children: Array.from({ length: 4 }).map((_, i) => (_jsxs("div", { className: "flex flex-col gap-2", children: [_jsx("div", { className: "h-3 w-20 rounded bg-elevated" }), _jsx("div", { className: "h-5 w-12 rounded bg-elevated" })] }, i))) })] }));
+}
