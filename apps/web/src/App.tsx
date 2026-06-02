@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { useAuthStore } from "@gymtracker/stores"
 import { AppShell } from "./components/AppShell";
 import ProtectedRoute from "./components/ProtectedRoute"
-
 // PAGES
 import Login from "./pages/Login"
 import Register from "./pages/Register"

@@ -67,7 +67,7 @@ export const ExercisePickerModal = ({ visible, onClose, onSelect }: Props) => {
         {/* List */}
         <FlatList
           data={filtered}
-          keyExtractor={(e) => e.id}
+          keyExtractor={(e) => e.id.toString()}
           contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 40, gap: 8 }}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (

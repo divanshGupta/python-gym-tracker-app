@@ -118,7 +118,7 @@ export function Sidebar() {
       >
         {/* Logo */}
         <div className="flex items-center justify-between px-5 h-15 border-b border-border-default shrink-0">
-          <div className="flex items-center gap-2.5">
+          <Link to="/" className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-md bg-accent flex items-center justify-center">
               <Dumbbell
                 size={15}
@@ -127,10 +127,10 @@ export function Sidebar() {
               />
             </div>
 
-            <span className="text-[15px] font-semibold tracking-tight text-text-primary">
+            <span className="text-[18px] font-semibold tracking-tight text-text-primary">
               GymTracker
             </span>
-          </div>
+          </Link>
 
           {/* Mobile close */}
           <button
@@ -157,7 +157,7 @@ export function Sidebar() {
                   onClick={() => setMobileOpen(false)}
                   className={({ isActive }) =>
                     [
-                      "flex items-center gap-3 px-3 py-2 rounded-md text-[13px] font-medium transition-colors duration-150",
+                      "flex items-center gap-3 px-3 py-2 rounded-md text-[16px] font-medium transition-colors duration-150",
                       isActive
                         ? "bg-accent/10 text-accent"
                         : "text-text-secondary hover:text-text-primary hover:bg-elevated",
@@ -167,7 +167,7 @@ export function Sidebar() {
                   {({ isActive }) => (
                     <>
                       <Icon
-                        size={16}
+                        size={18}
                         strokeWidth={isActive ? 2.5 : 2}
                         className="shrink-0"
                       />

@@ -19,7 +19,8 @@ interface Props {
 }
 
 export const ExerciseCard = ({ exercise, onPress, rightElement }: Props) => {
-  const config = MUSCLE_CONFIG[exercise.muscle_group] ?? MUSCLE_CONFIG.core;
+  const muscleGroup = (exercise.muscle_group ?? "core") as MuscleGroup;
+  const config = MUSCLE_CONFIG[muscleGroup] ?? MUSCLE_CONFIG.core;
 
   return (
     <TouchableOpacity
@@ -53,7 +54,7 @@ export const ExerciseCard = ({ exercise, onPress, rightElement }: Props) => {
           style={{ backgroundColor: config.bg }}
         >
           <Text style={{ fontSize: 10, fontWeight: "500", color: config.color }}>
-            {exercise.muscle_group.charAt(0).toUpperCase() + exercise.muscle_group.slice(1)}
+            {muscleGroup.charAt(0).toUpperCase() + muscleGroup.slice(1)}
           </Text>
         </View>
       )}
