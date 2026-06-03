@@ -16,13 +16,13 @@ export const TabNavigator = (): React.JSX.Element => (
       tabBarStyle: {
         backgroundColor: "#1C1C1E",
         borderTopColor: "#2C2C2E" as const,
-        borderTopWidth: 0.5,
-        height: 68,
+        borderTopWidth: 1,
+        height: 80,
         paddingTop: 8,
-        paddingBottom: 12,
+        paddingBottom: 16,
       } as const,
       tabBarLabelStyle: {
-        fontSize: 10,
+        fontSize: 12,
         fontWeight: "500",
       },
       tabBarActiveTintColor: (tokens?.colors?.accent as string) || "#7C5CFC",
