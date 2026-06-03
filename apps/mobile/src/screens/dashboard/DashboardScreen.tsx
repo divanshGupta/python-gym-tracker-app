@@ -1,15 +1,18 @@
 import {
-  View, Text, TouchableOpacity, RefreshControl, StatusBar, ActivityIndicator
+  View, Text, TouchableOpacity, RefreshControl, StatusBar, ActivityIndicator, Alert,
 } from "react-native";
 import { useAuthStore }  from "@gymtracker/stores";
-import { useWorkouts }   from "@gymtracker/hooks";
+import { useWorkouts, useDeleteWorkout }   from "@gymtracker/hooks";
 import type { Workout }  from "@gymtracker/types";
+
+// ==================== COMPONENTS ============================
 import { StreakCard }        from "../../components/dashboard/StreakCard";
 import { tokens }            from "../../theme/tokens";
 import { Ionicons }          from "@expo/vector-icons";
 import {
   ScreenContainer, AppHeader, AppCard, SectionHeader, StatCard
 } from "../../components/ui";
+import { WorkoutRow } from "../../components/dashboard/WorkoutRow";
 
 const getGreeting = (): string => {
   const h = new Date().getHours();
@@ -21,8 +24,10 @@ const getGreeting = (): string => {
 const formatVolume = (kg: number): string =>
   kg >= 1000 ? `${(kg / 1000).toFixed(1)}t` : `${Math.round(kg)}`;
 
+// ======================= SCREEN ===========================
 export const DashboardScreen = ({ navigation }: any) => {
   const { user } = useAuthStore();
+  const { mutate: deleteWorkout } = useDeleteWorkout();
 
   const firstName = user?.username
     ? user.username.charAt(0).toUpperCase() + user.username.slice(1)
@@ -49,6 +54,22 @@ export const DashboardScreen = ({ navigation }: any) => {
   const recentWorkouts = [...workouts]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5);
+
+  // delete function for recent workouts
+  const handleDelete = (id: number) => {
+    Alert.alert(
+      "Delete workout",
+      "Are you sure you want to delete this workout session? This cannot be undone.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => deleteWorkout(id),
+        },
+      ]
+    );
+  };
 
   const renderAvatar = () => (
     <TouchableOpacity
@@ -206,17 +227,15 @@ export const DashboardScreen = ({ navigation }: any) => {
               />
 
               <AppCard className="p-0 overflow-hidden">
-                {recentWorkouts.map((w, i) => {
-                  const { RecentWorkoutItem } = require("../../components/dashboard/RecentWorkoutItem");
+                {recentWorkouts.map((w: Workout) => {
                   return (
-                    <RecentWorkoutItem
+                    <WorkoutRow
                       key={w.id}
                       workout={w}
-                      isLast={i === recentWorkouts.length - 1}
-                      onPress={() =>
-                        navigation.navigate("WorkoutDetail", { workoutId: w.id })
-                      }
+                      onDelete={handleDelete}
+                      onPress={() => navigation.navigate("WorkoutDetail", { workoutId: w.id })}
                     />
+              
                   );
                 })}
               </AppCard>

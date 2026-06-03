@@ -69,13 +69,13 @@ function StreakCard({
   iconBg: string;
 }) {
   return (
-    <AppCard className="flex-1 flex-row items-center p-3.5" style={{ gap: 10 }}>
+    <AppCard className="flex-1 flex-row items-center p-3.5" style={{ gap: 20 }}>
       <View className={`w-10 h-10 rounded-lg items-center justify-center flex-shrink-0 ${iconBg}`}>
         <Ionicons name={iconName as any} size={18} color={iconColor} />
       </View>
-      <View className="flex-1">
-        <View className="flex-row items-baseline gap-0.5">
-          <Text className="text-2xl font-bold text-text-primary">{value}</Text>
+      <View className="flex-1 flex-col">
+        <View className="flex-row items-baseline" style={{ gap: 5 }}>
+          <Text className="text-xl font-bold text-text-primary">{value}</Text>
           <Text className="text-2xs font-medium text-text-tertiary uppercase ml-0.5">days</Text>
         </View>
         <Text className="text-2xs font-semibold text-text-tertiary uppercase tracking-wide mt-0.5">{label}</Text>
