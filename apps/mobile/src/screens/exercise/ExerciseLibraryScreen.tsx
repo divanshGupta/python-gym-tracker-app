@@ -1,16 +1,17 @@
 // react-native/src/screens/exerciseLibraryScreen.tsx
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import {
-  View, Text, TextInput, FlatList, ScrollView,
+  View, Text, FlatList, ScrollView,
   TouchableOpacity, StatusBar, ActivityIndicator, Modal, Alert
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useExercises, useCreateExercise } from "@gymtracker/hooks"; 
-import { useAuthStore } from "@gymtracker/stores";
 import { ExerciseCard } from "../../components/exercise/ExerciseCard";
 import type { MuscleGroup, ExerciseCategory } from "@gymtracker/types";
 import { tokens } from "../../theme/tokens";
+import {
+  ScreenContainer, AppHeader, Input, PrimaryButton
+} from "../../components/ui";
 
 const FILTERS: { label: string; value: MuscleGroup | "all" }[] = [
   { label: "All",       value: "all" },
@@ -27,7 +28,6 @@ const MUSCLE_GROUPS: MuscleGroup[] = ["chest", "back", "shoulders", "arms", "leg
 const EQUIPMENT = ["barbell", "dumbbell", "bodyweight", "machine", "cable", "kettlebell", "none"];
 
 export const ExerciseLibraryScreen = ({ navigation }: any) => {
-  const insets = useSafeAreaInsets();
   const { data: exercises = [], isLoading } = useExercises();
   const { mutate: createExercise, isPending } = useCreateExercise();
 
@@ -85,75 +85,72 @@ export const ExerciseLibraryScreen = ({ navigation }: any) => {
     });
   };
 
+  const renderCustomButton = () => (
+    <TouchableOpacity
+      onPress={() => setCreateModalVisible(true)}
+      className="bg-accent rounded-xl px-3.5 py-2 flex-row items-center"
+      activeOpacity={0.85}
+    >
+      <Ionicons name="add" size={15} color="#fff" />
+      <Text className="text-white text-xs font-semibold">Custom</Text>
+    </TouchableOpacity>
+  );
+
   return (
     <View className="flex-1 bg-void">
       <StatusBar barStyle="light-content" backgroundColor={tokens.colors.void} />
 
       {/* Header */}
-      <View className="px-5" style={{ paddingTop: insets.top + 12 }}>
-        <View className="flex-row items-center justify-between mb-4">
-          <Text className="text-text-primary text-xl font-bold">
-            Exercises
-          </Text>
-          <TouchableOpacity
-            onPress={() => setCreateModalVisible(true)}
-            className="bg-accent rounded-xl px-3.5 py-2 flex-row items-center"
-            activeOpacity={0.85}
-          >
-            <Ionicons name="add" size={15} color="#fff" className="mr-1" />
-            <Text className="text-white text-xs font-semibold ml-1">Custom</Text>
-          </TouchableOpacity>
-        </View>
+      <AppHeader
+        title="Exercises"
+        rightElement={renderCustomButton()}
+        safeArea
+      />
 
-        {/* Search */}
-        <View className="flex-row items-center bg-surface border border-border-default rounded-md px-3 mb-3" style={{ height: 42 }}>
-          <Text className="text-text-tertiary mr-2">🔍</Text>
-          <TextInput
-            className="flex-1 text-text-primary text-sm"
-            placeholder="Search exercises..."
-            placeholderTextColor={tokens.colors.textSecondary}
-            value={query}
-            onChangeText={setQuery}
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-          {query.length > 0 && (
+      {/* Search Input */}
+      <Input
+        placeholder="Search exercises..."
+        value={query}
+        onChangeText={setQuery}
+        leftIcon={<Ionicons name="search-outline" size={16} color={tokens.colors.textSecondary} />}
+        rightElement={
+          query.length > 0 ? (
             <TouchableOpacity onPress={() => setQuery("")}>
-              <Text className="text-text-tertiary text-base px-1">✕</Text>
+              <Ionicons name="close-circle-outline" size={16} color={tokens.colors.textTertiary} />
             </TouchableOpacity>
-          )}
-        </View>
+          ) : undefined
+        }
+        containerStyle={{ paddingHorizontal: 20 }}
+      />
 
-        {/* Filter chips */}
+      {/* Filter chips container */}
+      <View className="px-5 pb-3">
         <FlatList
           data={FILTERS}
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={(f) => f.value}
-          contentContainerStyle={{ gap: 6, paddingBottom: 12 }}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() => setActiveFilter(item.value)}
-              className="px-3 py-1.5 rounded-full mr-1.5"
-              style={{
-                backgroundColor:
-                  activeFilter === item.value ? tokens.colors.accent : "#1C1C1E",
-                borderWidth: 0.5,
-                borderColor:
-                  activeFilter === item.value ? tokens.colors.accent : "#2C2C2E",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontWeight: "500",
-                  color: activeFilter === item.value ? "#fff" : tokens.colors.textSecondary,
-                }}
+          contentContainerStyle={{ gap: 8 }}
+          renderItem={({ item }) => {
+            const active = activeFilter === item.value;
+            return (
+              <TouchableOpacity
+                onPress={() => setActiveFilter(item.value)}
+                className={`px-4 py-2 rounded-full border ${
+                  active ? "bg-accent border-accent" : "bg-surface border-border-default"
+                }`}
+                activeOpacity={0.8}
               >
-                {item.label}
-              </Text>
-            </TouchableOpacity>
-          )}
+                <Text
+                  className={`text-xs font-semibold ${
+                    active ? "text-white" : "text-text-secondary"
+                  }`}
+                >
+                  {item.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          }}
         />
       </View>
 
@@ -172,7 +169,7 @@ export const ExerciseLibraryScreen = ({ navigation }: any) => {
         <FlatList
           data={filtered}
           keyExtractor={(ex) => ex.id.toString()}
-          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 100, gap: 8 }}
+          contentContainerStyle={{ paddingHorizontal: 16, gap: 10 }}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
             <ExerciseCard
@@ -193,38 +190,37 @@ export const ExerciseLibraryScreen = ({ navigation }: any) => {
           resetForm();
         }}
       >
-        <View className="flex-1 bg-void p-5">
+        <ScreenContainer keyboardAvoiding safeAreaTop safeAreaBottom style={{ backgroundColor: tokens.colors.void }}>
           {/* Header */}
-          <View className="flex-row items-center justify-between pb-4 border-b border-border-default mb-4">
-            <Text className="text-text-primary text-lg font-bold">New Custom Exercise</Text>
-            <TouchableOpacity onPress={() => { setCreateModalVisible(false); resetForm(); }}>
-              <Text className="text-accent text-sm font-semibold">Cancel</Text>
-            </TouchableOpacity>
-          </View>
+          <AppHeader
+            title="New Custom Exercise"
+            rightElement={
+              <TouchableOpacity onPress={() => { setCreateModalVisible(false); resetForm(); }}>
+                <Text className="text-accent text-sm font-semibold">Cancel</Text>
+              </TouchableOpacity>
+            }
+            border
+          />
 
-          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
+          <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16, paddingBottom: 40 }}>
             {errorMsg && (
-              <View className="mb-4 rounded-xl border border-danger/20 bg-danger/10 p-3">
+              <View className="mb-6 rounded-xl border border-danger/20 bg-danger/10 p-3">
                 <Text className="text-sm text-danger">{errorMsg}</Text>
               </View>
             )}
 
-            {/* Name */}
-            <View className="mb-4">
-              <Text className="text-text-secondary text-xs font-semibold mb-1.5 uppercase tracking-wider">Exercise Name</Text>
-              <TextInput
-                className="bg-surface border border-border-default rounded-xl px-4 py-3 text-text-primary text-sm font-medium"
-                placeholder="e.g. Incline Bench Press, Jogging"
-                placeholderTextColor={tokens.colors.textTertiary}
-                value={newName}
-                onChangeText={setNewName}
-                autoFocus
-              />
-            </View>
+            {/* Name Input */}
+            <Input
+              label="Exercise Name"
+              placeholder="e.g. Incline Bench Press, Jogging"
+              value={newName}
+              onChangeText={setNewName}
+              autoFocus
+            />
 
-            {/* Category */}
+            {/* Category Select */}
             <View className="mb-4">
-              <Text className="text-text-secondary text-xs font-semibold mb-1.5 uppercase tracking-wider">Category</Text>
+              <Text className="text-2xs font-semibold text-text-secondary mb-2.5 uppercase tracking-wider px-0.5">Category</Text>
               <View className="flex-row flex-wrap">
                 {CATEGORIES.map((c) => {
                   const active = newCategory === c;
@@ -232,11 +228,10 @@ export const ExerciseLibraryScreen = ({ navigation }: any) => {
                     <TouchableOpacity
                       key={c}
                       onPress={() => setNewCategory(c)}
-                      className="px-4 py-2.5 rounded-xl border capitalize mb-2 mr-2"
-                      style={{
-                        backgroundColor: active ? tokens.colors.accent : "#1C1C1E",
-                        borderColor: active ? tokens.colors.accent : "#2C2C2E",
-                      }}
+                      className={`px-4 py-2.5 rounded-xl border capitalize mb-2 mr-2 ${
+                        active ? "bg-accent border-accent" : "bg-surface border-border-default"
+                      }`}
+                      activeOpacity={0.8}
                     >
                       <Text className={`text-xs font-semibold ${active ? "text-white" : "text-text-secondary"}`}>
                         {c}
@@ -247,10 +242,10 @@ export const ExerciseLibraryScreen = ({ navigation }: any) => {
               </View>
             </View>
 
-            {/* Muscle Group (Only for strength) */}
+            {/* Muscle Group (Only for strength category) */}
             {newCategory === "strength" && (
               <View className="mb-4">
-                <Text className="text-text-secondary text-xs font-semibold mb-1.5 uppercase tracking-wider">Muscle Group</Text>
+                <Text className="text-2xs font-semibold text-text-secondary mb-2.5 uppercase tracking-wider px-0.5">Muscle Group</Text>
                 <View className="flex-row flex-wrap">
                   {MUSCLE_GROUPS.map((m) => {
                     const active = newMuscleGroup === m;
@@ -258,11 +253,10 @@ export const ExerciseLibraryScreen = ({ navigation }: any) => {
                       <TouchableOpacity
                         key={m}
                         onPress={() => setNewMuscleGroup(m)}
-                        className="px-3.5 py-2 rounded-xl border capitalize mb-2 mr-2"
-                        style={{
-                          backgroundColor: active ? tokens.colors.accent : "#1C1C1E",
-                          borderColor: active ? tokens.colors.accent : "#2C2C2E",
-                        }}
+                        className={`px-3.5 py-2 rounded-xl border capitalize mb-2 mr-2 ${
+                          active ? "bg-accent border-accent" : "bg-surface border-border-default"
+                        }`}
+                        activeOpacity={0.8}
                       >
                         <Text className={`text-xs font-semibold ${active ? "text-white" : "text-text-secondary"}`}>
                           {m.replace("_", " ")}
@@ -274,9 +268,9 @@ export const ExerciseLibraryScreen = ({ navigation }: any) => {
               </View>
             )}
 
-            {/* Equipment */}
+            {/* Equipment Select */}
             <View className="mb-6">
-              <Text className="text-text-secondary text-xs font-semibold mb-1.5 uppercase tracking-wider">Equipment</Text>
+              <Text className="text-2xs font-semibold text-text-secondary mb-2.5 uppercase tracking-wider px-0.5">Equipment</Text>
               <View className="flex-row flex-wrap">
                 {EQUIPMENT.map((eq) => {
                   const active = newEquipment === eq;
@@ -284,11 +278,10 @@ export const ExerciseLibraryScreen = ({ navigation }: any) => {
                     <TouchableOpacity
                       key={eq}
                       onPress={() => setNewEquipment(eq)}
-                      className="px-3.5 py-2 rounded-xl border capitalize mb-2 mr-2"
-                      style={{
-                        backgroundColor: active ? tokens.colors.accent : "#1C1C1E",
-                        borderColor: active ? tokens.colors.accent : "#2C2C2E",
-                      }}
+                      className={`px-3.5 py-2 rounded-xl border capitalize mb-2 mr-2 ${
+                        active ? "bg-accent border-accent" : "bg-surface border-border-default"
+                      }`}
+                      activeOpacity={0.8}
                     >
                       <Text className={`text-xs font-semibold ${active ? "text-white" : "text-text-secondary"}`}>
                         {eq}
@@ -300,20 +293,13 @@ export const ExerciseLibraryScreen = ({ navigation }: any) => {
             </View>
 
             {/* Submit button */}
-            <TouchableOpacity
+            <PrimaryButton
+              title="Create Exercise"
               onPress={handleCreateExercise}
-              disabled={isPending}
-              className="bg-accent rounded-xl py-4 items-center"
-              activeOpacity={0.85}
-            >
-              {isPending ? (
-                <ActivityIndicator size="small" color="#fff" />
-              ) : (
-                <Text className="text-white text-sm font-semibold">Create Exercise</Text>
-              )}
-            </TouchableOpacity>
+              loading={isPending}
+            />
           </ScrollView>
-        </View>
+        </ScreenContainer>
       </Modal>
     </View>
   );

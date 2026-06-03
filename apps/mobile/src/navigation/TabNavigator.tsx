@@ -5,12 +5,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { tokens } from "../theme/tokens";
 import { ExerciseLibraryScreen } from "../screens/exercise/ExerciseLibraryScreen";
 import { WorkoutHistoryScreen } from "../screens/history/WorkoutHistoryScreen";
-import { ProgressScreen } from "../screens/progress/ProgressScreen";
+import ProgressScreen  from "../screens/progress/ProgressScreen";
 import { ProfileScreen } from "../screens/profile/ProfileScreen";
 
 const Tab = createBottomTabNavigator();
 
-export const TabNavigator = (): JSX.Element => (
+export const TabNavigator = (): React.JSX.Element => (
   <Tab.Navigator
     screenOptions={({ route }) => ({
       tabBarStyle: {
@@ -28,13 +28,13 @@ export const TabNavigator = (): JSX.Element => (
       tabBarActiveTintColor: (tokens?.colors?.accent as string) || "#7C5CFC",
       tabBarInactiveTintColor: (tokens?.colors?.textSecondary as string) || "#636366",
       headerShown: false,
-      tabBarIcon: ({ color, size }) => {
-        const icons: Record<string, string> = {
-          Dashboard: "home-outline",
-          Workout: "dumbbell-outline",
-          Exercises: "barbell-outline",
-          Progress: "stats-chart-outline",
-          Profile: "person-outline",
+      tabBarIcon: ({ color, size, focused }) => {
+        const icons: Record<string, string> = { 
+          Dashboard: focused ? "home" : "home-outline",
+          Workout: focused ? "fitness" : "fitness-outline",
+          Exercises: focused ? "barbell" : "barbell-outline",
+          Progress: focused ? "stats-chart" : "stats-chart-outline",
+          Profile: focused ? "person" : "person-outline",
         };
         return (
           <Ionicons
@@ -57,7 +57,7 @@ export const TabNavigator = (): JSX.Element => (
       name="Workout"
       component={WorkoutHistoryScreen}
       options={{
-        title: "Workout",
+        title: "Workouts",
       }}
     />
     <Tab.Screen

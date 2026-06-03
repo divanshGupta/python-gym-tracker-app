@@ -1,10 +1,17 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-  
+    "module": "esnext",
     "strict": true,
-    "ignoreDeprecations": "6.0",
+    "ignoreDeprecations": "5.0",
     "paths": {
+      "@gymtracker/types":                    ["../../packages/types/src/index.ts"],
+      "@gymtracker/api-client":               ["../../packages/api-client/src/index.ts"],
+      "@gymtracker/hooks":                    ["../../packages/hooks/src/index.ts"],
+      "@gymtracker/stores":                   ["../../packages/stores/src/index.ts"],
+      "@gymtracker/utils":                    ["../../packages/utils/src/index.ts"],
+      "@gymtracker/utils/*":                  ["../../packages/utils/src/*"],
+      "@gymtracker/constants":                ["../../packages/constants/src/index.ts"],
       "@gymtracker/tailwind-config":          ["../../packages/tailwind-config/token.ts"],
       "@gymtracker/tailwind-config/tokens":   ["../../packages/tailwind-config/token.ts"],
       "@gymtracker/tailwind-config/native":   ["../../packages/tailwind-config/native.js"]

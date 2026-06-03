@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import { formatDistanceToNow } from "date-fns";
 import type { Workout } from "@gymtracker/types";
+import { tokens } from "../../theme/tokens";
 
 interface Props {
   workout: Workout;
@@ -20,7 +21,6 @@ export const RecentWorkoutItem = ({ workout, isLast, onPress }: Props) => {
 
   const duration = getDuration(workout);
 
-  // Top 2 exercise names — more informative than just "3 ex"
   const exercises = workout.workout_exercises ?? [];
   const topNames  = exercises
     .slice(0, 2)
@@ -30,60 +30,50 @@ export const RecentWorkoutItem = ({ workout, isLast, onPress }: Props) => {
 
   return (
     <TouchableOpacity
-      className={`flex-row items-center px-3 py-2.5 ${
+      className={`flex-row items-center px-4 py-3.5 ${
         !isLast ? "border-b border-border-default" : ""
       }`}
       onPress={onPress}
       activeOpacity={0.7}
     >
-      {/* Icon */}
+      {/* Icon with Accent Dot */}
       <View
-        style={{
-          width:           32,
-          height:          32,
-          borderRadius:    8,
-          backgroundColor: "#2C2C2E",
-          alignItems:      "center",
-          justifyContent:  "center",
-          marginRight:     10,
-          flexShrink:      0,
-        }}
+        className="w-9 h-9 rounded-lg bg-elevated items-center justify-center mr-3 flex-shrink-0"
       >
-        <View style={{ width: 7, height: 7, borderRadius: 4,
-                       backgroundColor: "#7C5CFC" }} />
+        <View className="w-2.5 h-2.5 rounded-full bg-accent" />
       </View>
 
       {/* Info */}
-      <View style={{ flex: 1 }}>
-        {/* Title + time on same row */}
+      <View className="flex-1">
+        {/* Title + time row */}
         <View className="flex-row items-center justify-between">
-          <Text style={{ fontSize: 13, fontWeight: "600", color: "#FFFFFF" }}>
+          <Text className="text-sm font-semibold text-text-primary">
             {title}
           </Text>
-          <Text style={{ fontSize: 10, color: "#636366" }}>
+          <Text className="text-2xs text-text-tertiary">
             {formatDistanceToNow(new Date(workout.date), { addSuffix: true })}
           </Text>
         </View>
 
         {/* Exercise names row */}
-        <View className="flex-row items-center mt-0.5">
+        <View className="flex-row items-center mt-1 flex-wrap">
           {topNames.length > 0 ? (
             <Text
-              style={{ fontSize: 11, color: "#8E8E93" }}
+              className="text-xs text-text-secondary"
               numberOfLines={1}
             >
               {topNames.join(" · ")}
               {remainder > 0 ? ` +${remainder} more` : ""}
             </Text>
           ) : (
-            <Text style={{ fontSize: 11, color: "#636366" }}>
+            <Text className="text-xs text-text-tertiary">
               {exercises.length} exercise{exercises.length !== 1 ? "s" : ""}
               {duration ? ` · ${duration}` : ""}
             </Text>
           )}
 
           {duration && topNames.length > 0 && (
-            <Text style={{ fontSize: 11, color: "#636366", marginLeft: 6 }}>
+            <Text className="text-xs text-text-tertiary ml-1.5">
               · {duration}
             </Text>
           )}

@@ -1,5 +1,7 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { tokens } from "../../theme/tokens";
 
 interface Props {
   iconBg: string;
@@ -17,35 +19,20 @@ const Icon = ({
 }: { bg: string; color: string; shape: "square" | "circle" | "rect" }) => {
   const inner =
     shape === "circle"
-      ? { width: 10, height: 10, borderRadius: 5, backgroundColor: color }
+      ? "w-2.5 h-2.5 rounded-full"
       : shape === "rect"
-      ? { width: 11, height: 7, borderRadius: 2, backgroundColor: color }
-      : { width: 10, height: 10, borderRadius: 3, backgroundColor: color };
+      ? "w-3 h-2 rounded-sm"
+      : "w-2.5 h-2.5 rounded-sm";
 
   return (
     <View
-      style={{
-        width: 30, height: 30, borderRadius: 8,
-        backgroundColor: bg,
-        alignItems: "center", justifyContent: "center",
-        marginRight: 12,
-      }}
+      style={{ backgroundColor: bg }}
+      className="w-8 h-8 rounded-lg items-center justify-center mr-3"
     >
-      <View style={inner} />
+      <View className={inner} style={{ backgroundColor: color }} />
     </View>
   );
 };
-
-const Chevron = () => (
-  <View
-    style={{
-      width: 7, height: 7,
-      borderRightWidth: 1.5, borderTopWidth: 1.5,
-      borderColor: "#636366",
-      transform: [{ rotate: "45deg" }],
-    }}
-  />
-);
 
 export const SettingsRow = ({
   iconBg, iconColor, iconShape,
@@ -54,12 +41,19 @@ export const SettingsRow = ({
 }: Props) => {
   const content = (
     <View
-      className={`flex-row items-center px-3 py-3 ${!isLast ? "border-b border-border-default" : ""}`}
+      className={`flex-row items-center px-4 py-3.5 ${!isLast ? "border-b border-border-default" : ""}`}
     >
       <Icon bg={iconBg} color={iconColor} shape={iconShape} />
-      <Text className="text-text-primary text-sm flex-1">{label}</Text>
+      <Text className="text-text-primary text-sm font-medium flex-1">{label}</Text>
       {rightElement}
-      {showChevron && <Chevron />}
+      {showChevron && (
+        <Ionicons
+          name="chevron-forward"
+          size={16}
+          color={tokens.colors.textTertiary}
+          className="ml-2"
+        />
+      )}
     </View>
   );
 

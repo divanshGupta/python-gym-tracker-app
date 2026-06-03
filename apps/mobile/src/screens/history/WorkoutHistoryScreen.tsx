@@ -3,7 +3,6 @@ import {
   View, Text, ScrollView, TouchableOpacity,
   RefreshControl, StatusBar, Alert, ActivityIndicator,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
@@ -11,6 +10,9 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { useWorkouts, useDeleteWorkout } from "@gymtracker/hooks";
 import type { Workout, WorkoutFilters, WorkoutType } from "@gymtracker/types";
 import { tokens } from "../../theme/tokens";
+import {
+  ScreenContainer, AppHeader, AppCard, EmptyState
+} from "../../components/ui";
 
 // ── Constants ──────────────────────────────────────────────────────────────
 
@@ -121,7 +123,7 @@ const getPickerDate = (dateStr?: string): Date => {
 // ── Skeleton Placeholder ───────────────────────────────────────────────────
 
 const LoadingSkeleton = () => (
-  <View className="flex-1 px-4 py-4 gap-2">
+  <View className="flex-1 px-4 py-4 gap-3">
     {[1, 2, 3, 4, 5].map((i) => (
       <View key={i} className="flex-row items-center bg-surface border border-border-default rounded-xl overflow-hidden h-20">
         <View className="w-[3.5px] h-full bg-border-default" />
@@ -151,10 +153,10 @@ const WorkoutRow = ({ workout: w, onDelete, onPress }: WorkoutRowProps) => {
   const name = workoutDisplayName(w);
 
   return (
-    <TouchableOpacity
+    <AppCard
       onPress={onPress}
       activeOpacity={0.8}
-      className="flex-row items-stretch bg-surface border border-border-default rounded-xl overflow-hidden mb-2"
+      className="p-0 flex-row items-stretch overflow-hidden mb-2.5"
     >
       {/* Type accent bar */}
       <View style={{ width: 3.5, backgroundColor: accentColor }} />
@@ -190,7 +192,7 @@ const WorkoutRow = ({ workout: w, onDelete, onPress }: WorkoutRowProps) => {
         </View>
 
         {/* Meta row */}
-        <View className="flex-row items-center flex-wrap gap-x-2 gap-y-1 mt-0.5">
+        <View className="flex-row items-center flex-wrap gap-x-2.5 gap-y-1 mt-0.5">
           <View className="flex-row items-center gap-1">
             <Ionicons name="calendar-outline" size={11} color={tokens.colors.textTertiary} />
             <Text className="text-text-secondary text-2xs">{relativeDay(w.date)}</Text>
@@ -236,14 +238,13 @@ const WorkoutRow = ({ workout: w, onDelete, onPress }: WorkoutRowProps) => {
       >
         <Ionicons name="trash-outline" size={15} color={tokens.colors.textTertiary} />
       </TouchableOpacity>
-    </TouchableOpacity>
+    </AppCard>
   );
 };
 
 // ── Screen Component ───────────────────────────────────────────────────────
 
 export const WorkoutHistoryScreen = ({ navigation }: any) => {
-  const insets = useSafeAreaInsets();
   const [filters, setFilters] = useState<WorkoutFilters>({ page: 1, limit: 10 });
   const [showFromPicker, setShowFromPicker] = useState(false);
   const [showToPicker, setShowToPicker] = useState(false);
@@ -290,14 +291,35 @@ export const WorkoutHistoryScreen = ({ navigation }: any) => {
   const hasDateFilter = !!(filters.date_from || filters.date_to);
   const hasFilter = !!(filters.type || hasDateFilter);
 
+  const renderNewButton = () => (
+    <TouchableOpacity
+      onPress={() => navigation.navigate("Log")}
+      className="bg-accent rounded-xl px-3.5 py-2 flex-row items-center"
+      activeOpacity={0.85}
+    >
+      <Ionicons name="add" size={15} color="#fff" />
+      <Text className="text-white text-xs font-semibold">New</Text>
+    </TouchableOpacity>
+  );
+
   return (
     <View className="flex-1 bg-void">
       <StatusBar barStyle="light-content" backgroundColor={tokens.colors.void} />
+      {/* Header */}
+      <AppHeader
+        title="Workouts"
+        subtitle={
+          workouts.length > 0
+            ? `${workouts.length} session${workouts.length !== 1 ? "s" : ""} logged`
+            : "Workout History"
+        }
+        rightElement={renderNewButton()}
+        safeArea
+      />
 
-      <ScrollView
-        className="flex-1"
-        contentContainerStyle={{ paddingBottom: 100 }}
-        showsVerticalScrollIndicator={false}
+      <ScreenContainer
+        scrollable
+        contentContainerStyle={{ paddingHorizontal: 16 }}
         refreshControl={
           <RefreshControl
             refreshing={isRefetching}
@@ -306,37 +328,14 @@ export const WorkoutHistoryScreen = ({ navigation }: any) => {
           />
         }
       >
-        {/* Header */}
-        <View className="px-5 pb-4" style={{ paddingTop: insets.top + 12 }}>
-          <View className="flex-row items-start justify-between">
-            <View>
-              <Text className="text-text-primary text-[24px] font-bold">
-                Workouts
-              </Text>
-              {workouts.length > 0 && (
-                <Text className="text-text-secondary text-sm mt-1">
-                  {workouts.length} session{workouts.length !== 1 ? "s" : ""} logged
-                </Text>
-              )}
-            </View>
-            <TouchableOpacity
-              onPress={() => navigation.navigate("Log")}
-              className="bg-accent rounded-xl px-4 py-2 flex-row items-center gap-1.5"
-              activeOpacity={0.85}
-            >
-              <Ionicons name="add" size={15} color="#fff" />
-              <Text className="text-white text-xs font-semibold">New</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
 
         {/* Filter Bar */}
-        <View className="px-4 mb-4 gap-3">
+        <View className=" mb-4 gap-3">
           {/* Type Tabs */}
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ gap: 6, paddingRight: 16 }}
+            contentContainerStyle={{ gap: 6 }}
             className="py-1"
           >
             {TYPES.map(({ value, label }) => {
@@ -407,9 +406,9 @@ export const WorkoutHistoryScreen = ({ navigation }: any) => {
                 className="flex-row items-center gap-1 py-1"
               >
                 <Ionicons name="close-circle-outline" size={14} color={tokens.colors.accent} />
-                <Text className="text-accent text-xs font-medium">Clear Filters</Text>
+                <Text className="text-accent text-xs font-semibold">Clear Filters</Text>
               </TouchableOpacity>
-              <Text className="text-text-tertiary text-xs">
+              <Text className="text-text-tertiary text-xs font-medium">
                 {workouts.length} found
               </Text>
             </View>
@@ -420,40 +419,24 @@ export const WorkoutHistoryScreen = ({ navigation }: any) => {
         {isLoading ? (
           <LoadingSkeleton />
         ) : workouts.length === 0 ? (
-          <View className="mx-4 bg-surface border border-border-default rounded-xl p-8 items-center justify-center">
-            <View className="w-12 h-12 bg-elevated rounded-full items-center justify-center mb-4">
-              <Ionicons name="barbell-outline" size={24} color={tokens.colors.textSecondary} />
-            </View>
-            <Text className="text-text-primary text-sm font-semibold text-center mb-1">
-              No workouts found
-            </Text>
-            <Text className="text-text-secondary text-xs text-center mb-4 leading-relaxed max-w-[80%]">
-              {hasFilter
-                ? "Try adjusting your filters to find other logged workout sessions."
-                : "Begin logging your workouts to build your history and track progress."}
-            </Text>
-            {hasFilter ? (
-              <TouchableOpacity
-                onPress={() => setFilters({ page: 1, limit: 10 })}
-                className="bg-elevated border border-border-strong rounded-xl px-4 py-2.5"
-              >
-                <Text className="text-text-primary text-xs font-semibold">
-                  Clear all filters
-                </Text>
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                onPress={() => navigation.navigate("Log")}
-                className="bg-accent rounded-xl px-4 py-2.5"
-              >
-                <Text className="text-white text-xs font-semibold">
-                  Log your first workout
-                </Text>
-              </TouchableOpacity>
-            )}
+          <View className="">
+            <EmptyState
+              title="No workouts found"
+              description={
+                hasFilter
+                  ? "Try adjusting your filters to find other logged workout sessions."
+                  : "Begin logging your workouts to build your history and track progress."
+              }
+              actionTitle={hasFilter ? "Clear all filters" : "Log your first workout"}
+              onActionPress={
+                hasFilter
+                  ? () => setFilters({ page: 1, limit: 10 })
+                  : () => navigation.navigate("Log")
+              }
+            />
           </View>
         ) : (
-          <View className="px-4">
+          <View className="">
             {workouts.map((w: Workout) => (
               <WorkoutRow
                 key={w.id}
@@ -497,7 +480,7 @@ export const WorkoutHistoryScreen = ({ navigation }: any) => {
             </TouchableOpacity>
           </View>
         )}
-      </ScrollView>
+      </ScreenContainer>
 
       {/* Date Pickers Render overlays */}
       {showFromPicker && (

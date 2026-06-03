@@ -1,13 +1,12 @@
 import { useState, useMemo } from "react";
-import {
-  View, Text, TextInput, FlatList,
-  TouchableOpacity, Modal,
-} from "react-native";
+import { View, Text, FlatList, TouchableOpacity, Modal } from "react-native";
 import { useExercises } from "@gymtracker/hooks"; 
 import { useWorkoutSessionStore } from "@gymtracker/stores"; 
 import { ExerciseCard } from "../exercise/ExerciseCard";
 import { tokens } from "../../theme/tokens";
+import { Ionicons } from "@expo/vector-icons";
 import type { Exercise } from "@gymtracker/types";
+import { ScreenContainer, AppHeader, Input } from "../ui";
 
 interface Props {
   visible: boolean;
@@ -16,7 +15,7 @@ interface Props {
 }
 
 export const ExercisePickerModal = ({ visible, onClose, onSelect }: Props) => {
-  const { data: exercises = [], isLoading } = useExercises();
+  const { data: exercises = [] } = useExercises();
   const { addExercise } = useWorkoutSessionStore();
   const [query, setQuery] = useState("");
 
@@ -36,53 +35,47 @@ export const ExercisePickerModal = ({ visible, onClose, onSelect }: Props) => {
   };
 
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
-      <View className="flex-1 bg-void">
+    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
+      <ScreenContainer keyboardAvoiding safeAreaTop safeAreaBottom style={{ backgroundColor: tokens.colors.void }}>
         {/* Header */}
-        <View className="flex-row items-center justify-between px-5 pt-6 pb-4 border-b border-border-default">
-          <Text className="text-text-primary text-base font-semibold">
-            Add exercise
-          </Text>
-          <TouchableOpacity onPress={onClose}>
-            <Text className="text-accent text-sm">Done</Text>
-          </TouchableOpacity>
-        </View>
+        <AppHeader
+          title="Add exercise"
+          rightElement={
+            <TouchableOpacity onPress={onClose}>
+              <Text className="text-accent text-sm font-semibold">Done</Text>
+            </TouchableOpacity>
+          }
+          border
+        />
 
         {/* Search */}
-        <View className="px-4 py-3">
-          <View className="flex-row items-center bg-surface border border-border-default rounded-md px-3" style={{ height: 42 }}>
-            <Text className="text-text-tertiary mr-2">🔍</Text>
-            <TextInput
-              className="flex-1 text-text-primary text-sm"
-              placeholder="Search exercises..."
-              placeholderTextColor={tokens.colors.textSecondary}
-              value={query}
-              onChangeText={setQuery}
-              autoCapitalize="none"
-              autoFocus
-            />
-          </View>
-        </View>
+        <Input
+          placeholder="Search exercises..."
+          value={query}
+          onChangeText={setQuery}
+          leftIcon={<Ionicons name="search-outline" size={16} color={tokens.colors.textSecondary} />}
+          containerStyle={{ paddingHorizontal: 20, paddingTop: 16, marginBottom: 8 }}
+        />
 
         {/* List */}
         <FlatList
           data={filtered}
           keyExtractor={(e) => e.id.toString()}
-          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 40, gap: 8 }}
+          contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40, gap: 10 }}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
             <ExerciseCard
               exercise={item}
               onPress={() => handlePick(item)}
               rightElement={
-                <View className="bg-elevated rounded-sm px-2 py-1 ml-2">
-                  <Text className="text-accent text-xs font-medium">Add</Text>
+                <View className="bg-accent/15 px-3 py-1.5 rounded-full ml-2">
+                  <Text className="text-accent text-3xs font-semibold uppercase tracking-wider">Add</Text>
                 </View>
               }
             />
           )}
         />
-      </View>
+      </ScreenContainer>
     </Modal>
   );
 };

@@ -1,17 +1,15 @@
-import React from "react";
 import {
-  View, Text, ScrollView, TouchableOpacity,
-  RefreshControl, StatusBar, ActivityIndicator,
+  View, Text, TouchableOpacity, RefreshControl, StatusBar, ActivityIndicator
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuthStore }  from "@gymtracker/stores";
 import { useWorkouts }   from "@gymtracker/hooks";
 import type { Workout }  from "@gymtracker/types";
 import { StreakCard }        from "../../components/dashboard/StreakCard";
-import { StatCard }          from "../../components/dashboard/StatCard";
-import { RecentWorkoutItem } from "../../components/dashboard/RecentWorkoutItem";
 import { tokens }            from "../../theme/tokens";
 import { Ionicons }          from "@expo/vector-icons";
+import {
+  ScreenContainer, AppHeader, AppCard, SectionHeader, StatCard
+} from "../../components/ui";
 
 const getGreeting = (): string => {
   const h = new Date().getHours();
@@ -24,7 +22,6 @@ const formatVolume = (kg: number): string =>
   kg >= 1000 ? `${(kg / 1000).toFixed(1)}t` : `${Math.round(kg)}`;
 
 export const DashboardScreen = ({ navigation }: any) => {
-  const insets = useSafeAreaInsets();
   const { user } = useAuthStore();
 
   const firstName = user?.username
@@ -49,19 +46,29 @@ export const DashboardScreen = ({ navigation }: any) => {
     acc + (w.workout_exercises ?? []).reduce((eAcc, e) =>
       eAcc + (e.sets ?? 0) * (e.reps ?? 0) * (e.weight ?? 0), 0), 0);
 
-  // Show 5 instead of 3 — fills the screen naturally
   const recentWorkouts = [...workouts]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5);
+
+  const renderAvatar = () => (
+    <TouchableOpacity
+      className="px-3.5 py-2 flex-row rounded-full bg-accent items-center justify-center"
+      onPress={() => navigation.navigate("Profile")}
+      activeOpacity={0.8}
+    >
+      <Text className="text-white font-semibold text-sm">
+        {user?.username?.[0]?.toUpperCase() ?? "A"}
+      </Text>
+    </TouchableOpacity>
+  );
 
   return (
     <View className="flex-1 bg-void">
       <StatusBar barStyle="light-content" backgroundColor={tokens.colors.void} />
 
-      <ScrollView
-        className="flex-1"
-        contentContainerStyle={{ paddingBottom: 80 }}  // was 100
-        showsVerticalScrollIndicator={false}
+      <ScreenContainer
+        scrollable
+        contentContainerStyle={{ paddingBottom: 100 }}
         refreshControl={
           <RefreshControl
             refreshing={isRefetching}
@@ -70,203 +77,176 @@ export const DashboardScreen = ({ navigation }: any) => {
           />
         }
       >
-        {/* Header — tighter top padding */}
-        <View
-          className="px-5 pb-4"                        // was pb-6
-          style={{ paddingTop: insets.top + 12 }}      // was +20
-        >
-          <View className="flex-row items-center justify-between">
-            <View>
-              <Text style={{ fontSize: 13, color: "#8E8E93", fontWeight: "500" }}>
-                {getGreeting()}
-              </Text>
-              <Text style={{ fontSize: 22, color: "#FFFFFF",  // was text-2xl
-                             fontWeight: "700", marginTop: 2, letterSpacing: -0.3 }}>
-                {firstName ?? "Athlete"} 
-              </Text>
-            </View>
-            <TouchableOpacity
-              style={{
-                width: 38, height: 38,           // was w-11 h-11
-                borderRadius: 19,
-                backgroundColor: "#7C5CFC",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              onPress={() => navigation.navigate("Profile")}
-            >
-              <Text style={{ color: "#fff", fontWeight: "600", fontSize: 14 }}>
-                {user?.username?.[0]?.toUpperCase() ?? "A"}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        {/* Header */}
+        <AppHeader
+          title={firstName ?? "Athlete"}
+          subtitle={getGreeting()}
+          rightElement={renderAvatar()}
+          safeArea
+        />
 
         {isLoading ? (
-          <View className="px-4" style={{ gap: 10 }}>
+          <View className="px-4" style={{ gap: 12 }}>
             <StreakCard workouts={workouts} />
 
-            <View className="flex-row" style={{ gap: 10 }}>
-              <View style={{ flex: 1 }}>
-                <StatCard value={thisMonthCount.toString()} label="Workouts this month" />
-              </View>
-              <View style={{ flex: 1 }}>
-                <StatCard value={formatVolume(totalKg)} label="Total kg lifted" />
-              </View>
+            <View className="flex-row" style={{ gap: 12 }}>
+              <StatCard value={thisMonthCount.toString()} label="Workouts this month" />
+              <StatCard value={formatVolume(totalKg)} label="Total kg lifted" unit="kg" />
             </View>
 
-            <View>
-              <View className="flex-row items-center justify-between" style={{ marginBottom: 8 }}>
-                <Text style={{ fontSize: 11, color: "#8E8E93", fontWeight: "500", textTransform: "uppercase", letterSpacing: 0.8 }}>
-                  Recent workouts
-                </Text>
-              </View>
-              <View style={{ alignItems: "center", paddingVertical: 24 }}>
+            <View className="mt-4">
+              <SectionHeader title="Recent workouts" />
+              <View className="items-center py-6">
                 <ActivityIndicator color={tokens.colors.accent} />
               </View>
             </View>
           </View>
         ) : workouts.length === 0 ? (
-          <View className="px-4" style={{ gap: 12 }}>
+          <View className="px-4" style={{ gap: 16 }}>
             {/* Welcome / Onboarding Card */}
-            <View className="bg-surface rounded-md border border-border-default px-5 py-4">
-              <Text style={{ fontSize: 16, color: "#FFFFFF", fontWeight: "700", letterSpacing: -0.2 }}>
+            <AppCard>
+              <Text className="text-sm font-bold text-text-primary mb-1">
                 Welcome to GymTracker! 🚀
               </Text>
-              <Text style={{ fontSize: 13, color: "#8E8E93", marginTop: 6, lineHeight: 18 }}>
+              <Text className="text-xs text-text-secondary leading-relaxed">
                 Let's get you set up. Complete these quick steps to build your training habits and start logging your progress.
               </Text>
+            </AppCard>
+
+            <View className="mt-2">
+              <SectionHeader title="Get Started" />
+
+              <View style={{ gap: 10 }}>
+                {/* Step 1: Browse Exercise Library */}
+                <TouchableOpacity
+                  className="bg-surface rounded-xl border border-border-default p-4 flex-row items-center justify-between"
+                  onPress={() => navigation.navigate("Exercises")}
+                  activeOpacity={0.8}
+                >
+                  <View className="flex-row items-center flex-1 mr-4" style={{ gap: 12 }}>
+                    <View className="w-9 h-9 rounded-lg bg-accent/10 items-center justify-center flex-shrink-0">
+                      <Ionicons name="barbell-outline" size={16} color={tokens.colors.accent} />
+                    </View>
+                    <View className="flex-1">
+                      <Text className="text-xs font-semibold text-text-primary">
+                        1. Explore Exercises
+                      </Text>
+                      <Text className="text-2xs text-text-secondary mt-0.5">
+                        Browse 100+ movements with target muscles.
+                      </Text>
+                    </View>
+                  </View>
+                  <Ionicons name="chevron-forward-outline" size={14} color={tokens.colors.textTertiary} />
+                </TouchableOpacity>
+
+                {/* Step 2: Log First Session */}
+                <TouchableOpacity
+                  className="bg-surface rounded-xl border border-border-default p-4 flex-row items-center justify-between"
+                  onPress={() => navigation.navigate("Log")}
+                  activeOpacity={0.8}
+                >
+                  <View className="flex-row items-center flex-1 mr-4" style={{ gap: 12 }}>
+                    <View className="w-9 h-9 rounded-lg bg-accent/10 items-center justify-center flex-shrink-0">
+                      <Ionicons name="add-circle-outline" size={16} color={tokens.colors.accent} />
+                    </View>
+                    <View className="flex-1">
+                      <Text className="text-xs font-semibold text-text-primary">
+                        2. Log Your First Workout
+                      </Text>
+                      <Text className="text-2xs text-text-secondary mt-0.5">
+                        Log your sets and reps to start your streak.
+                      </Text>
+                    </View>
+                  </View>
+                  <Ionicons name="chevron-forward-outline" size={14} color={tokens.colors.textTertiary} />
+                </TouchableOpacity>
+
+                {/* Step 3: Customize Profile */}
+                <TouchableOpacity
+                  className="bg-surface rounded-xl border border-border-default p-4 flex-row items-center justify-between"
+                  onPress={() => navigation.navigate("Profile")}
+                  activeOpacity={0.8}
+                >
+                  <View className="flex-row items-center flex-1 mr-4" style={{ gap: 12 }}>
+                    <View className="w-9 h-9 rounded-lg bg-accent/10 items-center justify-center flex-shrink-0">
+                      <Ionicons name="person-outline" size={16} color={tokens.colors.accent} />
+                    </View>
+                    <View className="flex-1">
+                      <Text className="text-xs font-semibold text-text-primary">
+                        3. Set Up Your Profile
+                      </Text>
+                      <Text className="text-2xs text-text-secondary mt-0.5">
+                        Update your training metrics and details.
+                      </Text>
+                    </View>
+                  </View>
+                  <Ionicons name="chevron-forward-outline" size={14} color={tokens.colors.textTertiary} />
+                </TouchableOpacity>
+              </View>
             </View>
-
-            <Text style={{ fontSize: 11, color: "#8E8E93", fontWeight: "600", textTransform: "uppercase", letterSpacing: 0.8, marginTop: 8, marginBottom: 4 }}>
-              Get Started
-            </Text>
-
-            {/* Step 1: Browse Exercise Library */}
-            <TouchableOpacity
-              className="bg-surface rounded-md border border-border-default p-4 flex-row items-center"
-              style={{ gap: 14 }}
-              onPress={() => navigation.navigate("Exercises")}
-              activeOpacity={0.8}
-            >
-              <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(124, 92, 252, 0.12)", alignItems: "center", justifyContent: "center" }}>
-                <Ionicons name="barbell-outline" size={18} color="#7C5CFC" />
-              </View>
-              <View className="flex-1">
-                <Text style={{ fontSize: 14, color: "#FFFFFF", fontWeight: "600" }}>
-                  1. Explore Exercises
-                </Text>
-                <Text style={{ fontSize: 12, color: "#8E8E93", marginTop: 2 }}>
-                  Browse 100+ movements with target muscles.
-                </Text>
-              </View>
-              <Ionicons name="chevron-forward-outline" size={16} color="#636366" />
-            </TouchableOpacity>
-
-            {/* Step 2: Log First Session */}
-            <TouchableOpacity
-              className="bg-surface rounded-md border border-border-default p-4 flex-row items-center"
-              style={{ gap: 14 }}
-              onPress={() => navigation.navigate("Log")}
-              activeOpacity={0.8}
-            >
-              <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(124, 92, 252, 0.12)", alignItems: "center", justifyContent: "center" }}>
-                <Ionicons name="add-circle-outline" size={18} color="#7C5CFC" />
-              </View>
-              <View className="flex-1">
-                <Text style={{ fontSize: 14, color: "#FFFFFF", fontWeight: "600" }}>
-                  2. Log Your First Workout
-                </Text>
-                <Text style={{ fontSize: 12, color: "#8E8E93", marginTop: 2 }}>
-                  Log your sets and reps to start your streak.
-                </Text>
-              </View>
-              <Ionicons name="chevron-forward-outline" size={16} color="#636366" />
-            </TouchableOpacity>
-
-            {/* Step 3: Customize Profile */}
-            <TouchableOpacity
-              className="bg-surface rounded-md border border-border-default p-4 flex-row items-center"
-              style={{ gap: 14 }}
-              onPress={() => navigation.navigate("Profile")}
-              activeOpacity={0.8}
-            >
-              <View style={{ width: 36, height: 36, borderRadius: 10, backgroundColor: "rgba(124, 92, 252, 0.12)", alignItems: "center", justifyContent: "center" }}>
-                <Ionicons name="person-outline" size={18} color="#7C5CFC" />
-              </View>
-              <View className="flex-1">
-                <Text style={{ fontSize: 14, color: "#FFFFFF", fontWeight: "600" }}>
-                  3. Set Up Your Profile
-                </Text>
-                <Text style={{ fontSize: 12, color: "#8E8E93", marginTop: 2 }}>
-                  Update your training metrics and details.
-                </Text>
-              </View>
-              <Ionicons name="chevron-forward-outline" size={16} color="#636366" />
-            </TouchableOpacity>
           </View>
         ) : (
-          <View className="px-4" style={{ gap: 10 }}>
+          <View className="px-4" style={{ gap: 16 }}>
             <StreakCard workouts={workouts} />
 
-            <View className="flex-row" style={{ gap: 10 }}>
-              <View style={{ flex: 1 }}>
-                <StatCard value={thisMonthCount.toString()} label="Workouts this month" />
-              </View>
-              <View style={{ flex: 1 }}>
-                <StatCard value={formatVolume(totalKg)} label="Total kg lifted" />
-              </View>
+            <View className="flex-row" style={{ gap: 12 }}>
+              <StatCard value={thisMonthCount.toString()} label="Workouts this month" />
+              <StatCard value={formatVolume(totalKg)} label="Total kg lifted" unit="kg" />
             </View>
 
             {/* Recent workouts */}
-            <View>
-              <View className="flex-row items-center justify-between"
-                    style={{ marginBottom: 8 }}>
-                <Text style={{ fontSize: 11, color: "#8E8E93",
-                               fontWeight: "500", textTransform: "uppercase",
-                               letterSpacing: 0.8 }}>
-                  Recent workouts
-                </Text>
-                <TouchableOpacity onPress={() => navigation.navigate("History")}>
-                  <Text style={{ fontSize: 12, color: "#7C5CFC" }}>See all</Text>
-                </TouchableOpacity>
-              </View>
+            <View className="mt-2">
+              <SectionHeader
+                title="Recent workouts"
+                rightElement={
+                  <TouchableOpacity onPress={() => navigation.navigate("History")}>
+                    <Text className="text-xs font-semibold text-accent">See all</Text>
+                  </TouchableOpacity>
+                }
+              />
 
-              <View className="bg-surface rounded-md border border-border-default overflow-hidden">
-                {recentWorkouts.map((w, i) => (
-                  <RecentWorkoutItem
-                    key={w.id}
-                    workout={w}
-                    isLast={i === recentWorkouts.length - 1}
-                    onPress={() =>
-                      navigation.navigate("WorkoutDetail", { workoutId: w.id })
-                    }
-                  />
-                ))}
-              </View>
+              <AppCard className="p-0 overflow-hidden">
+                {recentWorkouts.map((w, i) => {
+                  const { RecentWorkoutItem } = require("../../components/dashboard/RecentWorkoutItem");
+                  return (
+                    <RecentWorkoutItem
+                      key={w.id}
+                      workout={w}
+                      isLast={i === recentWorkouts.length - 1}
+                      onPress={() =>
+                        navigation.navigate("WorkoutDetail", { workoutId: w.id })
+                      }
+                    />
+                  );
+                })}
+              </AppCard>
             </View>
           </View>
         )}
-      </ScrollView>
+      </ScreenContainer>
 
       {/* FAB */}
       <TouchableOpacity
         style={{
-          position:        "absolute",
-          right:           20,
-          bottom:          insets.bottom + 16,
-          width:           52,           // was w-14 = 56px
-          height:          52,
-          borderRadius:    14,
-          backgroundColor: "#7C5CFC",
-          alignItems:      "center",
-          justifyContent:  "center",
+          position: "absolute",
+          right: 20,
+          bottom: 20,
+          width: 52,
+          height: 52,
+          borderRadius: 14,
+          backgroundColor: tokens.colors.accent,
+          alignItems: "center",
+          justifyContent: "center",
+          elevation: 4,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 3 },
+          shadowOpacity: 0.3,
+          shadowRadius: 4.5,
         }}
         onPress={() => navigation.navigate("Log")}
         activeOpacity={0.85}
       >
-        <Text style={{ color: "#fff", fontSize: 24, fontWeight: "300",
-                       lineHeight: 28, marginTop: -1 }}>+</Text>
+        <Ionicons name="add" size={26} color="#fff" />
       </TouchableOpacity>
     </View>
   );

@@ -2,6 +2,8 @@ import React from "react";
 import { View, Text } from "react-native";
 import { startOfDay, subDays, isSameDay } from "date-fns";
 import type { Workout } from "@gymtracker/types";
+import { tokens } from "../../theme/tokens";
+import { AppCard } from "../ui";
 
 interface Props { workouts: Workout[]; }
 
@@ -31,34 +33,32 @@ export const StreakCard = ({ workouts }: Props) => {
   );
 
   return (
-    <View className="bg-surface rounded-md border border-border-default px-4 py-3">
-
-      {/* Header row — label + motivational text on same line */}
-      <View className="flex-row items-center justify-between mb-2">
-        <Text className="text-text-secondary text-2xs font-medium uppercase tracking-wide">
+    <AppCard className="px-4 py-3.5">
+      {/* Header row */}
+      <View className="flex-row items-center justify-between mb-3">
+        <Text className="text-2xs font-semibold text-text-secondary uppercase tracking-wider">
           Current streak
         </Text>
         {streak >= 3 && (
-          <Text style={{ fontSize: 11, color: "#9B7EFD" }}>
+          <Text className="text-xs font-semibold text-accent">
             🔥 {streak} days strong
           </Text>
         )}
         {streak === 0 && (
-          <Text style={{ fontSize: 11, color: "#636366" }}>
+          <Text className="text-xs text-text-tertiary">
             Log a workout to start
           </Text>
         )}
       </View>
 
-      {/* Content row — number + dots side by side */}
+      {/* Content row */}
       <View className="flex-row items-center">
-        {/* Streak number — smaller, tighter */}
-        <View style={{ width: 52 }}>
-          <Text style={{ fontSize: 28, fontWeight: "700",
-                         color: "#7C5CFC", letterSpacing: -1, lineHeight: 30 }}>
+        {/* Streak number */}
+        <View style={{ width: 56 }}>
+          <Text className="text-3xl font-bold text-accent tracking-tighter leading-8">
             {streak}
           </Text>
-          <Text style={{ fontSize: 10, color: "#8E8E93", marginTop: 1 }}>
+          <Text className="text-2xs text-text-secondary font-medium uppercase tracking-wide mt-0.5">
             days
           </Text>
         </View>
@@ -73,19 +73,19 @@ export const StreakCard = ({ workouts }: Props) => {
                 <View
                   key={i}
                   style={{
-                    width:           28,
-                    height:          28,
-                    borderRadius:    7,
-                    backgroundColor: done ? "#7C5CFC" : "#2C2C2E",
-                    borderWidth:     isToday ? 1.5 : 0,
-                    borderColor:     "#9B7EFD",
+                    width: 28,
+                    height: 28,
+                    borderRadius: 8,
+                    backgroundColor: done ? tokens.colors.accent : tokens.colors.elevated,
+                    borderWidth: isToday ? 1.5 : 0,
+                    borderColor: tokens.colors.accent,
                   }}
                 />
               );
             })}
           </View>
 
-          <View className="flex-row justify-between mt-1">
+          <View className="flex-row justify-between mt-1.5">
             {last7.map((day, i) => {
               const isToday  = isSameDay(day, today);
               const dayIndex = (day.getDay() + 6) % 7;
@@ -93,12 +93,12 @@ export const StreakCard = ({ workouts }: Props) => {
                 <Text
                   key={i}
                   style={{
-                    width:      28,
-                    fontSize:   9,
-                    textAlign:  "center",
-                    fontWeight: "500",
-                    color:      isToday ? "#9B7EFD" : "#636366",
+                    width: 28,
+                    textAlign: "center",
+                    fontWeight: isToday ? "700" : "500",
+                    color: isToday ? tokens.colors.accent : tokens.colors.textTertiary,
                   }}
+                  className="text-2xs"
                 >
                   {DAYS[dayIndex]}
                 </Text>
@@ -107,7 +107,6 @@ export const StreakCard = ({ workouts }: Props) => {
           </View>
         </View>
       </View>
-
-    </View>
+    </AppCard>
   );
 };

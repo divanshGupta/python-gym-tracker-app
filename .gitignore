@@ -1,21 +1,8 @@
-# Dependencies
 node_modules/
-# env files
-.env
-backend/.env
-backend/.env.development.local
-backend/.env.production.local
-frontend/.env
-frontend/.env.development
-frontend/.env.local
-
-old-codes/
-dist/
-build/
 .venv/
 .vscode/
-coverage/
-.cache/
-.next/
+dist/
+build/
 out/
-public/build/
+*.js.map
+*.d.ts.map

@@ -4,6 +4,7 @@ import { useAuthStore } from "@gymtracker/stores";
 import { TabNavigator } from "./TabNavigator";
 import { LoginScreen } from "../screens/auth/LoginScreen";
 import { RegisterScreen } from "../screens/auth/RegisterScreen";
+import { LogWorkoutScreen } from "../screens/workout/LogWorkoutScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -14,7 +15,10 @@ export const RootNavigator = () => {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {isAuthenticated ? (
-          <Stack.Screen name="Main" component={TabNavigator} />
+          <>
+            <Stack.Screen name="Main" component={TabNavigator} />
+            <Stack.Screen name="Log" component={LogWorkoutScreen} />
+          </>
         ) : (
           <>
             <Stack.Screen name="Login" component={LoginScreen} />

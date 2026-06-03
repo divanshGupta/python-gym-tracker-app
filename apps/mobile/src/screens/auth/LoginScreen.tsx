@@ -1,17 +1,14 @@
-//apps/mobile/src/screens/LoginScreen.tsx
+//apps/mobile/src/screens/auth/LoginScreen.tsx
 import { useState } from "react";
-import {
-  View, Text, TextInput, TouchableOpacity,
-  KeyboardAvoidingView, Platform, ScrollView, ActivityIndicator,
-} from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuthStore } from "@gymtracker/stores"; 
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { tokens } from "../../theme/tokens";
+import { ScreenContainer, Input, PrimaryButton, SecondaryButton } from "../../components/ui";
 
-// zod schema
 const schema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Minimum 6 characters"),
@@ -27,156 +24,112 @@ export const LoginScreen = ({ navigation }: NativeStackScreenProps<any>) => {
   });
 
   return (
-    <KeyboardAvoidingView
-      className="flex-1 bg-white"
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1 }}
-        keyboardShouldPersistTaps="handled"
-      >
-        <View className="flex-1 px-6 pt-20 pb-10 justify-between">
-
-          {/* Header */}
-          <View>
-            {/* Logo mark */}
-            <View className="w-10 h-10 bg-indigo-600 rounded-xl items-center justify-center mb-8">
-              <Text className="text-white font-bold text-lg">G</Text>
-            </View>
-
-            <Text className="text-2xl font-semibold text-gray-900 mb-1">
-              Welcome back
-            </Text>
-            <Text className="text-sm text-gray-400 mb-8">
-              Log in to continue tracking
-            </Text>
-
-            {/* Error banner */}
-            {error && (
-              <View className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-4">
-                <Text className="text-red-600 text-sm">{error}</Text>
-              </View>
-            )}
-
-            {/* Username */}
-            <Controller
-              control={control}
-              name="email"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <View className="mb-4">
-                  <Text className="text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">
-                    Username
-                  </Text>
-                  <TextInput
-                    className={`bg-gray-50 border rounded-xl px-4 py-3.5 text-sm text-gray-900 pr-12 ${
-                        errors.email ? "border-red-300" : "border-gray-200"
-                    }`}
-                    placeholder="you@example.com"
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    placeholderTextColor={tokens.colors.textSecondary}
-                    onChangeText={onChange}
-                    onBlur={onBlur}
-                    value={value}
-                    autoCorrect={false}
-                  />
-                  {errors.email && (
-                    <Text className="text-red-500 text-xs mt-1">
-                      {errors.email.message}
-                    </Text>
-                  )}
-                </View>
-              )}
-            />
-
-            {/* Password */}
-            <Controller
-              control={control}
-              name="password"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <View className="mb-2">
-                  <Text className="text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">
-                    Password
-                  </Text>
-                  <View className="relative">
-                    <TextInput
-                      className={`bg-gray-50 border rounded-xl px-4 py-3.5 text-sm text-gray-900 pr-12 ${
-                        errors.password ? "border-red-300" : "border-gray-200"
-                      }`}
-                      placeholder="••••••••"
-                      placeholderTextColor="#9ca3af"
-                      onChangeText={onChange}
-                      onBlur={onBlur}
-                      value={value}
-                      secureTextEntry={!showPassword}
-                    />
-                    <TouchableOpacity
-                      className="absolute right-4 top-3.5"
-                      onPress={() => setShowPassword(!showPassword)}
-                    >
-                      <Text className="text-xs text-gray-400">
-                        {showPassword ? "Hide" : "Show"}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                  {errors.password && (
-                    <Text className="text-red-500 text-xs mt-1">
-                      {errors.password.message}
-                    </Text>
-                  )}
-                </View>
-              )}
-            />
-
-            <TouchableOpacity className="self-end mb-6">
-              <Text className="text-xs text-indigo-600">Forgot password?</Text>
-            </TouchableOpacity>
-
-            {/* CTA */}
-            <TouchableOpacity
-              className={`bg-gray-900 rounded-xl py-4 items-center ${
-                isLoading ? "opacity-60" : ""
-              }`}
-              onPress={handleSubmit(login)}
-              disabled={isLoading}
-              activeOpacity={0.85}
-            >
-              {isLoading ? (
-                <ActivityIndicator color="#fff" size="small" />
-              ) : (
-                <Text className="text-white text-sm font-semibold">Log in</Text>
-              )}
-            </TouchableOpacity>
-
-            {/* Divider */}
-            <View className="flex-row items-center my-5">
-              <View className="flex-1 h-px bg-gray-100" />
-              <Text className="text-xs text-gray-300 mx-3">or</Text>
-              <View className="flex-1 h-px bg-gray-100" />
-            </View>
-
-            {/* Google (wired up when ready) */}
-            <TouchableOpacity
-              className="border border-gray-200 rounded-xl py-3.5 items-center"
-              activeOpacity={0.7}
-            >
-              <Text className="text-sm text-gray-600">Continue with Google</Text>
-            </TouchableOpacity>
+    <ScreenContainer scrollable keyboardAvoiding safeAreaTop safeAreaBottom style={{ backgroundColor: tokens.colors.void }}>
+      <View className="flex-1 px-6 pt-16 pb-6 justify-between">
+        <View>
+          {/* Logo mark */}
+          <View className="w-10 h-10 bg-accent rounded-xl items-center justify-center mb-8">
+            <Text className="text-white font-bold text-lg">G</Text>
           </View>
 
-          {/* Footer */}
-          <TouchableOpacity
-            className="items-center mt-8"
-            onPress={() => navigation.navigate("Register")}
-          >
-            <Text className="text-sm text-gray-400">
-              No account?{" "}
-              <Text className="text-indigo-600 font-medium">Sign up</Text>
-            </Text>
+          <Text className="text-2xl font-bold text-text-primary mb-1 tracking-tight">
+            Welcome back
+          </Text>
+          <Text className="text-sm text-text-secondary mb-8">
+            Log in to continue tracking
+          </Text>
+
+          {/* Error banner */}
+          {error && (
+            <View className="bg-danger/10 border border-danger/20 rounded-xl px-4 py-3 mb-6">
+              <Text className="text-danger text-sm">{error}</Text>
+            </View>
+          )}
+
+          {/* Email / Username */}
+          <Controller
+            control={control}
+            name="email"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                label="Username"
+                placeholder="you@example.com"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                onChangeText={onChange}
+                onBlur={onBlur}
+                value={value}
+                error={errors.email?.message}
+              />
+            )}
+          />
+
+          {/* Password */}
+          <Controller
+            control={control}
+            name="password"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                label="Password"
+                placeholder="••••••••"
+                secureTextEntry={!showPassword}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                value={value}
+                error={errors.password?.message}
+                rightElement={
+                  <TouchableOpacity
+                    onPress={() => setShowPassword(!showPassword)}
+                    className="p-1"
+                  >
+                    <Text className="text-xs text-text-tertiary font-semibold">
+                      {showPassword ? "Hide" : "Show"}
+                    </Text>
+                  </TouchableOpacity>
+                }
+              />
+            )}
+          />
+
+          {/* Forgot password */}
+          <TouchableOpacity className="self-end mb-6">
+            <Text className="text-xs text-accent font-semibold">Forgot password?</Text>
           </TouchableOpacity>
 
+          {/* CTA */}
+          <PrimaryButton
+            title="Log in"
+            onPress={handleSubmit(login)}
+            loading={isLoading}
+            style={{ marginBottom: 16 }}
+          />
+
+          {/* Divider */}
+          <View className="flex-row items-center my-6">
+            <View className="flex-1 h-px bg-border-default" />
+            <Text className="text-xs text-text-tertiary mx-3">or</Text>
+            <View className="flex-1 h-px bg-border-default" />
+          </View>
+
+          {/* Google */}
+          <SecondaryButton
+            title="Continue with Google"
+            onPress={() => {}}
+            variant="filled"
+          />
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+
+        {/* Footer */}
+        <TouchableOpacity
+          className="items-center mt-10"
+          onPress={() => navigation.navigate("Register")}
+        >
+          <Text className="text-sm text-text-secondary">
+            No account?{" "}
+            <Text className="text-accent font-semibold">Sign up</Text>
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </ScreenContainer>
   );
 };

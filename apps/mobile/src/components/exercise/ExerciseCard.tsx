@@ -1,6 +1,7 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text } from "react-native";
 import type { MuscleGroup, Exercise } from "@gymtracker/types"; 
+import { AppCard } from "../ui";
 
 const MUSCLE_CONFIG: Record<MuscleGroup, { bg: string; color: string; dot: string }> = {
   chest:     { bg: "#2C1F5E", color: "#9B7EFD", dot: "#7C5CFC" },
@@ -23,12 +24,12 @@ export const ExerciseCard = ({ exercise, onPress, rightElement }: Props) => {
   const config = MUSCLE_CONFIG[muscleGroup] ?? MUSCLE_CONFIG.core;
 
   return (
-    <TouchableOpacity
-      className="bg-surface rounded-md border border-border-default p-3 flex-row items-center"
+    <AppCard
+      className="flex-row items-center p-3"
       onPress={onPress}
       activeOpacity={0.75}
     >
-      {/* Icon */}
+      {/* Icon Indicator */}
       <View
         className="w-9 h-9 rounded-lg items-center justify-center mr-3"
         style={{ backgroundColor: config.bg }}
@@ -41,23 +42,23 @@ export const ExerciseCard = ({ exercise, onPress, rightElement }: Props) => {
 
       {/* Info */}
       <View className="flex-1">
-        <Text className="text-text-primary text-sm font-medium">{exercise.name}</Text>
-        <Text className="text-text-secondary mt-0.5 capitalize" style={{ fontSize: 11 }}>
+        <Text className="text-text-primary text-sm font-semibold">{exercise.name}</Text>
+        <Text className="text-text-secondary text-2xs mt-0.5 capitalize">
           {exercise.equipment} · {exercise.category}
         </Text>
       </View>
 
-      {/* Right — tag or custom element */}
+      {/* Right side tag or customized element */}
       {rightElement ?? (
         <View
-          className="px-2 py-1 rounded-sm ml-2"
+          className="px-2.5 py-1 rounded-full ml-2"
           style={{ backgroundColor: config.bg }}
         >
-          <Text style={{ fontSize: 10, fontWeight: "500", color: config.color }}>
-            {muscleGroup.charAt(0).toUpperCase() + muscleGroup.slice(1)}
+          <Text className="text-3xs font-semibold uppercase tracking-wider" style={{ color: config.color }}>
+            {muscleGroup.replace("_", " ")}
           </Text>
         </View>
       )}
-    </TouchableOpacity>
+    </AppCard>
   );
 };

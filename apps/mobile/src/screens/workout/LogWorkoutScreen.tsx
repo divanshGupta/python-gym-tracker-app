@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import {
   View, Text, TextInput, ScrollView, TouchableOpacity,
-  Alert, StatusBar, KeyboardAvoidingView, Platform, ActivityIndicator
+  Alert, StatusBar, ActivityIndicator
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
@@ -12,6 +11,9 @@ import { useCreateWorkout } from "@gymtracker/hooks";
 import { WORKOUT_TYPES, type WorkoutInput, type WorkoutType } from "@gymtracker/types";
 import { tokens } from "../../theme/tokens";
 import { ExercisePickerModal } from "../../components/workouts/ExercisePickerModal";
+import {
+  ScreenContainer, AppHeader, AppCard, Input, PrimaryButton, SecondaryButton, SectionHeader
+} from "../../components/ui";
 
 interface FormExercise {
   exercise_id: number;
@@ -23,7 +25,6 @@ interface FormExercise {
 }
 
 export const LogWorkoutScreen = ({ navigation }: any) => {
-  const insets = useSafeAreaInsets();
   const { mutate: createWorkout, isPending } = useCreateWorkout();
 
   // Form State
@@ -145,69 +146,67 @@ export const LogWorkoutScreen = ({ navigation }: any) => {
     });
   };
 
+  const renderSaveButton = () => (
+    <TouchableOpacity onPress={handleSubmit} disabled={isPending} className="p-1 -mr-1">
+      {isPending ? (
+        <ActivityIndicator size="small" color={tokens.colors.accent} />
+      ) : (
+        <Text className="text-accent text-sm font-semibold">Save</Text>
+      )}
+    </TouchableOpacity>
+  );
+
   return (
-    <KeyboardAvoidingView
-      className="flex-1 bg-void"
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
+    <View className="flex-1 bg-void">
       <StatusBar barStyle="light-content" backgroundColor={tokens.colors.void} />
 
       {/* Header */}
-      <View
-        className="px-5 pb-3 border-b border-border-default"
-        style={{ paddingTop: insets.top + 12 }}
-      >
-        <View className="flex-row items-center justify-between mb-2">
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text className="text-accent text-sm">Cancel</Text>
-          </TouchableOpacity>
-          <Text className="text-text-primary text-base font-semibold">Log Workout</Text>
-          <TouchableOpacity onPress={handleSubmit} disabled={isPending}>
-            {isPending ? (
-              <ActivityIndicator size="small" color={tokens.colors.accent} />
-            ) : (
-              <Text className="text-accent text-sm font-semibold">Save</Text>
-            )}
-          </TouchableOpacity>
-        </View>
-      </View>
+      <AppHeader
+        title="Log Workout"
+        showBack
+        onBackPress={() => navigation.goBack()}
+        // rightElement={renderSaveButton()}
+        safeArea
+        style={{ paddingHorizontal: 4 }}
+      />
 
-      <ScrollView
-        className="flex-1 px-4 pt-4"
-        contentContainerStyle={{ paddingBottom: insets.bottom + 120 }}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
+      <ScreenContainer
+        scrollable
+        keyboardAvoiding
+        contentContainerStyle={{ paddingHorizontal: 16 }}
       >
+
         {/* Error message */}
         {validationError && (
           <View className="mb-4 rounded-xl border border-danger/20 bg-danger/10 px-4 py-3">
-            <Text className="text-sm text-danger font-medium">{validationError}</Text>
+            <Text className="text-sm text-danger font-semibold">{validationError}</Text>
           </View>
         )}
 
         {/* Workout Details Container */}
-        <View className="bg-surface border border-border-default rounded-xl p-4 mb-4">
-          <Text className="text-text-primary text-sm font-semibold mb-3">Workout Details</Text>
+        <AppCard className="mb-4" style={{ gap: 0 }}>
+          <Text className="text-sm font-semibold text-text-primary mb-3.5">Workout Details</Text>
 
           {/* Date Picker Button */}
           <View className="mb-4">
-            <Text className="text-text-secondary text-xs mb-1.5 font-medium">Date</Text>
+            <Text className="text-2xs font-semibold text-text-secondary mb-1.5 uppercase tracking-wider px-0.5">Date</Text>
             <TouchableOpacity
               onPress={() => setShowDatePicker(true)}
-              className="flex-row items-center justify-between bg-elevated border border-border-default rounded-xl px-4 py-3"
+              className="flex-row items-center justify-between bg-elevated border border-border-default rounded-xl px-4"
+              style={{ height: 48 }}
               activeOpacity={0.7}
             >
-              <View className="flex-row items-center">
-                <Ionicons name="calendar-outline" size={16} color={tokens.colors.textSecondary} className="mr-2" />
-                <Text className="text-text-primary text-sm ml-2">{date}</Text>
+              <View className="flex-row items-center" style={{ gap: 8 }}>
+                <Ionicons name="calendar-outline" size={16} color={tokens.colors.textSecondary} />
+                <Text className="text-text-primary text-sm font-medium">{date}</Text>
               </View>
               <Ionicons name="chevron-down" size={14} color={tokens.colors.textTertiary} />
             </TouchableOpacity>
           </View>
 
           {/* Workout Type Segmented Control */}
-          <View className="mb-4">
-            <Text className="text-text-secondary text-xs mb-1.5 font-medium">Workout Type</Text>
+          <View className="mb-5">
+            <Text className="text-2xs font-semibold text-text-secondary mb-1.5 uppercase tracking-wider px-0.5">Workout Type</Text>
             <View className="flex-row justify-between">
               {WORKOUT_TYPES.map((t, idx) => {
                 const active = type === t;
@@ -215,11 +214,12 @@ export const LogWorkoutScreen = ({ navigation }: any) => {
                   <TouchableOpacity
                     key={t}
                     onPress={() => setType(t)}
-                    className={`flex-1 py-2.5 rounded-xl items-center border capitalize ${idx > 0 ? "ml-1.5" : ""}`}
-                    style={{
-                      backgroundColor: active ? tokens.colors.accent : "#1C1C1E",
-                      borderColor: active ? tokens.colors.accent : "#2C2C2E",
-                    }}
+                    className={`flex-1 py-2.5 rounded-xl items-center border capitalize ${
+                      idx > 0 ? "ml-2" : ""
+                    } ${
+                      active ? "bg-accent border-accent" : "bg-elevated border-border-default"
+                    }`}
+                    activeOpacity={0.8}
                   >
                     <Text className={`text-xs font-semibold ${active ? "text-white" : "text-text-secondary"}`}>
                       {t}
@@ -231,53 +231,48 @@ export const LogWorkoutScreen = ({ navigation }: any) => {
           </View>
 
           {/* Duration & Calories */}
-          <View className="flex-row justify-between mb-4">
+          <View className="flex-row justify-between">
             <View className="flex-1 mr-2">
-              <Text className="text-text-secondary text-xs mb-1.5 font-medium">Duration (mins)</Text>
-              <TextInput
-                className="bg-elevated border border-border-default rounded-xl px-4 py-3 text-text-primary text-sm"
+              <Input
+                label="Duration (mins)"
                 placeholder="60"
-                placeholderTextColor={tokens.colors.textTertiary}
                 keyboardType="numeric"
                 value={duration}
                 onChangeText={setDuration}
+                containerStyle={{ marginBottom: 0 }}
               />
             </View>
             <View className="flex-1 ml-2">
-              <Text className="text-text-secondary text-xs mb-1.5 font-medium">Calories Burned</Text>
-              <TextInput
-                className="bg-elevated border border-border-default rounded-xl px-4 py-3 text-text-primary text-sm"
+              <Input
+                label="Calories Burned"
                 placeholder="400"
-                placeholderTextColor={tokens.colors.textTertiary}
                 keyboardType="numeric"
                 value={calories}
                 onChangeText={setCalories}
+                containerStyle={{ marginBottom: 0 }}
               />
             </View>
           </View>
 
           {/* Notes */}
-          <View>
-            <Text className="text-text-secondary text-xs mb-1.5 font-medium">Notes</Text>
-            <TextInput
-              className="bg-elevated border border-border-default rounded-xl px-4 py-3 text-text-primary text-sm min-h-[80px]"
-              multiline
-              numberOfLines={3}
-              placeholder="How was today's session?"
-              placeholderTextColor={tokens.colors.textTertiary}
-              value={notes}
-              onChangeText={setNotes}
-              textAlignVertical="top"
-            />
-          </View>
-        </View>
+          <Input
+            label="Notes"
+            placeholder="How was today's session?"
+            multiline
+            numberOfLines={3}
+            value={notes}
+            onChangeText={setNotes}
+            style={{ height: 80, textAlignVertical: "top" }}
+            containerStyle={{ marginTop: 16, marginBottom: 0 }}
+          />
+        </AppCard>
 
         {/* Exercises Section */}
-        <View className="bg-surface border border-border-default rounded-xl p-4">
+        <AppCard>
           <View className="flex-row items-center justify-between mb-4">
             <View>
-              <Text className="text-text-primary text-sm font-semibold">Exercises</Text>
-              <Text className="text-text-secondary text-[11px] mt-0.5">Performances logged today</Text>
+              <Text className="text-sm font-semibold text-text-primary">Exercises</Text>
+              <Text className="text-2xs text-text-secondary mt-0.5 font-semibold uppercase tracking-wider">Logged today</Text>
             </View>
             <TouchableOpacity
               onPress={() => setPickerVisible(true)}
@@ -291,87 +286,84 @@ export const LogWorkoutScreen = ({ navigation }: any) => {
           {exercises.length === 0 ? (
             <View className="border border-dashed border-border-default rounded-xl p-6 items-center justify-center my-2">
               <Ionicons name="barbell-outline" size={24} color={tokens.colors.textTertiary} className="mb-2" />
-              <Text className="text-text-secondary text-xs text-center">
+              <Text className="text-text-secondary text-xs text-center leading-relaxed font-semibold">
                 No exercises added yet.{"\n"}Tap 'Add Exercise' to build your list.
               </Text>
             </View>
           ) : (
-            exercises.map((e, index) => (
-              <View key={index} className="rounded-xl border border-border-default bg-elevated/30 p-4 mb-3">
-                {/* Exercise Header */}
-                <View className="flex-row items-center justify-between mb-3">
-                  <Text className="text-sm font-semibold text-text-primary capitalize truncate flex-1 mr-2" numberOfLines={1}>
-                    {index + 1}. {e.name}
-                  </Text>
-                  <TouchableOpacity onPress={() => handleRemoveExercise(index)} className="py-1 px-2">
-                    <Text className="text-danger text-xs font-medium">Remove</Text>
-                  </TouchableOpacity>
-                </View>
+            <View style={{ gap: 12 }}>
+              {exercises.map((e, index) => (
+                <AppCard key={index} className="bg-elevated/20 border-border-default p-4">
+                  {/* Exercise Header */}
+                  <View className="flex-row items-center justify-between mb-3.5">
+                    <Text className="text-sm font-semibold text-text-primary capitalize truncate flex-1 mr-2" numberOfLines={1}>
+                      {index + 1}. {e.name}
+                    </Text>
+                    <TouchableOpacity onPress={() => handleRemoveExercise(index)} className="py-1 px-2 -mr-2">
+                      <Text className="text-danger text-xs font-semibold">Remove</Text>
+                    </TouchableOpacity>
+                  </View>
 
-                {/* Sets / Reps / Weight Inputs */}
-                <View className="flex-row justify-between">
-                  <View className="flex-1 mr-1.5">
-                    <Text className="text-text-secondary text-3xs uppercase mb-1 text-center">Sets</Text>
-                    <TextInput
-                      className="bg-surface border border-border-default rounded-lg px-2 py-2 text-text-primary text-xs text-center font-semibold"
-                      placeholder="4"
-                      placeholderTextColor={tokens.colors.textTertiary}
-                      keyboardType="numeric"
-                      value={e.sets}
-                      onChangeText={(val) => handleUpdateExercise(index, "sets", val)}
-                    />
+                  {/* Sets / Reps / Weight Inputs */}
+                  <View className="flex-row justify-between">
+                    <View className="flex-1 mr-2">
+                      <Text className="text-text-secondary text-3xs font-semibold uppercase mb-1.5 text-center tracking-wider">Sets</Text>
+                      <TextInput
+                        className="bg-surface border border-border-default rounded-xl px-2 text-text-primary text-xs text-center font-bold"
+                        style={{ height: 38 }}
+                        placeholder="4"
+                        placeholderTextColor={tokens.colors.textTertiary}
+                        keyboardType="numeric"
+                        value={e.sets}
+                        onChangeText={(val) => handleUpdateExercise(index, "sets", val)}
+                      />
+                    </View>
+                    <View className="flex-1 mx-1">
+                      <Text className="text-text-secondary text-3xs font-semibold uppercase mb-1.5 text-center tracking-wider">Reps</Text>
+                      <TextInput
+                        className="bg-surface border border-border-default rounded-xl px-2 text-text-primary text-xs text-center font-bold"
+                        style={{ height: 38 }}
+                        placeholder="12"
+                        placeholderTextColor={tokens.colors.textTertiary}
+                        keyboardType="numeric"
+                        value={e.reps}
+                        onChangeText={(val) => handleUpdateExercise(index, "reps", val)}
+                      />
+                    </View>
+                    <View className="flex-1 ml-2">
+                      <Text className="text-text-secondary text-3xs font-semibold uppercase mb-1.5 text-center tracking-wider">Weight (kg)</Text>
+                      <TextInput
+                        className="bg-surface border border-border-default rounded-xl px-2 text-text-primary text-xs text-center font-bold"
+                        style={{ height: 38 }}
+                        placeholder="80"
+                        placeholderTextColor={tokens.colors.textTertiary}
+                        keyboardType="numeric"
+                        value={e.weight}
+                        onChangeText={(val) => handleUpdateExercise(index, "weight", val)}
+                      />
+                    </View>
                   </View>
-                  <View className="flex-1 mx-1.5">
-                    <Text className="text-text-secondary text-3xs uppercase mb-1 text-center">Reps</Text>
-                    <TextInput
-                      className="bg-surface border border-border-default rounded-lg px-2 py-2 text-text-primary text-xs text-center font-semibold"
-                      placeholder="12"
-                      placeholderTextColor={tokens.colors.textTertiary}
-                      keyboardType="numeric"
-                      value={e.reps}
-                      onChangeText={(val) => handleUpdateExercise(index, "reps", val)}
-                    />
-                  </View>
-                  <View className="flex-1 ml-1.5">
-                    <Text className="text-text-secondary text-3xs uppercase mb-1 text-center">Weight (kg)</Text>
-                    <TextInput
-                      className="bg-surface border border-border-default rounded-lg px-2 py-2 text-text-primary text-xs text-center font-semibold"
-                      placeholder="80"
-                      placeholderTextColor={tokens.colors.textTertiary}
-                      keyboardType="numeric"
-                      value={e.weight}
-                      onChangeText={(val) => handleUpdateExercise(index, "weight", val)}
-                    />
-                  </View>
-                </View>
-              </View>
-            ))
+                </AppCard>
+              ))}
+            </View>
           )}
-        </View>
+        </AppCard>
 
         {/* Submit Actions */}
         <View className="flex-row justify-between mt-6" style={{ gap: 12 }}>
-          <TouchableOpacity
-            className="flex-1 bg-surface border border-border-default py-3.5 rounded-xl items-center"
+          <SecondaryButton
+            title="Cancel"
             onPress={() => navigation.goBack()}
-            activeOpacity={0.8}
-          >
-            <Text className="text-text-primary text-sm font-semibold">Cancel</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="flex-1 bg-accent py-3.5 rounded-xl items-center"
+            style={{ flex: 1 }}
+          />
+          <PrimaryButton
+            title="Save Workout"
             onPress={handleSubmit}
-            disabled={isPending}
-            activeOpacity={0.8}
-          >
-            {isPending ? (
-              <ActivityIndicator size="small" color="#fff" />
-            ) : (
-              <Text className="text-white text-sm font-semibold">Save Workout</Text>
-            )}
-          </TouchableOpacity>
+            loading={isPending}
+            style={{ flex: 1 }}
+          />
         </View>
-      </ScrollView>
+      </ScreenContainer>
 
       {/* Date Pickers */}
       {showDatePicker && (
@@ -389,6 +381,6 @@ export const LogWorkoutScreen = ({ navigation }: any) => {
         onClose={() => setPickerVisible(false)}
         onSelect={handleAddExercise}
       />
-    </KeyboardAvoidingView>
+    </View>
   );
 };
