@@ -108,7 +108,7 @@ export default function ProgressScreen() {
 
   // ── react-native-chart-kit data shapes ───────────────────────────────
   const barChartData = {
-    labels: typeChartData.map((d) => d.type.charAt(0).toUpperCase() + d.type.slice(0, 3)),
+    labels: typeChartData.map((d) => d.type.toUpperCase()),
     datasets: [{ data: typeChartData.map((d) => d.count) }],
   };
 

@@ -138,7 +138,7 @@ export const LogWorkoutScreen = ({ navigation }: any) => {
         setCalories("");
         setNotes("");
         setDate(new Date().toISOString().split("T")[0]);
-        navigation.navigate("Dashboard");
+        navigation.navigate("Workout");
       },
       onError: (err: any) => {
         Alert.alert("Error", err?.response?.data?.detail ?? "Failed to save workout");
@@ -146,15 +146,15 @@ export const LogWorkoutScreen = ({ navigation }: any) => {
     });
   };
 
-  const renderSaveButton = () => (
-    <TouchableOpacity onPress={handleSubmit} disabled={isPending} className="p-1 -mr-1">
-      {isPending ? (
-        <ActivityIndicator size="small" color={tokens.colors.accent} />
-      ) : (
-        <Text className="text-accent text-sm font-semibold">Save</Text>
-      )}
-    </TouchableOpacity>
-  );
+  // const renderSaveButton = () => (
+  //   <TouchableOpacity onPress={handleSubmit} disabled={isPending} className="p-1 -mr-1">
+  //     {isPending ? (
+  //       <ActivityIndicator size="small" color={tokens.colors.accent} />
+  //     ) : (
+  //       <Text className="text-accent text-sm font-semibold">Save</Text>
+  //     )}
+  //   </TouchableOpacity>
+  // );
 
   return (
     <View className="flex-1 bg-void">

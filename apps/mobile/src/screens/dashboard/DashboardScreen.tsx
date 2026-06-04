@@ -220,7 +220,7 @@ export const DashboardScreen = ({ navigation }: any) => {
               <SectionHeader
                 title="Recent workouts"
                 rightElement={
-                  <TouchableOpacity onPress={() => navigation.navigate("History")}>
+                  <TouchableOpacity onPress={() => navigation.navigate("Workout")}>
                     <Text className="text-xs font-semibold text-accent">See all</Text>
                   </TouchableOpacity>
                 }
