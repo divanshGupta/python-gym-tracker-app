@@ -54,7 +54,7 @@ export const ExerciseCard = ({ exercise, onPress, rightElement }: Props) => {
           className="px-2.5 py-1 rounded-full ml-2"
           style={{ backgroundColor: config.bg }}
         >
-          <Text className="text-3xs font-semibold uppercase tracking-wider" style={{ color: config.color }}>
+          <Text className="text-2xs font-semibold uppercase tracking-wider" style={{ color: config.color }}>
             {muscleGroup.replace("_", " ")}
           </Text>
         </View>

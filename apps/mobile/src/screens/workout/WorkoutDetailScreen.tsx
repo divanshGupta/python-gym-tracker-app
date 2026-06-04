@@ -45,15 +45,15 @@ function ExerciseRow({ we, index }: { we: WorkoutExercise; index: number }) {
           <Text className="text-sm font-semibold text-text-primary capitalize flex-1">
             {we.exercise?.name ?? "Unknown exercise"}
           </Text>
-          <View className="bg-surface border border-border-default rounded-md px-2 py-0.5">
+          {/* <View className="bg-surface border border-border-default rounded-md px-2 py-0.5">
             <Text className="text-[10px] text-text-tertiary capitalize">
               {we.exercise?.category ?? "—"}
             </Text>
-          </View>
+          </View> */}
         </View>
 
         {/* Sets / Reps / Weight */}
-        <View className="flex-row gap-5">
+        <View className="flex-row justify-between" >
           {we.sets != null && (
             <View>
               <Text className="text-[10px] text-text-tertiary mb-1">Sets</Text>
@@ -185,8 +185,9 @@ export const WorkoutDetailScreen = ({ route, navigation }: any) => {
             <TouchableOpacity
               onPress={handleDelete}
               disabled={isDeleting}
-              className="flex-row items-center gap-1.5 bg-danger/15 border border-danger/30 rounded-xl px-3.5 py-2"
+              className="bg-danger/15 border border-danger/30 rounded-xl px-3.5 py-2 flex-row items-center"
               activeOpacity={0.8}
+              style={{ gap: 4 }}
             >
               {isDeleting ? (
                 <ActivityIndicator size={12} color="#EF4444" />
@@ -251,7 +252,7 @@ export const WorkoutDetailScreen = ({ route, navigation }: any) => {
             <Text className="text-sm font-semibold text-text-primary">Exercises</Text>
           </View>
 
-          <View className="p-3 gap-3">
+          <View style={{ gap: 12, padding: 12 }}>
             {exercises.length === 0 ? (
               <Text className="text-xs text-text-tertiary text-center py-4">
                 No exercises logged.

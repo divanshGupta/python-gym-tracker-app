@@ -16,7 +16,7 @@ export const AppCard = ({
   activeOpacity = 0.75,
   className = "",
 }: AppCardProps) => {
-  const cardClasses = `bg-surface rounded-xl border border-border-default p-4 ${className}`;
+  const cardClasses = `bg-surface rounded-xl  p-4 ${className}`;
 
   if (onPress) {
     return (
