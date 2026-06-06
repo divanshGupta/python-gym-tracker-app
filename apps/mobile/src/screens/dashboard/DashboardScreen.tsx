@@ -226,7 +226,7 @@ export const DashboardScreen = ({ navigation }: any) => {
                 }
               />
 
-              <AppCard className="p-0 overflow-hidden">
+              
                 {recentWorkouts.map((w: Workout) => {
                   return (
                     <WorkoutRow
@@ -238,7 +238,7 @@ export const DashboardScreen = ({ navigation }: any) => {
               
                   );
                 })}
-              </AppCard>
+              
             </View>
           </View>
         )}

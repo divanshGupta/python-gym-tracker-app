@@ -1,21 +1,25 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { workoutsApi } from "@gymtracker/api-client";
 import { queryKeys, STALE_TIMES } from "@gymtracker/constants";
-import type { WorkoutInput, UpdateWorkoutPayload, WorkoutFilters } from "@gymtracker/types";
+import type {
+  UpdateWorkoutPayload,
+  WorkoutFilters,
+  WorkoutInput,
+} from "@gymtracker/types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useWorkouts = (filters?: WorkoutFilters) =>
   useQuery({
-    queryKey:  [...queryKeys.workouts.all(), filters],
-    queryFn:   () => workoutsApi.getAll(filters).then((r) => r.data),
+    queryKey: [...queryKeys.workouts.all(), filters],
+    queryFn: () => workoutsApi.getAll(filters).then((r) => r.data),
     staleTime: STALE_TIMES.workouts,
   });
 
 export const useWorkout = (id: number) =>
   useQuery({
-    queryKey: queryKeys.workouts.detail((id)),
-    queryFn:  () => workoutsApi.getById(id).then((r) => r.data),
+    queryKey: queryKeys.workouts.detail(id),
+    queryFn: () => workoutsApi.getById(id).then((r) => r.data),
     staleTime: STALE_TIMES.workouts,
-    enabled:   !!id,
+    enabled: !!id,
   });
 
 export const useCreateWorkout = () => {
@@ -42,12 +46,11 @@ export const useDeleteWorkout = () => {
   const qc = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: number) =>
-      workoutsApi.delete(id).then((r) => r.data),
+    mutationFn: (id: number) => workoutsApi.delete(id).then((r) => r.data),
 
     onSuccess: () =>
-      qc.invalidateQueries({ 
-        queryKey: queryKeys.workouts.all() 
+      qc.invalidateQueries({
+        queryKey: queryKeys.workouts.all(),
       }),
   });
 };
