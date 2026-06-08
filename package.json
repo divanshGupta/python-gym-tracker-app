@@ -9,7 +9,9 @@
     "api": "cd apps/api && uvicorn app.main:app --reload",
     "install:all": "pnpm install",
     "build:web": "pnpm --filter web build",
-    "lint": "pnpm -r lint"
+    "lint": "pnpm -r lint",
+    "test": "jest",
+    "test:hooks": "jest --selectProjects hooks"
   },
   "devDependencies": {
     "babel-plugin-module-resolver": "^5.0.3",
