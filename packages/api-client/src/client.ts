@@ -1,28 +1,27 @@
 import axios, { type AxiosInstance } from "axios";
-import { apiEvents, API_EVENTS } from "./events" 
+import { API_EVENTS, apiEvents } from "./events";
 
 // ─── Token storage interface ───────────────────────────────────────────────
 // Injected per-platform so this package stays platform-agnostic.
 // Web:    localStorage
 // Native: expo-secure-store
 
-
-let getToken:    () => Promise<string | null> = async () => null;
-let removeToken: () => Promise<void>          = async () => {};
+let getToken: () => Promise<string | null> = async () => null;
+let removeToken: () => Promise<void> = async () => {};
 
 export const configureApiClient = (config: {
-  baseURL:     string;
-  getToken:    () => Promise<string | null>;
+  baseURL: string;
+  getToken: () => Promise<string | null>;
   removeToken: () => Promise<void>;
 }) => {
   apiClient.defaults.baseURL = config.baseURL;
-  getToken    = config.getToken;
+  getToken = config.getToken;
   removeToken = config.removeToken;
 };
 
 export const apiClient: AxiosInstance = axios.create({
-  headers:  { "Content-Type": "application/json" },
-  timeout:  10_000,
+  headers: { "Content-Type": "application/json" },
+  timeout: 10_000,
 });
 
 apiClient.interceptors.request.use(async (config) => {
@@ -40,5 +39,5 @@ apiClient.interceptors.response.use(
       apiEvents.emit(API_EVENTS.UNAUTHORIZED);
     }
     return Promise.reject(error);
-  }
+  },
 );
