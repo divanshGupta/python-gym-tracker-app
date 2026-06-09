@@ -10,10 +10,13 @@
     "install:all": "pnpm install",
     "build:web": "pnpm --filter web build",
     "lint": "pnpm -r lint",
-    "test": "jest",
-    "test:hooks": "jest --selectProjects hooks"
+    "test": "pnpm -r test",
+    "test:hooks": "pnpm --filter @gymtracker/hooks test",
+    "test:utils": "pnpm --filter @gymtracker/utils test",
+    "preinstall": "npx only-allow pnpm"
   },
   "devDependencies": {
+    "@vitejs/plugin-react": "^6.0.2",
     "babel-plugin-module-resolver": "^5.0.3",
     "jest": "^30.4.2",
     "ts-jest": "^29.4.11",

@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "strict": true,
-    "types": ["jest"]
+    "types": ["vitest/globals"]
   },
   "include": ["src/**/*.ts"]
 }
