@@ -1,6 +1,13 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from sqlalchemy import Integer, String, DateTime, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
+
+if TYPE_CHECKING:
+    from app.models.goal import Goal
+    from app.models.measurement import BodyMeasurement
+    from app.models.workout import Workout
 
 class User(Base):
     __tablename__ = "users"

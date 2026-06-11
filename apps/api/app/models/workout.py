@@ -1,7 +1,13 @@
 # apps/api/app/models/workout.py
+from __future__ import annotations
+from typing import TYPE_CHECKING
 from sqlalchemy import Integer, String, Date, DateTime, ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
+
+if TYPE_CHECKING:
+    from app.models.user import User
+    from app.models.workout_exercise import WorkoutExercise
 
 class Workout(Base):
     __tablename__ = "workouts"
