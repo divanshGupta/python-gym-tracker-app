@@ -1,18 +1,20 @@
 // packages/hooks/src/useExercise.ts
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { exercisesApi } from "@gymtracker/api-client";
 import { queryKeys, STALE_TIMES } from "@gymtracker/constants";
-import type { ExerciseCategory }  from "@gymtracker/types";
-import type { CreateExercisePayload } from "@gymtracker/types";
+import type {
+  CreateExercisePayload,
+  ExerciseCategory,
+} from "@gymtracker/types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 // Fetch all exercises — optionally filtered by category
-// Cached for 10 min because exercises are reference data that rarely change
+// Cached for 20 min because exercises are reference data that rarely change
 export const useExercises = (category?: ExerciseCategory) =>
   useQuery({
     queryKey: category
       ? queryKeys.exercises.byCategory(category)
       : queryKeys.exercises.all(),
-    queryFn:  () => exercisesApi.getAll(category).then((r) => r.data),
+    queryFn: () => exercisesApi.getAll(category).then((r) => r.data),
     staleTime: STALE_TIMES.exercises,
   });
 
@@ -20,9 +22,9 @@ export const useExercises = (category?: ExerciseCategory) =>
 export const useExercise = (id: number) =>
   useQuery({
     queryKey: queryKeys.exercises.detail(id),
-    queryFn:  () => exercisesApi.getById(id).then((r) => r.data),
+    queryFn: () => exercisesApi.getById(id).then((r) => r.data),
     staleTime: STALE_TIMES.exercises,
-    enabled:   !!id,   // don't fire if id is empty string
+    enabled: !!id, // don't fire if id is empty string
   });
 
 // Create exercise
@@ -30,11 +32,12 @@ export const useCreateExercise = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateExercisePayload) => exercisesApi.create(data).then((r) => r.data),
+    mutationFn: (data: CreateExercisePayload) =>
+      exercisesApi.create(data).then((r) => r.data),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.exercises.all(),
-      })
+      });
     },
-  })
-}
+  });
+};
