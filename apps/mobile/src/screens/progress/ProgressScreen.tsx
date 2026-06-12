@@ -1,31 +1,37 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
   ActivityIndicator,
   Dimensions,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { BarChart, LineChart } from "react-native-chart-kit";
-import { Ionicons } from "@expo/vector-icons";
 
 import {
-  useWorkoutStats,
-  usePersonalBests,
-  useStreak,
   useExerciseProgress,
   useExercises,
+  usePersonalBests,
+  useProgressionSuggestion,
+  useStreak,
+  useWorkoutStats,
 } from "@gymtracker/hooks";
-import { tokens } from "../../theme/tokens";
 import {
-  ScreenContainer, AppHeader, AppCard, StatCard, EmptyState, SectionHeader
+  AppCard,
+  AppHeader,
+  EmptyState,
+  ScreenContainer,
+  SectionHeader,
+  StatCard,
 } from "../../components/ui";
+import { tokens } from "../../theme/tokens";
 
-const ACCENT   = (tokens?.colors?.accent as string)        || "#7C5CFC";
+const ACCENT = (tokens?.colors?.accent as string) || "#7C5CFC";
 const ACCENT_L = "#9B7EFD";
-const HINT     = (tokens?.colors?.textSecondary as string)  || "#636366";
-const BG       = (tokens?.colors?.void as string)     || "#141414";
+const HINT = (tokens?.colors?.textSecondary as string) || "#636366";
+const BG = (tokens?.colors?.void as string) || "#141414";
 
 const screenWidth = Dimensions.get("window").width;
 const CHART_WIDTH = screenWidth - 32; // 16px padding each side
@@ -33,13 +39,13 @@ const CHART_HEIGHT = 160;
 
 // Shared chart config for react-native-chart-kit
 const baseChartConfig = {
-  backgroundGradientFrom:    BG,
+  backgroundGradientFrom: BG,
   backgroundGradientFromOpacity: 0,
-  backgroundGradientTo:      BG,
+  backgroundGradientTo: BG,
   backgroundGradientToOpacity: 0,
-  color:        (opacity = 1) => `rgba(124, 92, 252, ${opacity})`,
-  labelColor:   (opacity = 1) => `rgba(99, 99, 102, ${opacity})`,
-  strokeWidth:  2,
+  color: (opacity = 1) => `rgba(124, 92, 252, ${opacity})`,
+  labelColor: (opacity = 1) => `rgba(99, 99, 102, ${opacity})`,
+  strokeWidth: 2,
   barPercentage: 0.6,
   decimalPlaces: 0,
   propsForDots: {
@@ -70,15 +76,21 @@ function StreakCard({
 }) {
   return (
     <AppCard className="flex-1 flex-row items-center p-3.5" style={{ gap: 20 }}>
-      <View className={`w-10 h-10 rounded-lg items-center justify-center flex-shrink-0 ${iconBg}`}>
+      <View
+        className={`w-10 h-10 rounded-lg items-center justify-center flex-shrink-0 ${iconBg}`}
+      >
         <Ionicons name={iconName as any} size={18} color={iconColor} />
       </View>
       <View className="flex-1 flex-col">
         <View className="flex-row items-baseline" style={{ gap: 5 }}>
           <Text className="text-xl font-bold text-text-primary">{value}</Text>
-          <Text className="text-2xs font-medium text-text-tertiary uppercase ml-0.5">days</Text>
+          <Text className="text-2xs font-medium text-text-tertiary uppercase ml-0.5">
+            days
+          </Text>
         </View>
-        <Text className="text-2xs font-semibold text-text-tertiary uppercase tracking-wide mt-0.5">{label}</Text>
+        <Text className="text-2xs font-semibold text-text-tertiary uppercase tracking-wide mt-0.5">
+          {label}
+        </Text>
       </View>
     </AppCard>
   );
@@ -87,13 +99,19 @@ function StreakCard({
 // ── Main screen ───────────────────────────────────────────────────────────
 
 export default function ProgressScreen() {
-  const [selectedExerciseId, setSelectedExerciseId] = useState<number | null>(null);
+  const [selectedExerciseId, setSelectedExerciseId] = useState<number | null>(
+    null,
+  );
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const { data: stats,           isLoading: statsLoading    } = useWorkoutStats();
-  const { data: pbData,          isLoading: pbLoading       } = usePersonalBests();
-  const { data: exercises = []                               } = useExercises();
-  const { data: exerciseProgress, isLoading: progressLoading } = useExerciseProgress(selectedExerciseId ?? 0);
+  const { data: stats, isLoading: statsLoading } = useWorkoutStats();
+  const { data: pbData, isLoading: pbLoading } = usePersonalBests();
+  const { data: exercises = [] } = useExercises();
+  const { data: exerciseProgress, isLoading: progressLoading } =
+    useExerciseProgress(selectedExerciseId ?? 0);
+
+  const { data: suggestion, isLoading: suggestionLoading } =
+    useProgressionSuggestion(selectedExerciseId ?? 0);
   const {
     currentStreak,
     longestStreak,
@@ -101,9 +119,12 @@ export default function ProgressScreen() {
     error: streakError,
   } = useStreak();
 
-  const personalBests  = pbData?.personal_bests ?? [];
-  const typeChartData  = stats?.workouts_by_type
-    ? Object.entries(stats.workouts_by_type).map(([type, count]) => ({ type, count: count as number }))
+  const personalBests = pbData?.personal_bests ?? [];
+  const typeChartData = stats?.workouts_by_type
+    ? Object.entries(stats.workouts_by_type).map(([type, count]) => ({
+        type,
+        count: count as number,
+      }))
     : [];
 
   // ── react-native-chart-kit data shapes ───────────────────────────────
@@ -114,19 +135,31 @@ export default function ProgressScreen() {
 
   const weightChartData = exerciseProgress?.max_weight_over_time?.length
     ? {
-        labels: exerciseProgress.max_weight_over_time.map((d: any) =>
-          d.date?.slice(5) ?? ""   // "2026-05-11" → "05-11"
+        labels: exerciseProgress.max_weight_over_time.map(
+          (d: any) => d.date?.slice(5) ?? "", // "2026-05-11" → "05-11"
         ),
-        datasets: [{ data: exerciseProgress.max_weight_over_time.map((d: any) => d.max_weight), color: () => ACCENT }],
+        datasets: [
+          {
+            data: exerciseProgress.max_weight_over_time.map(
+              (d: any) => d.max_weight,
+            ),
+            color: () => ACCENT,
+          },
+        ],
       }
     : null;
 
   const volumeChartData = exerciseProgress?.volume_over_time?.length
     ? {
-        labels: exerciseProgress.volume_over_time.map((d: any) =>
-          d.date?.slice(5) ?? ""
+        labels: exerciseProgress.volume_over_time.map(
+          (d: any) => d.date?.slice(5) ?? "",
         ),
-        datasets: [{ data: exerciseProgress.volume_over_time.map((d: any) => d.volume), color: () => ACCENT_L }],
+        datasets: [
+          {
+            data: exerciseProgress.volume_over_time.map((d: any) => d.volume),
+            color: () => ACCENT_L,
+          },
+        ],
       }
     : null;
 
@@ -141,27 +174,37 @@ export default function ProgressScreen() {
   return (
     <View className="flex-1 bg-void">
       {/* Header */}
-      <AppHeader
-        title="Progress"
-        safeArea
-      />
+      <AppHeader title="Progress" safeArea />
       <ScreenContainer
         scrollable
         contentContainerStyle={{ paddingHorizontal: 16 }}
       >
-
         {/* Overview stats */}
         {stats && (
-          <View className="mb-6" >
+          <View className="mb-6">
             <SectionHeader title="Overview" />
             <View style={{ gap: 12 }}>
               <View className="flex-row" style={{ gap: 12 }}>
-                <StatCard label="Workouts" value={stats.total_workouts ?? "--"} />
-                <StatCard label="Duration" value={stats.total_duration_minutes ?? "--"} unit="min" />
+                <StatCard
+                  label="Workouts"
+                  value={stats.total_workouts ?? "--"}
+                />
+                <StatCard
+                  label="Duration"
+                  value={stats.total_duration_minutes ?? "--"}
+                  unit="min"
+                />
               </View>
               <View className="flex-row" style={{ gap: 12 }}>
-                <StatCard label="Calories" value={stats.total_calories_burned ?? "--"} unit="kcal" />
-                <StatCard label="Top exercise" value={stats.most_logged_exercise ?? "—"} />
+                <StatCard
+                  label="Calories"
+                  value={stats.total_calories_burned ?? "--"}
+                  unit="kcal"
+                />
+                <StatCard
+                  label="Top exercise"
+                  value={stats.most_logged_exercise ?? "—"}
+                />
               </View>
             </View>
           </View>
@@ -224,13 +267,17 @@ export default function ProgressScreen() {
               <Text className="text-sm font-semibold text-text-primary">
                 Personal bests
               </Text>
-              <Text className="text-2xs font-semibold text-text-tertiary uppercase tracking-wider">Max weight</Text>
+              <Text className="text-2xs font-semibold text-text-tertiary uppercase tracking-wider">
+                Max weight
+              </Text>
             </View>
             {personalBests.map((pb: any, i: number) => (
               <View
                 key={pb.exercise}
                 className={`flex-row items-center justify-between px-4 py-3.5 ${
-                  i < personalBests.length - 1 ? "border-b border-border-default/50" : ""
+                  i < personalBests.length - 1
+                    ? "border-b border-border-default/50"
+                    : ""
                 }`}
               >
                 <View className="flex-row items-center gap-3 flex-1">
@@ -267,11 +314,14 @@ export default function ProgressScreen() {
           >
             <Text className="text-sm text-text-primary font-medium">
               {selectedExerciseId
-                ? exercises.find((e: any) => e.id === selectedExerciseId)?.name ?? "Select an exercise…"
+                ? (exercises.find((e: any) => e.id === selectedExerciseId)
+                    ?.name ?? "Select an exercise…")
                 : "Select an exercise…"}
             </Text>
             <Ionicons
-              name={dropdownOpen ? "chevron-up-outline" : "chevron-down-outline"}
+              name={
+                dropdownOpen ? "chevron-up-outline" : "chevron-down-outline"
+              }
               size={16}
               color={HINT}
             />
@@ -332,7 +382,9 @@ export default function ProgressScreen() {
             <View className="gap-6 mt-2">
               {/* Max weight */}
               <View>
-                <Text className="text-2xs font-semibold text-text-tertiary uppercase tracking-wider mb-3 px-0.5">Max weight (kg)</Text>
+                <Text className="text-2xs font-semibold text-text-tertiary uppercase tracking-wider mb-3 px-0.5">
+                  Max weight (kg)
+                </Text>
                 <LineChart
                   data={weightChartData}
                   width={CHART_WIDTH - 64}
@@ -377,6 +429,121 @@ export default function ProgressScreen() {
                   yAxisSuffix=""
                 />
               </View>
+            </View>
+          )}
+
+          {/* Progression suggestion */}
+          {selectedExerciseId && (
+            <View className="mt-6 pt-4 border-t border-border-default/50">
+              <Text className="text-2xs font-semibold text-text-tertiary uppercase tracking-wider mb-3">
+                Progression suggestion
+              </Text>
+
+              {suggestionLoading ? (
+                <ActivityIndicator size="small" color={ACCENT} />
+              ) : suggestion ? (
+                <View style={{ gap: 10 }}>
+                  {/* Badge */}
+                  <View
+                    className={`self-start px-3 py-1.5 rounded-full flex-row items-center ${
+                      suggestion.suggestion === "increase_weight"
+                        ? "bg-green-500/10"
+                        : suggestion.suggestion === "reduce_weight"
+                          ? "bg-red-500/10"
+                          : suggestion.suggestion === "insufficient_data"
+                            ? "bg-elevated"
+                            : "bg-accent/10"
+                    }`}
+                    style={{ gap: 6 }}
+                  >
+                    <Ionicons
+                      name={
+                        suggestion.suggestion === "increase_weight"
+                          ? "trending-up-outline"
+                          : suggestion.suggestion === "reduce_weight"
+                            ? "trending-down-outline"
+                            : "remove-outline"
+                      }
+                      size={12}
+                      color={
+                        suggestion.suggestion === "increase_weight"
+                          ? "#22C55E"
+                          : suggestion.suggestion === "reduce_weight"
+                            ? "#EF4444"
+                            : ACCENT
+                      }
+                    />
+                    <Text
+                      className={`text-xs font-semibold ${
+                        suggestion.suggestion === "increase_weight"
+                          ? "text-green-500"
+                          : suggestion.suggestion === "reduce_weight"
+                            ? "text-red-500"
+                            : suggestion.suggestion === "insufficient_data"
+                              ? "text-text-tertiary"
+                              : "text-accent"
+                      }`}
+                    >
+                      {suggestion.suggestion.replace(/_/g, " ")}
+                    </Text>
+                  </View>
+
+                  {/* Suggestion text */}
+                  <Text className="text-sm text-text-secondary leading-relaxed">
+                    {suggestion.suggestion_text}
+                  </Text>
+
+                  {/* Weight row */}
+                  {suggestion.suggestion !== "insufficient_data" && (
+                    <View
+                      className="flex-row items-center mt-1"
+                      style={{ gap: 20 }}
+                    >
+                      <View>
+                        <Text className="text-2xs text-text-tertiary uppercase tracking-wide mb-0.5">
+                          Current
+                        </Text>
+                        <Text className="text-xl font-bold text-text-primary">
+                          {suggestion.current_weight}
+                          <Text className="text-xs font-normal text-text-tertiary">
+                            {" "}
+                            kg
+                          </Text>
+                        </Text>
+                      </View>
+                      {suggestion.suggestion === "increase_weight" && (
+                        <>
+                          <Ionicons
+                            name="arrow-forward-outline"
+                            size={16}
+                            color="#22C55E"
+                          />
+                          <View>
+                            <Text className="text-2xs text-text-tertiary uppercase tracking-wide mb-0.5">
+                              Suggested
+                            </Text>
+                            <Text className="text-xl font-bold text-green-500">
+                              {suggestion.suggested_weight}
+                              <Text className="text-xs font-normal text-text-tertiary">
+                                {" "}
+                                kg
+                              </Text>
+                            </Text>
+                          </View>
+                        </>
+                      )}
+                      <View className="ml-auto">
+                        <Text className="text-2xs text-text-tertiary uppercase tracking-wide mb-0.5">
+                          Sessions
+                        </Text>
+                        <Text className="text-xl font-bold text-text-primary">
+                          {suggestion.sessions_analyzed}
+                        </Text>
+                      </View>
+                    </View>
+                  )}
+                </View>
+              ) : null}
             </View>
           )}
         </AppCard>
