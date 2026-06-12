@@ -1,9 +1,27 @@
 import { calculateStreaks } from "../streaks";
 import type { ContributionDay } from "../types";
 
+// ---------- Helpers --------------
+
+function daysAgo(n: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() - n);
+  return d.toISOString().split("T")[0];
+}
+
 // ---------- Tests --------------
 
 describe("calculateStreaks", () => {
+  it("maintains current streak when today has no workout yet (grace day)", () => {
+    const contributions: ContributionDay[] = [
+      { date: daysAgo(1), count: 1 },
+      { date: daysAgo(0), count: 0 },
+    ];
+    const result = calculateStreaks(contributions);
+    expect(result.currentStreak).toBe(1);
+    expect(result.longestStreak).toBe(1);
+  });
+
   it("returns zero streaks when there are no contributions", () => {
     // arrange
     const emptyDays: ContributionDay[] = [];
@@ -121,23 +139,6 @@ describe("calculateStreaks", () => {
     expect(result.longestStreak).toBe(1);
   });
 
-  it("handles a single day of zero contributions with multiple breaks", () => {
-    // arrange
-    const contributions: ContributionDay[] = [
-      { date: "2024-06-01", count: 5 },
-      { date: "2024-06-02", count: 0 },
-      { date: "2024-06-03", count: 0 },
-      { date: "2024-06-04", count: 0 },
-    ];
-
-    // act
-    const result = calculateStreaks(contributions);
-
-    // assert
-    expect(result.currentStreak).toBe(0);
-    expect(result.longestStreak).toBe(1);
-  });
-
   it("handles a single day of zero contributions with multiple breaks (with grace)", () => {
     // arrange
     const contributions: ContributionDay[] = [
@@ -154,5 +155,21 @@ describe("calculateStreaks", () => {
     // assert
     expect(result.currentStreak).toBe(1);
     expect(result.longestStreak).toBe(1);
+  });
+
+  it("both streak zero if all days have zero contributions", () => {
+    // arrange
+    const contributions: ContributionDay[] = [
+      { date: "2024-06-01", count: 0 },
+      { date: "2024-06-02", count: 0 },
+      { date: "2024-06-03", count: 0 },
+    ];
+
+    // act
+    const result = calculateStreaks(contributions);
+
+    // assert
+    expect(result.currentStreak).toBe(0);
+    expect(result.longestStreak).toBe(0);
   });
 });

@@ -1,8 +1,14 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
 from sqlalchemy import Integer, String, Float, Date, DateTime, ForeignKey, func, Enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 import enum
 from app.database import Base
 
+if TYPE_CHECKING:  
+    from app.models.user import User
+    from app.models.exercise import Exercise
 
 class GoalType(str, enum.Enum):
     workout_frequency = "workout_frequency"   # X workouts per week

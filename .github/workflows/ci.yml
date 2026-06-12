@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]  # [main, ___] run on main and feature branches
+    branches: [main, "feat/**", "fix/**"]  # [main, ___] run on main and feature branches
   pull_request:
     branches: [main]        # run on PRs targeting main
 

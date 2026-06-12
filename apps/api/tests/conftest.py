@@ -11,8 +11,8 @@ load_dotenv()
 DB_URL = os.getenv("DATABASE_URL", "")
 TEST_DATABASE_URL = DB_URL.replace("/gymdb", "/gymtracker_test")
 
-from app.backend.app.main import app
-from app.backend.app.database import Base, get_db
+from app.main import app
+from app.database import Base, get_db
 
 test_engine = create_async_engine(TEST_DATABASE_URL, isolation_level="AUTOCOMMIT", echo=False,
     poolclass=NullPool)
