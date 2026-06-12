@@ -11,7 +11,12 @@ from app.models.user import User
 from app.utils.dependencies import get_current_user
 from app.services.progression import analyze_progression, WorkoutSession
 
+
+import logging
+logger = logging.getLogger(__name__)
+
 router = APIRouter(prefix="/suggestions", tags=["suggestions"])
+
 
 @router.get("/{exercise_id}")
 async def get_progression_suggestion(
@@ -69,6 +74,8 @@ async def get_progression_suggestion(
     # "/{exercise_id}",
     #     response_model=ProgressionResponse,
     # )/
+
+    logger.warning(f"user_id: {current_user.id}, exercise_id: {exercise_id}, rows: {len(rows)}")
     return asdict(suggestion)
 
 

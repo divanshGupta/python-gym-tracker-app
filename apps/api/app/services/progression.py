@@ -136,5 +136,6 @@ def analyze_progression(
     if all_same_weight and all_hitting_target:
         return make_result("increase_weight", latest.weight, latest.weight + increment)
 
+    
     # ── Default: keep working at current weight ──────────────────────────────
     return make_result("maintain", latest.weight, latest.weight)
