@@ -216,7 +216,6 @@ export const LogWorkoutScreen = ({ navigation }: any) => {
             </Text>
           </View>
         )}
-
         {/* Workout Details Container */}
         <AppCard className="mb-4" style={{ gap: 0 }}>
           <Text className="text-sm font-semibold text-text-primary mb-3.5">

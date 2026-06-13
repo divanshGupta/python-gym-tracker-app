@@ -1,12 +1,12 @@
 import React from "react";
 import {
-  View,
-  ScrollView,
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
-  ActivityIndicator,
-  ViewStyle,
+  ScrollView,
   StyleProp,
+  View,
+  ViewStyle,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { tokens } from "../../theme/tokens";
@@ -56,9 +56,7 @@ export const ScreenContainer = ({
       {children}
     </ScrollView>
   ) : (
-    <View style={[{ flex: 1 }, contentContainerStyle]}>
-      {children}
-    </View>
+    <View style={[{ flex: 1 }, contentContainerStyle]}>{children}</View>
   );
 
   const inner = loading ? (
@@ -73,7 +71,7 @@ export const ScreenContainer = ({
     return (
       <KeyboardAvoidingView
         style={[containerStyle, style]}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         {inner}
       </KeyboardAvoidingView>
