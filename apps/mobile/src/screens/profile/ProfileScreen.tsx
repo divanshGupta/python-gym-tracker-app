@@ -1,43 +1,46 @@
-import { useState } from "react";
-import {
-  View, Text, TouchableOpacity, Switch, Alert, StatusBar,
-} from "react-native";
+import { useWorkouts, useWorkoutStats } from "@gymtracker/hooks";
 import { useAuthStore } from "@gymtracker/stores";
-import { useWorkouts } from "@gymtracker/hooks";
-import { SettingsRow } from "./SettingsRow";
-import { tokens } from "../../theme/tokens";
+import { useState } from "react";
+import { Alert, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import {
-  ScreenContainer, AppHeader, AppCard, StatCard, SectionHeader
+  AppCard,
+  AppHeader,
+  ScreenContainer,
+  StatCard,
 } from "../../components/ui";
+import { tokens } from "../../theme/tokens";
 
 type WeightUnit = "kg" | "lbs";
 
 export const ProfileScreen = ({ navigation }: any) => {
   const { user, logout } = useAuthStore();
   const { data: workouts = [] } = useWorkouts();
+  const { data: stats } = useWorkoutStats();
 
   const [weightUnit, setWeightUnit] = useState<WeightUnit>("kg");
-  const [restTimer, setRestTimer] = useState(true);
-  const [notifications, setNotifications] = useState(false);
+  // const [restTimer, setRestTimer] = useState(true);
+  // const [notifications, setNotifications] = useState(false);
 
   const totalWorkouts = workouts.length;
-  const totalKg = workouts.reduce((acc, w) =>
-    acc + (w.workout_exercises ?? []).reduce((eAcc, e) =>
-      eAcc + (e.sets ?? 0) * (e.reps ?? 0) * (e.weight ?? 0), 0), 0);
+  const totalKg = workouts.reduce(
+    (acc, w) =>
+      acc +
+      (w.workout_exercises ?? []).reduce(
+        (eAcc, e) => eAcc + (e.sets ?? 0) * (e.reps ?? 0) * (e.weight ?? 0),
+        0,
+      ),
+    0,
+  );
 
   const handleLogout = () => {
-    Alert.alert(
-      "Log out",
-      "Are you sure you want to log out?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Log out",
-          style: "destructive",
-          onPress: logout,
-        },
-      ]
-    );
+    Alert.alert("Log out", "Are you sure you want to log out?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Log out",
+        style: "destructive",
+        onPress: logout,
+      },
+    ]);
   };
 
   const handleUnitToggle = () => {
@@ -46,20 +49,16 @@ export const ProfileScreen = ({ navigation }: any) => {
 
   return (
     <View className="flex-1 bg-void">
-      <StatusBar barStyle="light-content" backgroundColor={tokens.colors.void} />
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor={tokens.colors.void}
+      />
 
-      <ScreenContainer
-        scrollable
-        contentContainerStyle={{ paddingBottom: 40 }}
-      >
+      <ScreenContainer scrollable contentContainerStyle={{ paddingBottom: 40 }}>
         {/* Header */}
-        <AppHeader
-          title="Profile"
-          safeArea
-        />
+        <AppHeader title="Profile" safeArea />
 
         <View className="px-4" style={{ gap: 16 }}>
-
           {/* Avatar card */}
           <AppCard className="flex-row items-center">
             <View className="w-12 h-12 rounded-full bg-accent items-center justify-center mr-4">
@@ -71,7 +70,10 @@ export const ProfileScreen = ({ navigation }: any) => {
               <Text className="text-text-primary text-base font-semibold">
                 {user?.username ?? "Athlete"}
               </Text>
-              <Text className="text-text-secondary text-xs mt-0.5" numberOfLines={1}>
+              <Text
+                className="text-text-secondary text-xs mt-0.5"
+                numberOfLines={1}
+              >
                 {user?.email ?? ""}
               </Text>
             </View>
@@ -89,13 +91,21 @@ export const ProfileScreen = ({ navigation }: any) => {
           <View className="flex-row" style={{ gap: 12 }}>
             <StatCard value={totalWorkouts} label="Total workouts" />
             <StatCard
-              value={totalKg >= 1000 ? `${(totalKg / 1000).toFixed(1)}t` : `${Math.round(totalKg)}`}
+              value={
+                totalKg >= 1000
+                  ? `${(totalKg / 1000).toFixed(1)}t`
+                  : `${Math.round(totalKg)}`
+              }
               label={`Total ${weightUnit} lifted`}
+            />
+            <StatCard
+              value={stats?.total_duration_minutes ?? "--"}
+              label={`Total duration`}
             />
           </View>
 
           {/* Preferences Section */}
-          <View>
+          {/* <View>
             <SectionHeader title="Preferences" />
             <AppCard className="p-0 overflow-hidden" style={{ gap: 0 }}>
               <SettingsRow
@@ -124,7 +134,10 @@ export const ProfileScreen = ({ navigation }: any) => {
                   <Switch
                     value={restTimer}
                     onValueChange={setRestTimer}
-                    trackColor={{ false: "#2C2C2E", true: tokens.colors.accent }}
+                    trackColor={{
+                      false: "#2C2C2E",
+                      true: tokens.colors.accent,
+                    }}
                     thumbColor="#FFFFFF"
                     ios_backgroundColor="#2C2C2E"
                   />
@@ -132,10 +145,10 @@ export const ProfileScreen = ({ navigation }: any) => {
                 isLast
               />
             </AppCard>
-          </View>
+          </View> */}
 
           {/* Notifications Section */}
-          <View>
+          {/* <View>
             <AppCard className="p-0 overflow-hidden">
               <SettingsRow
                 iconBg="#2A2010"
@@ -154,10 +167,10 @@ export const ProfileScreen = ({ navigation }: any) => {
                 isLast
               />
             </AppCard>
-          </View>
+          </View> */}
 
           {/* Account Section */}
-          <View>
+          {/* <View>
             <SectionHeader title="Account" />
             <AppCard className="p-0 overflow-hidden">
               <SettingsRow
@@ -178,7 +191,7 @@ export const ProfileScreen = ({ navigation }: any) => {
                 isLast
               />
             </AppCard>
-          </View>
+          </View> */}
 
           {/* Logout button */}
           <TouchableOpacity
@@ -193,7 +206,6 @@ export const ProfileScreen = ({ navigation }: any) => {
           <Text className="text-center text-text-tertiary mt-2 text-2xs uppercase tracking-widest font-semibold">
             GymTracker v1.0.0
           </Text>
-
         </View>
       </ScreenContainer>
     </View>
