@@ -22,7 +22,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: "11.1.1"  # check with: pnpm --version
+          version: "11.6.0"  # check with: pnpm --version
 
       - name: Install dependencies
         run: pnpm install  # what command installs all deps in a pnpm monorepo?

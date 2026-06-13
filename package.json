@@ -2,7 +2,7 @@
   "name": "gymtracker",
   "private": true,
   "version": "1.0.0",
-  "packageManager": "pnpm@11.1.1",
+  "packageManager": "pnpm@11.6.0",
   "scripts": {
     "web": "pnpm --filter web dev",
     "mobile": "pnpm --filter mobile start",

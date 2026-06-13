@@ -30,6 +30,12 @@
       "expo-secure-store",
       "@react-native-community/datetimepicker",
       "expo-asset"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "d29fbc30-0bd9-47b7-9530-6900fae7a90d"
+      }
+    },
+    "owner": "vashappening"
   }
 }
