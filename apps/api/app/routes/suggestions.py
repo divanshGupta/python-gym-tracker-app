@@ -43,7 +43,7 @@ async def get_progression_suggestion(
             WorkoutExercise.sets.is_not(None),
         )
         .order_by(Workout.date.desc())
-        .limit(5)
+        .limit(3)
     )
 
     rows = result.all()
@@ -75,7 +75,7 @@ async def get_progression_suggestion(
     #     response_model=ProgressionResponse,
     # )/
 
-    logger.warning(f"user_id: {current_user.id}, exercise_id: {exercise_id}, rows: {len(rows)}")
+    logger.debug(f"user_id: {current_user.id}, exercise_id: {exercise_id}, rows: {len(rows)}")
     return asdict(suggestion)
 
 

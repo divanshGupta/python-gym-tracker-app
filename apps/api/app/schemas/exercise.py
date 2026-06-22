@@ -8,7 +8,25 @@ class ExerciseCreate(BaseModel):
     equipment:    str | None = None   # defaults to "none" in model
     description:  str | None = None
 
-     # Always save name lowercase for consistent dedup check
+    # Always save name lowercase for consistent dedup check
+    @field_validator("name")
+    @classmethod
+    def lowercase_name(cls, v: str) -> str:
+        return v.strip().lower()
+
+    @field_validator("category")
+    @classmethod
+    def lowercase_category(cls, v: str) -> str:
+        return v.strip().lower()
+    
+class ExerciseUpdate(BaseModel):
+    name:         str 
+    category:     str 
+    muscle_group: str | None = None   
+    equipment:    str | None = None  
+    description:  str | None = None
+
+    # Always save name lowercase for consistent dedup check
     @field_validator("name")
     @classmethod
     def lowercase_name(cls, v: str) -> str:
