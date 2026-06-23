@@ -133,7 +133,7 @@ function EmptyChart({ message }: { message: string }) {
           <path d="m19 9-5 5-4-4-3 3" />
         </svg>
       </div>
-      <p className="text-[13px] text-text-secondary max-w-[220px]">{message}</p>
+      <p className="text-[13px] text-text-secondary max-w-55">{message}</p>
     </div>
   );
 }
@@ -334,7 +334,7 @@ export default function Progress() {
                   e.target.value ? Number(e.target.value) : "",
                 )
               }
-              className="h-9 bg-elevated border border-border-default rounded-lg pl-3 pr-8 text-[13px] text-text-primary appearance-none outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-colors min-w-[200px]"
+              className="h-9 bg-elevated border border-border-default rounded-lg pl-3 pr-8 text-[13px] text-text-primary appearance-none outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-colors min-w-50"
             >
               <option value="">Select an exercise…</option>
               {exercises.map((ex) => (
@@ -365,8 +365,8 @@ export default function Progress() {
           <EmptyChart message="Select an exercise above to see your progress over time." />
         ) : progressLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="h-[180px] bg-elevated rounded-xl animate-pulse" />
-            <div className="h-[180px] bg-elevated rounded-xl animate-pulse" />
+            <div className="h-45 bg-elevated rounded-xl animate-pulse" />
+            <div className="h-45 bg-elevated rounded-xl animate-pulse" />
           </div>
         ) : !exerciseProgress ||
           exerciseProgress.max_weight_over_time.length === 0 ? (

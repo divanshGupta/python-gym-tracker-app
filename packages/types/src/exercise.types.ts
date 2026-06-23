@@ -17,6 +17,7 @@ export interface Exercise {
   muscle_group:  string | null;   // null for cardio/flexibility exercises
   equipment:     string;
   description?:  string | null;
+  is_custom?: boolean;
   created_by?: number;          // user id if custom
 }
 
@@ -26,4 +27,17 @@ export interface CreateExercisePayload {
   muscle_group?: string | null;   // optional
   equipment?:    string | null;   // optional
   description?:  string | null;
+}
+
+export interface UpdateExercisePayload {
+  name?: string | null;
+  category?: string | null;
+  muscle_group?: string | null;
+  equipment?: string | null;
+  description?: string | null;
+}
+
+export interface ExerciseRowProps {
+  exercise: Exercise;
+  onDelete?: (id: number) => void;
 }

@@ -1,41 +1,20 @@
 {
   "expo": {
-    "name": "Gymtracker",
-    "slug": "Gymtracker",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "plugins": [
-      "expo-secure-store",
-      "@react-native-community/datetimepicker",
-      "expo-asset"
-    ],
+    
     "extra": {
       "eas": {
-        "projectId": "d29fbc30-0bd9-47b7-9530-6900fae7a90d"
+        "projectId": "e787f668-6a90-44ef-8d1a-72e61bd6826e"
       }
     },
-    "owner": "vashappening"
+
+    "owner": "divanshgupta",
+    "slug": "gymtrackermobile",
+    "android": {
+      "package": "com.divanshgupta.gymtrackermobile"
+    },
+
+    "engines": {
+      "node": "22.x"
+    }
   }
 }

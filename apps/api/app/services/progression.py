@@ -79,12 +79,7 @@ def analyze_progression(
     exercise_name: str,
     sessions: list[WorkoutSession],
 ) -> ProgressionResult:
-    """
-    Analyze workout sessions for a single exercise and return a progression suggestion.
-
-    Expects sessions to be pre-fetched for the correct user and exercise.
-    Sorting is handled internally.
-    """
+    """Analyze workout sessions for a single exercise and return a progression suggestion."""
 
     def make_result(
         suggestion: Suggestion,

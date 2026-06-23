@@ -83,7 +83,7 @@ export function WorkoutRow({ workout: w, onDelete }: WorkoutRowProps) {
   const name        = workoutDisplayName(w);
 
   return (
-    <div className="flex items-center bg-surface border border-border-default rounded-xl overflow-hidden hover:border-border-strong hover:bg-elevated/30 transition-all duration-150 group">
+    <div className="flex items-center bg-surface border border-border-default rounded-xl overflow-hidden hover:border-border-strong hover:bg-elevated/20 transition-all duration-150 group">
 
       {/* Type accent bar */}
       <div className={`w-0.75 self-stretch shrink-0 ${accentClass}`} />

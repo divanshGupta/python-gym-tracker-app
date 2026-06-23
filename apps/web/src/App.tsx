@@ -16,6 +16,9 @@ import Progress from "./pages/Progress"
 import Goals from "./pages/Goals"
 import Measurements from "./pages/Measurements"
 import EditWorkout from "./pages/EditWorkout"
+import ExerciseDetail from "./pages/ExerciseDetails";
+import Editexercise from "./pages/EditExercise";
+import EditExercise from "./pages/EditExercise";
 
 /**
  * Helper: wraps a page in ProtectedRoute + AppShell.
@@ -61,6 +64,8 @@ export default function App() {
         <Route path="/workouts/:id/edit" element={<Protected><EditWorkout /></Protected>} />
         <Route path="/workouts/:id"   element={<Protected><WorkoutDetail /></Protected>} />
         <Route path="/exercises"      element={<Protected><Exercises /></Protected>} />
+        <Route path="/exercises/:id" element={<Protected><ExerciseDetail /></Protected>} />
+        <Route path="/exercises/:id/edit" element={<Protected><EditExercise /></Protected>} />
         <Route path="/progress"       element={<Protected><Progress /></Protected>} />
         <Route path="/goals"          element={<Protected><Goals /></Protected>} />
         <Route path="/measurements"   element={<Protected><Measurements /></Protected>} />

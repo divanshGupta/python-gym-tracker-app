@@ -162,14 +162,25 @@ export default function EditWorkout() {
           />
         </div>
 
-        {/* ── Exercises section locked — explains why, instead of pretending it's editable ── */}
-        <div className="mb-8 rounded-xl border border-border-default bg-surface p-5">
-          <p className="mb-2 text-xs font-medium uppercase tracking-wide text-text-tertiary">
-            Exercises
-          </p>
-          <p className="text-sm text-text-tertiary">
-            Exercises can't be changed here. Delete this workout and log a new one to change exercises.
-          </p>
+        <p className="text-text-secondary text-xs">
+          * To change exercises, delete this workout and create a new one.
+        </p>
+
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={() => navigate(`/workouts/${id}`)}
+            className="flex-1 bg-elevated hover:bg-surface py-2 rounded font-semibold text-sm"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={isPending}
+            className="flex-1 bg-accent hover:bg-accent-light py-2 rounded font-semibold text-sm disabled:opacity-50"
+          >
+            {isPending ? "Saving..." : "Save Changes"}
+          </button>
         </div>
 
         <button
