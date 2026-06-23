@@ -2,12 +2,13 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Plus, X, Search, Dumbbell, Wind, Zap, Activity } from "lucide-react";
+import { Plus, X, Search, Dumbbell, Wind, Zap, Activity, ChevronRight, Trash2 } from "lucide-react";
 
 import { useExercises, useCreateExercise } from "@gymtracker/hooks";
-import type { ExerciseCategory } from "@gymtracker/types";
+import type { ExerciseCategory, ExerciseRowProps } from "@gymtracker/types";
 
 import { Button, Input, Select, EmptyState } from "../components/ui";
+import { Link } from "react-router-dom";
 
 // ── Constants ──────────────────────────────────────────────────────────────
 
@@ -181,20 +182,22 @@ function AddExerciseForm({ onClose }: AddExerciseFormProps) {
 
 // ── Exercise row ───────────────────────────────────────────────────────────
 
-function ExerciseRow({ exercise }: { exercise: any }) {
+function ExerciseRow({ exercise, onDelete }: ExerciseRowProps) {
   const cat        = exercise.category?.toLowerCase() ?? "strength";
   const accentBar  = ACCENT_BAR[cat] ?? "bg-elevated";
   const iconBox    = ICON_BOX[cat]   ?? "bg-elevated text-text-tertiary";
   const badgeClass = BADGE[cat]      ?? "bg-elevated text-text-secondary";
 
   return (
-    <div className="flex items-center bg-surface border border-border-default rounded-xl overflow-hidden hover:border-border-strong hover:bg-elevated/20 transition-all duration-150">
+    <Link 
+    to={`/exercises/${exercise.id}`}
+    className="flex items-center bg-surface border border-border-default rounded-xl overflow-hidden hover:border-border-strong hover:bg-elevated/20 transition-all duration-150">
       {/* Accent bar */}
-      <div className={`w-[3px] self-stretch flex-shrink-0 ${accentBar}`} />
+      <div className={`w-0.75 self-stretch shrink-0 ${accentBar}`} />
 
       {/* Icon */}
-      <div className="flex items-center justify-center w-[48px] flex-shrink-0">
-        <div className={`w-[30px] h-[30px] rounded-lg flex items-center justify-center ${iconBox}`}>
+      <div className="flex items-center justify-center w-12 shrink-0">
+        <div className={`w-7.5 h-7.5 rounded-lg flex items-center justify-center ${iconBox}`}>
           <ExerciseIcon category={cat} />
         </div>
       </div>
@@ -218,13 +221,32 @@ function ExerciseRow({ exercise }: { exercise: any }) {
 
       {/* Equipment (right) */}
       {exercise.equipment && exercise.equipment !== "none" && (
-        <div className="px-4 flex-shrink-0">
+        <div className="px-4 shrink-0">
           <span className="text-[11px] text-text-tertiary capitalize">
             {exercise.equipment}
           </span>
         </div>
       )}
-    </div>
+
+      {/* Actions */}
+      <div className="flex items-center gap-1 px-3 shrink-0">
+        <div
+          className="w-8 h-8 rounded-lg flex items-center justify-center bg-accent/10 text-accent hover:bg-accent/20 transition-colors"
+          aria-label="View workout"
+        >
+          <ChevronRight size={15} />
+        </div>
+        {onDelete && (
+            <button
+            onClick={(e) => { e.stopPropagation(); onDelete(exercise.id); }}
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-text-tertiary hover:bg-danger/10 hover:text-danger transition-colors"
+            aria-label="Delete workout"
+            >
+                <Trash2 size={14} />
+            </button>
+        )}
+      </div>
+    </Link>
   );
 }
 
@@ -269,7 +291,7 @@ export default function Exercises() {
       {/* ── Filter bar ── */}
       <div className="flex items-center gap-3 flex-wrap">
         {/* Search input */}
-        <div className="relative flex items-center flex-1 min-w-[180px]">
+        <div className="relative flex items-center flex-1 min-w-45">
           <Search size={14} className="absolute left-3 text-text-tertiary pointer-events-none" />
           <input
             type="text"
@@ -315,7 +337,7 @@ export default function Exercises() {
       {isLoading ? (
         <div className="flex flex-col gap-2">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-[58px] bg-surface border border-border-default rounded-xl animate-pulse" />
+            <div key={i} className="h-14.5 bg-surface border border-border-default rounded-xl animate-pulse" />
           ))}
         </div>
       ) : filtered.length === 0 ? (

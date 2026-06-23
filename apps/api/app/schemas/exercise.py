@@ -20,8 +20,8 @@ class ExerciseCreate(BaseModel):
         return v.strip().lower()
     
 class ExerciseUpdate(BaseModel):
-    name:         str 
-    category:     str 
+    name:         str | None = None 
+    category:     str | None = None 
     muscle_group: str | None = None   
     equipment:    str | None = None  
     description:  str | None = None

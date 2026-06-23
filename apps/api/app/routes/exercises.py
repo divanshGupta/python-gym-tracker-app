@@ -14,6 +14,7 @@ router = APIRouter(prefix="/exercises", tags=["Exercises"])
 async def get_exercises(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
+    # pagination
 ):
     result = await db.execute(
         select(Exercise).where(
@@ -22,6 +23,24 @@ async def get_exercises(
         )
     )
     return result.scalars().all()
+
+@router.get("/{exercise_id}", response_model=ExerciseResponse)
+async def get_exercise(
+    exercise_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    result = await db.execute(
+        select(Exercise).where(
+            (Exercise.id == exercise_id),
+            ((Exercise.is_custom == False) |
+            (Exercise.created_by == current_user.id))
+        )
+    )
+    exercise = result.scalar_one_or_none()
+    if not exercise:
+        raise HTTPException(status_code=404, detail="exercise not found")
+    return exercise
 
 @router.post("/", response_model=ExerciseResponse, status_code=201)
 async def create_exercise(
@@ -53,6 +72,7 @@ async def create_exercise(
     await db.refresh(exercise)
     return exercise
 
+# --------- helper function --------------
 async def get_owned_exercise(exercise_id: int, db: AsyncSession, current_user: User) -> Exercise:
     exercise = await db.get(Exercise, exercise_id)
     if exercise is None:

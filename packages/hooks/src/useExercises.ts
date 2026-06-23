@@ -4,6 +4,7 @@ import { queryKeys, STALE_TIMES } from "@gymtracker/constants";
 import type {
   CreateExercisePayload,
   ExerciseCategory,
+  UpdateExercisePayload,
 } from "@gymtracker/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -41,3 +42,31 @@ export const useCreateExercise = () => {
     },
   });
 };
+
+// Update exercise
+export const useUpdateExercise = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: {id: number; data: UpdateExercisePayload}) => 
+      exercisesApi.update(id, data).then((r) => r.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.exercises.all(),
+      });
+    },
+  })
+}
+// Delete exercise
+export const useDeleteExercise = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => exercisesApi.delete(id).then((r) => r.data),
+
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.exercises.all(),
+      }),
+  })
+}
