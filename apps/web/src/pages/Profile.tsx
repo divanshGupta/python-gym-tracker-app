@@ -63,7 +63,7 @@ export default function Profile() {
 
   return (
 
-      <div className="flex flex-col gap-6 max-w-2xl">
+      <div className="flex flex-col gap-6 max-w-2xl mx-auto">
 
         {/* ── Hero card ── */}
         <div className="bg-surface border border-border-default rounded-xl p-5 flex flex-col gap-5">

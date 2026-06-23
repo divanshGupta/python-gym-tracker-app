@@ -190,11 +190,11 @@ function ExerciseRow({ exercise }: { exercise: any }) {
   return (
     <div className="flex items-center bg-surface border border-border-default rounded-xl overflow-hidden hover:border-border-strong hover:bg-elevated/20 transition-all duration-150">
       {/* Accent bar */}
-      <div className={`w-[3px] self-stretch flex-shrink-0 ${accentBar}`} />
+      <div className={`w-0.75 self-stretch shrink-0 ${accentBar}`} />
 
       {/* Icon */}
-      <div className="flex items-center justify-center w-[48px] flex-shrink-0">
-        <div className={`w-[30px] h-[30px] rounded-lg flex items-center justify-center ${iconBox}`}>
+      <div className="flex items-center justify-center w-12 shrink-0">
+        <div className={`w-7.5 h-7.5 rounded-lg flex items-center justify-center ${iconBox}`}>
           <ExerciseIcon category={cat} />
         </div>
       </div>
@@ -218,7 +218,7 @@ function ExerciseRow({ exercise }: { exercise: any }) {
 
       {/* Equipment (right) */}
       {exercise.equipment && exercise.equipment !== "none" && (
-        <div className="px-4 flex-shrink-0">
+        <div className="px-4 shrink-0">
           <span className="text-[11px] text-text-tertiary capitalize">
             {exercise.equipment}
           </span>
@@ -269,7 +269,7 @@ export default function Exercises() {
       {/* ── Filter bar ── */}
       <div className="flex items-center gap-3 flex-wrap">
         {/* Search input */}
-        <div className="relative flex items-center flex-1 min-w-[180px]">
+        <div className="relative flex items-center flex-1 min-w-45">
           <Search size={14} className="absolute left-3 text-text-tertiary pointer-events-none" />
           <input
             type="text"
@@ -315,7 +315,7 @@ export default function Exercises() {
       {isLoading ? (
         <div className="flex flex-col gap-2">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-[58px] bg-surface border border-border-default rounded-xl animate-pulse" />
+            <div key={i} className="h-14.5 bg-surface border border-border-default rounded-xl animate-pulse" />
           ))}
         </div>
       ) : filtered.length === 0 ? (
