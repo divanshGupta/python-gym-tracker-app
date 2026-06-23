@@ -22,7 +22,7 @@ export default function WorkoutDetail() {
   };
 
   return (
-    <div className="min-h-screen max-w-3xl mx-auto bg-void px-6 py-8 text-text-primary">
+    <div className="min-h-screen max-w-3xl mx-auto bg-void text-text-primary">
 
       {/* ── Error banner ── */}
       {error && (
@@ -78,11 +78,11 @@ export default function WorkoutDetail() {
       </div>
 
       {/* ── Stats ── */}
-      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="mb-8 grid grid-cols-3 gap-4 sm:grid-cols-3">
         {[
           { label: "Duration",  value: workout.duration  ? `${workout.duration} min`   : "—" },
           { label: "Calories",  value: workout.calories  ? `${workout.calories} kcal`  : "—" },
-          { label: "Exercises", value: workout.workout_exercises.length                       },
+          { label: "Exercises", value: workout.workout_exercises.length},
         ].map((s) => (
           <div
             key={s.label}
