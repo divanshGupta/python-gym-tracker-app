@@ -32,6 +32,7 @@ export const useCreateWorkout = () => {
   });
 };
 
+// Update Workout by ID
 export const useUpdateWorkout = () => {
   const qc = useQueryClient();
   return useMutation({
@@ -42,6 +43,7 @@ export const useUpdateWorkout = () => {
   });
 };
 
+// Delete Workout by ID
 export const useDeleteWorkout = () => {
   const qc = useQueryClient();
 

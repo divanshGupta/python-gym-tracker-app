@@ -173,7 +173,7 @@ export default function EditWorkout() {
           <button
             type="submit"
             disabled={isPending}
-            className="flex-1 bg-green-500 hover:bg-green-600 py-2 rounded font-semibold text-sm disabled:opacity-50"
+            className="flex-1 bg-accent hover:bg-accent-light py-2 rounded font-semibold text-sm disabled:opacity-50"
           >
             {isPending ? "Saving..." : "Save Changes"}
           </button>

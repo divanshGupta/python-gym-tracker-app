@@ -1,6 +1,6 @@
 // packages/api-client/src/exercises.api.ts
 import { apiClient } from "./client";
-import type { Exercise, ExerciseCategory, CreateExercisePayload } from "@gymtracker/types";
+import type { Exercise, ExerciseCategory, CreateExercisePayload, UpdateExercisePayload } from "@gymtracker/types";
 
 export const exercisesApi = {
 
@@ -14,7 +14,15 @@ export const exercisesApi = {
   getById: (id: number) =>
     apiClient.get<Exercise>(`/exercises/${id}`),
 
-  // POST /exercise
+  // POST /exercises
   create: (data: CreateExercisePayload) =>
     apiClient.post<Exercise>("/exercises", data),
+
+  // PATCh /exercises/:id
+  update: (id: number, data: UpdateExercisePayload) => 
+    apiClient.patch<Exercise>(`/exercises/${id}`, data),
+
+  // DELETE /exercises/:id
+  delete: (id: number) => 
+    apiClient.delete<void>(`/exercises/${id}`),
 };
