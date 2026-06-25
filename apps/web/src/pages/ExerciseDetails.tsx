@@ -24,7 +24,7 @@ export default function ExerciseDetail() {
   };
 
   return (
-    <div className="min-h-screen max-w-3xl mx-auto bg-void px-6 py-8 text-text-primary">
+    <div className="max-w-3xl mx-auto bg-void text-text-primary">
 
       {/* ── Error banner ── */}
       {error && (
@@ -34,7 +34,7 @@ export default function ExerciseDetail() {
       )}
 
       {/* ── Header ── */}
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div className="mb-4 sm:mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight capitalize text-text-primary">
             {exercise.name}
@@ -84,7 +84,7 @@ export default function ExerciseDetail() {
       </div>
 
       {/* ── Stats ── */}
-      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="mb-4 sm:mb-6 grid grid-cols-3 gap-2 sm:gap-4 sm:grid-cols-3">
         {[
           { label: "Category",  value: exercise.category  ? `${exercise.category}`   : "—" },
           { label: "Muscle Group",  value: exercise.muscle_group  ? `${exercise.muscle_group}`  : "—" },
@@ -92,19 +92,19 @@ export default function ExerciseDetail() {
         ].map((s) => (
           <div
             key={s.label}
-            className="rounded-xl border border-border-default bg-surface p-5"
+            className="rounded-xl border border-border-default bg-surface p-3 sm:p-5 text-center"
           >
             <p className="mb-1 text-xs font-medium uppercase tracking-wide text-text-tertiary">
               {s.label}
             </p>
-            <p className="text-lg font-semibold text-text-primary">{s.value}</p>
+            <p className="text-md sm:text-lg font-semibold text-text-primary">{s.value}</p>
           </div>
         ))}
       </div>
 
       {/* ── Notes ── */}
       {exercise.description && (
-        <div className="mb-8 rounded-xl border border-border-default bg-surface p-5">
+        <div className="mb-4 sm:mb-6 rounded-xl border border-border-default bg-surface p-3 sm:p-5">
           <p className="mb-2 text-xs font-medium uppercase tracking-wide text-text-tertiary">
             Notes
           </p>
@@ -114,7 +114,7 @@ export default function ExerciseDetail() {
 
       <button
         onClick={() => navigate("/exercises")}
-        className="mt-8 text-sm text-text-secondary transition-colors hover:text-text-primary"
+        className="mt-4 sm:mt-6 text-sm text-text-secondary transition-colors hover:text-text-primary"
       >
         ← Back to exercises
       </button>

@@ -58,7 +58,7 @@ export default function EditExercise() {
     return <div className="min-h-screen bg-void px-6 py-8 text-text-secondary">Exercise not found.</div>;
 
   return (
-    <div className="min-h-screen max-w-3xl mx-auto bg-void px-6 py-8 text-text-primary">
+    <div className="max-w-3xl mx-auto bg-void text-text-primary">
       <form onSubmit={handleSubmit(onSubmit)}>
 
         {/* ── Error banner ── */}
@@ -69,7 +69,7 @@ export default function EditExercise() {
         )}
 
         {/* ── Header ── */}
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="mb-4 sm:mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex-1">
             {/* Same visual size/weight as the <h1> on the Detail page, but it's an input now */}
             <input
@@ -99,9 +99,9 @@ export default function EditExercise() {
         </div>
 
         {/* ── Stats ── */}
-        <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="mb-4 sm:mb-6 grid grid-cols-3 gap-2 sm:gap-4 sm:grid-cols-3">
           {/* Category */}
-          <div className="rounded-xl border border-border-default bg-surface p-5">
+          <div className="rounded-xl border border-border-default bg-surface p-3 sm:p-5 text-center">
             <p className="mb-1 text-xs font-medium uppercase tracking-wide text-text-tertiary">
               Category
             </p>
@@ -111,13 +111,13 @@ export default function EditExercise() {
               className="w-full bg-transparent text-lg font-semibold text-gray-400
              border-b border-dashed border-border-default
              focus:outline-none focus:border-solid focus:border-primary
-             transition-colors duration-200"
+             transition-colors duration-200 text-center"
             />
             {errors.category && <p className="text-danger text-xs mt-1">{errors.category.message}</p>}
           </div>
 
           {/* Muscle Group */}
-          <div className="rounded-xl border border-border-default bg-surface p-5">
+          <div className="rounded-xl border border-border-default bg-surface p-3 sm:p-5 text-center">
             <p className="mb-1 text-xs font-medium uppercase tracking-wide text-text-tertiary">
               Muscle Group
             </p>
@@ -128,12 +128,12 @@ export default function EditExercise() {
               className="w-full bg-transparent text-lg font-semibold text-gray-400
              border-b border-dashed border-border-default
              focus:outline-none focus:border-solid focus:border-primary
-             transition-colors duration-200"
+             transition-colors duration-200 text-center"
             />
           </div>
 
           {/* Equipment */}
-          <div className="rounded-xl border border-border-default bg-surface p-5">
+          <div className="rounded-xl border border-border-default bg-surface p-3 sm:p-5 text-center">
             <p className="mb-1 text-xs font-medium uppercase tracking-wide text-text-tertiary">
               Equipment
             </p>
@@ -144,13 +144,13 @@ export default function EditExercise() {
               className="w-full bg-transparent text-lg font-semibold text-gray-400
              border-b border-dashed border-border-default
              focus:outline-none focus:border-solid focus:border-primary
-             transition-colors duration-200"
+             transition-colors duration-200 text-center"
             />
           </div>
         </div>
 
         {/* ── Notes ── */}
-        <div className="mb-8 rounded-xl border border-border-default bg-surface p-5">
+        <div className="mb-4 sm:mb-6 rounded-xl border border-border-default bg-surface p-3 sm:p-5">
           <p className="mb-2 text-xs font-medium uppercase tracking-wide text-text-tertiary">
             Notes
           </p>
@@ -167,7 +167,7 @@ export default function EditExercise() {
         <button
           type="button"
           onClick={() => navigate(`/exercises/${id}`)}
-          className="mt-8 text-sm text-text-secondary transition-colors hover:text-text-primary"
+          className="mt-4 sm:mt-6 text-sm text-text-secondary transition-colors hover:text-text-primary"
         >
           ← Back to exercise
         </button>

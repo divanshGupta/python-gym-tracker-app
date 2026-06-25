@@ -26,17 +26,17 @@ function formatDate(): string {
 }
 
 // ── Sub-components ─────────────────────────────────────────────────────────
-
+// Consider whether StreakPill should have its own tiny loading state instead, so the rest of the dashboard can render as soon as it's ready. 
 function StreakPill({ count }: { count: number }) {
   if (!count) return null;
   return (
-    <span className="inline-flex items-center gap-1.5 mt-2.5 px-3 py-1 rounded-full bg-warning/8 border border-warning/18 text-warning text-[13px] font-semibold">
+    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-warning/8 border border-warning/18 text-warning text-[13px] font-semibold">
       {/* Flame — inline SVG to avoid lucide size inconsistency */}
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <path d="M12 2c0 6-6 8-6 14a6 6 0 0 0 12 0c0-3-1.5-5-3-7-1 2-2 3-3 7-1-2-1-4 0-7z"/>
       </svg>
       {count}
-      <span className="font-normal text-text-secondary text-[12px]">day streak</span>
+      <span className="hidden sm:block font-normal text-text-secondary text-[12px]">day streak</span>
     </span>
   );
 }
@@ -83,7 +83,7 @@ export default function Dashboard() {
   if (isLoading) return <PageSkeleton stats={0} rows={3} />;
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4 sm:gap-6">
 
       {/* ── Header ── */}
       <div className="flex items-start justify-between gap-4">
@@ -91,19 +91,20 @@ export default function Dashboard() {
           <p className="text-[11px] font-medium text-text-tertiary uppercase tracking-widest mb-1.5">
             {formatDate()}
           </p>
-          <h1 className="text-[24px] md:text-[30px] font-bold text-text-primary tracking-tight leading-tight">
-            {greeting()},{" "}
-            <span className="text-accent">{firstName}</span>
-          </h1>
-          <StreakPill count={currentStreak ?? 0} />
+
+          {/* New inner row: just the heading + pill, centered against each other */}
+          <div className="flex items-center gap-6">
+            <h1 className="text-[24px] md:text-[30px] font-bold text-text-primary tracking-tight leading-tight">
+              {greeting()},{" "}
+              <span className="text-accent">{firstName}</span>
+            </h1>
+            <h1><StreakPill count={currentStreak ?? 0} /></h1>
+          </div>
         </div>
 
-        <div className="shrink-0 pt-1">
-          <Button
-            icon={<Plus size={14} />}
-            onClick={() => navigate("/workouts/create")}
-          >
-            Log workout
+        <div className="hidden sm:inline-flex shrink-0 pt-1">
+          <Button icon={<Plus size={14} />} onClick={() => navigate("/workouts/create")}>
+            Log Workout
           </Button>
         </div>
       </div>
@@ -133,7 +134,7 @@ export default function Dashboard() {
               </svg>
             </div>
             <p className="text-[14px] font-semibold text-text-primary mb-1">No workouts yet</p>
-            <p className="text-[12px] text-text-secondary mb-4 max-w-55">
+            <p className="text-[12px] text-text-secondary mb-4 max-w-56">
               Log your first session to start tracking progress.
             </p>
             <Button size="sm" onClick={() => navigate("/workouts/create")}>
@@ -144,7 +145,7 @@ export default function Dashboard() {
           <div className="px-2 pb-2">
             {recentWorkouts.map((w, i) => (
               <div key={w.id}>
-                <WorkoutRow key={w.id} workout={w} />
+                <WorkoutRow workout={w} />
                 {i < recentWorkouts.length - 1 && (
                   <div className="h-px bg-border-default mx-3" />
                 )}
@@ -158,6 +159,18 @@ export default function Dashboard() {
       <div className="bg-surface border border-border-default rounded-xl px-5 py-4">
         <FriendsPlaceholder />
       </div>
+
+      {/* ── Mobile floating action button ── */}
+      <button
+      
+        onClick={() => navigate("/workouts/create")}
+        aria-label="Log workout"
+        className="sm:hidden fixed bottom-6 right-5 z-50 flex h-14 w-14 items-center justify-center
+                  rounded-full bg-accent text-white shadow-lg shadow-accent/30
+                  transition-transform duration-200 active:scale-95"
+      >
+        <Plus size={24} />
+      </button>
 
     </div>
   );

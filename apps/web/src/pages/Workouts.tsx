@@ -111,14 +111,14 @@ export default function Workouts() {
   if (isLoading) return <PageSkeleton stats={0} rows={6} />;
 
   return (
-    <div className="flex flex-col gap-6 ">
+    <div className="flex flex-col gap-4 sm:gap-6">
 
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-[24px] font-bold text-text-primary tracking-tight">Workouts</h1>
           {workouts.length > 0 && (
-            <p className="text-[13px] text-text-secondary mt-1">
+            <p className="text-[13px] text-text-secondary mt-1 sm:mt-2">
               {workouts.length} session{workouts.length !== 1 ? "s" : ""} logged
             </p>
           )}

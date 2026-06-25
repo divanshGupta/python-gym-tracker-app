@@ -62,11 +62,11 @@ export default function Profile() {
   const initials = user.username ? user.username.charAt(0).toUpperCase() : "?";
 
   return (
-    <div className="flex flex-col gap-6 max-w-2xl">
+    <div className="flex flex-col gap-4 sm:gap-6 max-w-3xl mx-auto">
       {/* ── Hero card ── */}
       <div className="bg-surface border border-border-default rounded-xl p-5 flex flex-col gap-5">
         {/* Top row — avatar + info + actions */}
-        <div className="flex items-start gap-4">
+        <div className="flex items-center gap-4">
           {/* Avatar */}
           <div className="w-14 h-14 rounded-full bg-accent/15 border-2 border-accent/25 flex items-center justify-center shrink-0">
             <span className="text-[22px] font-bold text-accent">
@@ -100,7 +100,7 @@ export default function Profile() {
               icon={<LogOut size={13} />}
               onClick={handleLogout}
             >
-              Sign out
+              <span className="hidden sm:block">Sign out</span>
             </Button>
           </div>
         </div>

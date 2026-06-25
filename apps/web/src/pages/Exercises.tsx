@@ -268,13 +268,13 @@ export default function Exercises() {
   });
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-4 sm:gap-6">
 
       {/* ── Header ── */}
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-[24px] font-bold text-text-primary tracking-tight">Exercises</h1>
-          <p className="text-[13px] text-text-secondary mt-1">Your exercise library</p>
+          <p className="text-[13px] text-text-secondary mt-1 sm:mt-2">Your exercise library</p>
         </div>
         <Button
           icon={showForm ? <X size={14} /> : <Plus size={14} />}
