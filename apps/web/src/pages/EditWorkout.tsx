@@ -65,7 +65,7 @@ export default function EditWorkout() {
     return <div className="min-h-screen bg-void px-6 py-8 text-text-secondary">Workout not found.</div>;
 
   return (
-    <div className="min-h-screen max-w-3xl mx-auto bg-void text-text-primary">
+    <div className="max-w-3xl mx-auto bg-void text-text-primary">
       <form onSubmit={handleSubmit(onSubmit)}>
 
         {/* ── Error banner ── */}
@@ -76,7 +76,7 @@ export default function EditWorkout() {
         )}
 
         {/* ── Header — matches WorkoutDetail's title + date layout ── */}
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="mb-4 sm:mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex flex-col w-full">
             <select
               {...register("type")}
@@ -116,8 +116,8 @@ export default function EditWorkout() {
         </div>
 
         {/* ── Stats — same 3-card grid as WorkoutDetail ── */}
-        <div className="mb-8 grid grid-cols-3 gap-4 sm:grid-cols-3">
-          <div className="rounded-xl border border-border-default bg-surface p-5 text-center">
+        <div className="mb-4 sm:mb-6 grid grid-cols-3 gap-2 sm:gap-4 sm:grid-cols-3">
+          <div className="rounded-xl border border-border-default bg-surface p-3 sm:p-5 text-center">
             <p className="mb-1 text-xs font-medium uppercase tracking-wide text-text-tertiary">
               Duration (min)
             </p>
@@ -128,7 +128,7 @@ export default function EditWorkout() {
             />
           </div>
 
-          <div className="rounded-xl border border-border-default bg-surface p-5 text-center">
+          <div className="rounded-xl border border-border-default bg-surface p-3 sm:p-5 text-center">
             <p className="mb-1 text-xs font-medium uppercase tracking-wide text-text-tertiary">
               Calories
             </p>
@@ -140,7 +140,7 @@ export default function EditWorkout() {
           </div>
 
           {/* Exercise count isn't editable here, so it stays read-only — matches the note below */}
-          <div className="rounded-xl border border-border-default bg-surface p-5 text-center">
+          <div className="rounded-xl border border-border-default bg-surface p-3 sm:p-5 text-center">
             <p className="mb-1 text-xs font-medium uppercase tracking-wide text-text-tertiary">
               Exercises
             </p>
@@ -151,7 +151,7 @@ export default function EditWorkout() {
         </div>
 
         {/* ── Notes — same card as WorkoutDetail, textarea instead of <p> ── */}
-        <div className="mb-8 rounded-xl border border-border-default bg-surface p-5">
+        <div className="mb-4 sm:mb-6 rounded-xl border border-border-default bg-surface p-5">
           <p className="mb-2 text-xs font-medium uppercase tracking-wide text-text-tertiary">
             Notes
           </p>
@@ -166,7 +166,7 @@ export default function EditWorkout() {
           * To change exercises, delete this workout and create a new one.
         </p>
 
-        <div className="flex gap-3">
+        {/* <div className="flex gap-3">
           <button
             type="button"
             onClick={() => navigate(`/workouts/${id}`)}
@@ -181,12 +181,12 @@ export default function EditWorkout() {
           >
             {isPending ? "Saving..." : "Save Changes"}
           </button>
-        </div>
+        </div> */}
 
         <button
           type="button"
           onClick={() => navigate(`/workouts/${id}`)}
-          className="mt-8 text-sm text-text-secondary transition-colors hover:text-text-primary"
+          className="mt-4 sm:mt-6 text-sm text-text-secondary transition-colors hover:text-text-primary"
         >
           ← Back to workout
         </button>

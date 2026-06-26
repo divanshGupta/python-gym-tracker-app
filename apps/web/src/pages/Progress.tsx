@@ -170,13 +170,13 @@ export default function Progress() {
   if (statsLoading && streakLoading) return <PageSkeleton stats={4} rows={0} />;
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-4 sm:gap-6">
       {/* ── Header ── */}
       <div>
         <h1 className="text-[24px] font-bold text-text-primary tracking-tight">
           Progress
         </h1>
-        <p className="text-[13px] text-text-secondary mt-1">
+        <p className="text-[13px] text-text-secondary mt-1 sm:mt-2">
           Your training stats at a glance
         </p>
       </div>

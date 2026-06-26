@@ -194,13 +194,13 @@ export default function Measurements() {
   if (isLoading) return <PageSkeleton stats={3} rows={4} />;
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4 sm:gap-6">
 
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-[24px] font-bold text-text-primary tracking-tight">Measurements</h1>
-          <p className="text-[13px] text-text-secondary mt-1">Body weight history</p>
+          <p className="text-[13px] text-text-secondary mt-1 sm:mt-2">Body weight history</p>
         </div>
         <Button
           icon={showForm ? <X size={14} /> : <Plus size={14} />}

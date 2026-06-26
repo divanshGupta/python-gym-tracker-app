@@ -137,3 +137,4 @@ async def delete_workout(
         raise HTTPException(status_code=404, detail="Workout not found")
 
     await db.delete(workout)
+    await db.commit()

@@ -157,15 +157,15 @@ export default function CreateWorkout() {
 
   return (
     <div className="min-h-screen bg-void text-text-primary">
-      <div className="max-w-3xl mx-auto px-6 py-8">
+      <div className="max-w-3xl mx-auto">
 
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-text-primary">
+        <div className="mb-4 sm:mb-8">
+          <h1 className="text-[24px] md:text-3xl font-semibold tracking-tight text-text-primary">
             Create Workout
           </h1>
 
-          <p className="mt-2 text-sm text-text-secondary">
+          <p className="mt-1 sm:mt-2 text-[13px] text-text-secondary">
             Track your training session and exercises.
           </p>
         </div>
@@ -180,11 +180,11 @@ export default function CreateWorkout() {
         {/* Form */}
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="space-y-6"
+          className="space-y-4 sm:space-y-6"
         >
 
           {/* Workout Details */}
-          <div className="bg-surface border border-border-default rounded-xl p-6 space-y-6">
+          <div className="bg-surface border border-border-default rounded-xl p-4 sm:p-6 space-y-4 sm:space-y-6">
 
             <h2 className="text-lg font-semibold tracking-tight text-text-primary">
               Workout Details
@@ -242,7 +242,7 @@ export default function CreateWorkout() {
             </div>
 
             {/* Duration + Calories */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4">
 
               {/* Duration */}
               <div>
@@ -302,7 +302,7 @@ export default function CreateWorkout() {
               </label>
 
               <textarea
-                rows={4}
+                rows={2}
                 {...register("notes")}
                 placeholder="How was today's workout?"
                 className="w-full rounded-lg bg-elevated border border-border-default px-4 py-2.5 text-sm text-text-primary placeholder:text-text-tertiary outline-none transition-all duration-200 focus:border-accent focus:ring-2 focus:ring-accent/20"
@@ -317,9 +317,9 @@ export default function CreateWorkout() {
           </div>
 
           {/* Exercises */}
-          <div className="bg-surface border border-border-default rounded-xl p-5">
+          <div className="bg-surface border border-border-default rounded-xl p-4 sm:p-6">
 
-            <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-lg font-semibold">
                   Exercises
@@ -340,9 +340,9 @@ export default function CreateWorkout() {
                     weight: undefined,
                   })
                 }
-                className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-text-primary transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
+                className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-text-primary transition-all duration-200 hover:bg-accent-light active:scale-[0.98]"
               >
-                Add Exercise
+                Add <span className="hidden sm:inline">Exercise</span>
               </button>
             </div>
 
@@ -357,7 +357,7 @@ export default function CreateWorkout() {
               {fields.map((field, index) => (
                 <div
                   key={field.id}
-                  className="rounded-xl border border-border-default bg-elevated/40 p-5"
+                  className="rounded-xl border border-border-default bg-elevated/40 p-4 sm:p-6"
                 >
 
                   {/* Header */}
@@ -424,7 +424,7 @@ export default function CreateWorkout() {
                   </div>
 
                   {/* Sets/Reps/Weight */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-3 gap-2 sm:gap-3">
 
                     {/* Sets */}
                     <div>
@@ -495,7 +495,7 @@ export default function CreateWorkout() {
           </div>
 
           {/* Actions */}
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-row gap-3 mb-4">
 
             <button
               type="button"
@@ -507,7 +507,7 @@ export default function CreateWorkout() {
             <button
               type="submit"
               disabled={isPending}
-              className="flex-1 rounded-xl bg-accent py-3 font-semibold text-text-primary transition-all duration-200 hover:opacity-90 active:scale-[0.99] disabled:opacity-50"
+              className="flex-1 rounded-xl bg-accent py-3 font-semibold text-text-primary transition-all duration-200 hover:bg-accent-light active:scale-[0.99] disabled:opacity-50"
             >
               {isPending
                 ? "Saving Workout..."

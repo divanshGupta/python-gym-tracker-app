@@ -22,7 +22,7 @@ export default function WorkoutDetail() {
   };
 
   return (
-    <div className="min-h-screen max-w-3xl mx-auto bg-void text-text-primary">
+    <div className="max-w-3xl mx-auto bg-void text-text-primary">
 
       {/* ── Error banner ── */}
       {error && (
@@ -32,7 +32,7 @@ export default function WorkoutDetail() {
       )}
 
       {/* ── Header ── */}
-      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div className="mb-4 sm:mb-6 flex flex-col gap-2 sm:gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight capitalize text-text-primary">
             {workout.type} Workout
@@ -40,7 +40,7 @@ export default function WorkoutDetail() {
           <p className="mt-1 text-sm text-text-secondary">{workout.date}</p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <Link
             to={`/workouts/${workout.id}/edit`}
             className="rounded-lg border border-border-default bg-surface px-4 py-2 text-sm font-medium text-text-primary transition-all duration-200 hover:bg-elevated"
@@ -78,7 +78,7 @@ export default function WorkoutDetail() {
       </div>
 
       {/* ── Stats ── */}
-      <div className="mb-8 grid grid-cols-3 gap-4 sm:grid-cols-3">
+      <div className="mb-4 sm:mb-6 grid grid-cols-3 gap-2 sm:gap-4 sm:grid-cols-3">
         {[
           { label: "Duration",  value: workout.duration  ? `${workout.duration} min`   : "—" },
           { label: "Calories",  value: workout.calories  ? `${workout.calories} kcal`  : "—" },
@@ -86,7 +86,7 @@ export default function WorkoutDetail() {
         ].map((s) => (
           <div
             key={s.label}
-            className="rounded-xl border border-border-default bg-surface p-5 text-center"
+            className="rounded-xl border border-border-default bg-surface p-3 sm:p-5 text-center"
           >
             <p className="mb-1 text-xs font-medium uppercase tracking-wide text-text-tertiary">
               {s.label}
@@ -98,7 +98,7 @@ export default function WorkoutDetail() {
 
       {/* ── Notes ── */}
       {workout.notes && (
-        <div className="mb-8 rounded-xl border border-border-default bg-surface p-5">
+        <div className="mb-4 sm:mb-6 rounded-xl border border-border-default bg-surface p-5">
           <p className="mb-2 text-xs font-medium uppercase tracking-wide text-text-tertiary">
             Notes
           </p>
@@ -109,7 +109,7 @@ export default function WorkoutDetail() {
       {/* ── Exercises ── */}
       {/* FIX: removed the outer <Link> that was wrapping this entire section */}
       <div className="rounded-xl border border-border-default bg-surface p-5">
-        <p className="mb-5 text-sm font-medium text-text-secondary">Exercises</p>
+        <p className="mb-4 sm:mb-6 text-sm font-medium text-text-secondary">Exercises</p>
         {workout.workout_exercises.length === 0 ? (
           <p className="text-sm text-text-tertiary">No exercises logged.</p>
         ) : (
@@ -160,7 +160,7 @@ export default function WorkoutDetail() {
 
       <button
         onClick={() => navigate("/workouts")}
-        className="mt-8 text-sm text-text-secondary transition-colors hover:text-text-primary"
+        className="mt-4 sm:mt-6 text-sm text-text-secondary transition-colors hover:text-text-primary"
       >
         ← Back to Workouts
       </button>
