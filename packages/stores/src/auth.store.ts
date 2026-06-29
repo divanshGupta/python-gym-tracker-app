@@ -82,7 +82,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   // ------------- Login ------------------
   login: async (payload) => {
-    console.log("→ STORE LOGIN called with:", JSON.stringify(payload));
+    // console.log("→ STORE LOGIN called with:", JSON.stringify(payload));
     set({ isLoading: true, error: null });
 
     try {

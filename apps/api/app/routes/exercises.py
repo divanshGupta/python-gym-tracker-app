@@ -105,6 +105,10 @@ async def update_exercise(
             raise HTTPException(status_code=400, detail="Exercise already exists")
 
     for field, value in updates.items():
+        if field == "muscle_group" and value is None:
+            value = "none"
+        elif field == "equipment" and value is None:
+            value = "none"
         setattr(exercise, field, value)
 
     await db.commit()

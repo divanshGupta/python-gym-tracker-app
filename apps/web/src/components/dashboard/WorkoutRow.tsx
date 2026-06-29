@@ -1,4 +1,4 @@
-import type { WorkoutRowProps, WorkoutType, Workout } from "@gymtracker/types";
+import type { WorkoutRowProps, Workout } from "@gymtracker/types";
 import { Link } from "react-router-dom";
 import {
   ChevronRight, Trash2,
@@ -7,14 +7,6 @@ import {
 } from "lucide-react";
 
 // ── Constants ──────────────────────────────────────────────────────────────
-
-const TYPES: { value: WorkoutType | ""; label: string }[] = [
-  { value: "",            label: "All"         },
-  { value: "strength",   label: "Strength"    },
-  { value: "cardio",     label: "Cardio"      },
-  { value: "flexibility",label: "Flexibility" },
-  { value: "core",       label: "Core"        },
-];
 
 // left accent bar colour per type
 const ACCENT_CLASS: Record<string, string> = {

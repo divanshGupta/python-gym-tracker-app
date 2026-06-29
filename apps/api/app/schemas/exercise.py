@@ -17,7 +17,33 @@ class ExerciseCreate(BaseModel):
     @field_validator("category")
     @classmethod
     def lowercase_category(cls, v: str) -> str:
-        return v.strip().lower()
+        val = v.strip().lower()
+        allowed = {"strength", "cardio", "flexibility", "core"}
+        if val not in allowed:
+            raise ValueError(f"Category must be one of {allowed}")
+        return val
+
+    @field_validator("muscle_group")
+    @classmethod
+    def validate_muscle_group(cls, v: str | None) -> str | None:
+        if v is None:
+            return v
+        val = v.strip().lower()
+        allowed = {"chest", "back", "shoulders", "arms", "legs", "core", "full_body"}
+        if val not in allowed:
+            raise ValueError(f"Muscle group must be one of {allowed}")
+        return val
+
+    @field_validator("equipment")
+    @classmethod
+    def validate_equipment(cls, v: str | None) -> str | None:
+        if v is None:
+            return v
+        val = v.strip().lower()
+        allowed = {"barbell", "dumbbell", "bodyweight", "machine", "cable", "kettlebell", "none"}
+        if val not in allowed:
+            raise ValueError(f"Equipment must be one of {allowed}")
+        return val
     
 class ExerciseUpdate(BaseModel):
     name:         str | None = None 
@@ -29,13 +55,43 @@ class ExerciseUpdate(BaseModel):
     # Always save name lowercase for consistent dedup check
     @field_validator("name")
     @classmethod
-    def lowercase_name(cls, v: str) -> str:
+    def lowercase_name(cls, v: str | None) -> str | None:
+        if v is None:
+            return v
         return v.strip().lower()
 
     @field_validator("category")
     @classmethod
-    def lowercase_category(cls, v: str) -> str:
-        return v.strip().lower()
+    def validate_category(cls, v: str | None) -> str | None:
+        if v is None:
+            return v
+        val = v.strip().lower()
+        allowed = {"strength", "cardio", "flexibility", "core"}
+        if val not in allowed:
+            raise ValueError(f"Category must be one of {allowed}")
+        return val
+
+    @field_validator("muscle_group")
+    @classmethod
+    def validate_muscle_group(cls, v: str | None) -> str | None:
+        if v is None:
+            return v
+        val = v.strip().lower()
+        allowed = {"chest", "back", "shoulders", "arms", "legs", "core", "full_body"}
+        if val not in allowed:
+            raise ValueError(f"Muscle group must be one of {allowed}")
+        return val
+
+    @field_validator("equipment")
+    @classmethod
+    def validate_equipment(cls, v: str | None) -> str | None:
+        if v is None:
+            return v
+        val = v.strip().lower()
+        allowed = {"barbell", "dumbbell", "bodyweight", "machine", "cable", "kettlebell", "none"}
+        if val not in allowed:
+            raise ValueError(f"Equipment must be one of {allowed}")
+        return val
 
 class ExerciseResponse(BaseModel):
     id:           int

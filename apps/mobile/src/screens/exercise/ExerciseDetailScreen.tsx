@@ -24,16 +24,17 @@ export const ExerciseDetailScreen = ({ route, navigation }: any) => {
   const [editDescription, setEditDescription] = useState("");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Initialize edit form values when details load or modal opens
-  useEffect(() => {
+  const openEditModal = () => {
     if (detail) {
       setEditName(detail.name);
       setEditCategory(detail.category);
       setEditMuscleGroup((detail.muscle_group as MuscleGroup) ?? "chest");
       setEditEquipment(detail.equipment ?? "none");
       setEditDescription(detail.description ?? "");
+      setErrorMsg(null);
+      setEditModalVisible(true);
     }
-  }, [detail, editModalVisible]);
+  };
 
   const handleDelete = () => {
     Alert.alert(
@@ -126,7 +127,7 @@ export const ExerciseDetailScreen = ({ route, navigation }: any) => {
             <SecondaryButton 
               title="Edit" 
               style={{ flex: 1 }}
-              onPress={() => setEditModalVisible(true)} 
+              onPress={openEditModal} 
             />
             <PrimaryButton 
               title="Delete" 
