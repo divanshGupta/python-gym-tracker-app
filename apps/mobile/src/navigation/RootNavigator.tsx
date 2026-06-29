@@ -7,6 +7,7 @@ import { LoginScreen } from "../screens/auth/LoginScreen";
 import { RegisterScreen } from "../screens/auth/RegisterScreen";
 import { LogWorkoutScreen } from "../screens/workout/LogWorkoutScreen";
 import { WorkoutDetailScreen } from "../screens/workout/WorkoutDetailScreen";
+import { ExerciseDetailScreen } from "../screens/exercise/ExerciseDetailScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -32,6 +33,7 @@ export const RootNavigator = () => {
                 animation: "slide_from_right",
               }}
             />
+            
             <Stack.Screen
               name="WorkoutDetail"
               component={WorkoutDetailScreen}
@@ -39,6 +41,15 @@ export const RootNavigator = () => {
                 animation: "slide_from_right",
               }}
             />
+
+            <Stack.Screen
+              name="ExerciseDetail"
+              component={ExerciseDetailScreen}
+              options={{
+                animation: "slide_from_right"
+              }}
+            />
+
           </>
         ) : (
           <>

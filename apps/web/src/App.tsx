@@ -17,7 +17,6 @@ import Goals from "./pages/Goals"
 import Measurements from "./pages/Measurements"
 import EditWorkout from "./pages/EditWorkout"
 import ExerciseDetail from "./pages/ExerciseDetails";
-import Editexercise from "./pages/EditExercise";
 import EditExercise from "./pages/EditExercise";
 
 /**

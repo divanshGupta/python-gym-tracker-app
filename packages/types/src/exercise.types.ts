@@ -13,7 +13,7 @@ export type Equipment        = EquipmentValue;
 export interface Exercise {
   id:            number;
   name:          string;
-  category:      string;
+  category:      ExerciseCategory;
   muscle_group:  string | null;   // null for cardio/flexibility exercises
   equipment:     string;
   description?:  string | null;
@@ -23,7 +23,7 @@ export interface Exercise {
 
 export interface CreateExercisePayload {
   name:          string;
-  category:      string;
+  category:      ExerciseCategory;
   muscle_group?: string | null;   // optional
   equipment?:    string | null;   // optional
   description?:  string | null;
@@ -31,7 +31,7 @@ export interface CreateExercisePayload {
 
 export interface UpdateExercisePayload {
   name?: string | null;
-  category?: string | null;
+  category?: ExerciseCategory;
   muscle_group?: string | null;
   equipment?: string | null;
   description?: string | null;

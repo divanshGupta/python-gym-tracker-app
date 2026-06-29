@@ -6,13 +6,23 @@ import { z } from "zod";
 import { useEffect } from "react";
 
 import { useExercise, useUpdateExercise } from "@gymtracker/hooks";
+import { EXERCISE_CATEGORY_VALUES } from "@gymtracker/constants";
+import { Select } from "../components/ui";
+
+const CATEGORIES    = ["strength", "cardio", "flexibility", "core"] as const;
+const MUSCLE_GROUPS = ["chest", "back", "shoulders", "arms", "legs", "core", "full_body"];
+const EQUIPMENT     = ["barbell", "dumbbell", "bodyweight", "machine", "cable", "kettlebell", "none"];
+
+function cap(s: string) {
+  return s ? s.charAt(0).toUpperCase() + s.slice(1).replace(/_/g, " ") : "";
+}
 
 const schema = z.object({
   name: z.string().min(1, "Name is required"),
-  category: z.string().min(1, "Category is required"),
-  muscle_group: z.string().optional(),
-  equipment: z.string().optional(),
-  description: z.string().optional(),
+  category: z.enum(EXERCISE_CATEGORY_VALUES),
+  muscle_group: z.string().optional().nullable(),
+  equipment: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
 });
 
 type ExerciseFormData = z.infer<typeof schema>;
@@ -28,10 +38,14 @@ export default function EditExercise() {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<ExerciseFormData>({
     resolver: zodResolver(schema),
   });
+
+  const selectedCategory = watch("category");
+  const showMuscleGroup = selectedCategory === "strength";
 
   useEffect(() => {
     if (exercise) {
@@ -47,7 +61,16 @@ export default function EditExercise() {
 
   const onSubmit = (data: ExerciseFormData) => {
     mutate(
-      { id: Number(id), data },
+      {
+        id: Number(id),
+        data: {
+          name: data.name,
+          category: data.category,
+          muscle_group: showMuscleGroup ? (data.muscle_group || null) : null,
+          equipment: data.equipment || null,
+          description: data.description || null,
+        },
+      },
       { onSuccess: () => navigate(`/exercises/${id}`) }
     );
   };
@@ -99,54 +122,42 @@ export default function EditExercise() {
         </div>
 
         {/* ── Stats ── */}
-        <div className="mb-4 sm:mb-6 grid grid-cols-3 gap-2 sm:gap-4 sm:grid-cols-3">
+        <div className="mb-4 sm:mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
           {/* Category */}
-          <div className="rounded-xl border border-border-default bg-surface p-3 sm:p-5 text-center">
-            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-text-tertiary">
-              Category
-            </p>
-            <input
-              {...register("category")}
-              type="text"
-              className="w-full bg-transparent text-lg font-semibold text-gray-400
-             border-b border-dashed border-border-default
-             focus:outline-none focus:border-solid focus:border-primary
-             transition-colors duration-200 text-center"
-            />
-            {errors.category && <p className="text-danger text-xs mt-1">{errors.category.message}</p>}
-          </div>
+          <Select
+            label="Category"
+            error={errors.category?.message}
+            {...register("category")}
+          >
+            {CATEGORIES.map((c) => (
+              <option key={c} value={c}>{cap(c)}</option>
+            ))}
+          </Select>
 
           {/* Muscle Group */}
-          <div className="rounded-xl border border-border-default bg-surface p-3 sm:p-5 text-center">
-            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-text-tertiary">
-              Muscle Group
-            </p>
-            <input
-              {...register("muscle_group")}
-              type="text"
-              placeholder="—"
-              className="w-full bg-transparent text-lg font-semibold text-gray-400
-             border-b border-dashed border-border-default
-             focus:outline-none focus:border-solid focus:border-primary
-             transition-colors duration-200 text-center"
-            />
-          </div>
+          <Select
+            label="Muscle Group"
+            error={errors.muscle_group?.message}
+            disabled={!showMuscleGroup}
+            {...register("muscle_group")}
+          >
+            <option value="">—</option>
+            {MUSCLE_GROUPS.map((m) => (
+              <option key={m} value={m}>{cap(m)}</option>
+            ))}
+          </Select>
 
           {/* Equipment */}
-          <div className="rounded-xl border border-border-default bg-surface p-3 sm:p-5 text-center">
-            <p className="mb-1 text-xs font-medium uppercase tracking-wide text-text-tertiary">
-              Equipment
-            </p>
-            <input
-              {...register("equipment")}
-              type="text"
-              placeholder="—"
-              className="w-full bg-transparent text-lg font-semibold text-gray-400
-             border-b border-dashed border-border-default
-             focus:outline-none focus:border-solid focus:border-primary
-             transition-colors duration-200 text-center"
-            />
-          </div>
+          <Select
+            label="Equipment"
+            error={errors.equipment?.message}
+            {...register("equipment")}
+          >
+            <option value="">—</option>
+            {EQUIPMENT.map((eq) => (
+              <option key={eq} value={eq}>{cap(eq)}</option>
+            ))}
+          </Select>
         </div>
 
         {/* ── Notes ── */}

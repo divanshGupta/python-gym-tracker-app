@@ -117,14 +117,14 @@ export default function Profile() {
           <div className="w-px h-6 bg-border-default" />
 
           <div className="flex flex-col items-center gap-0.5 opacity-40">
-            <span className="text-[16px] font-bold text-text-tertiary">—</span>
+            <span className="text-[16px] font-bold text-text-tertiary">0</span>
             <span className="text-[10px] text-text-tertiary">Followers</span>
           </div>
 
           <div className="w-px h-6 bg-border-default opacity-40" />
 
           <div className="flex flex-col items-center gap-0.5 opacity-40">
-            <span className="text-[16px] font-bold text-text-tertiary">—</span>
+            <span className="text-[16px] font-bold text-text-tertiary">0</span>
             <span className="text-[10px] text-text-tertiary">Following</span>
           </div>
 

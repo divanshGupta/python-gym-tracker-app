@@ -9,6 +9,7 @@ import {
   StatCard,
 } from "../../components/ui";
 import { tokens } from "../../theme/tokens";
+// import { SettingsRow } from "./SettingsRow";
 
 type WeightUnit = "kg" | "lbs";
 
@@ -32,6 +33,13 @@ export const ProfileScreen = ({ navigation }: any) => {
     0,
   );
 
+  function formatMemberSince(dateStr: string): string {
+    return new Date(dateStr).toLocaleDateString("en-US", {
+      month: "long",
+      year: "numeric",
+    });
+  }
+
   const handleLogout = () => {
     Alert.alert("Log out", "Are you sure you want to log out?", [
       { text: "Cancel", style: "cancel" },
@@ -43,9 +51,9 @@ export const ProfileScreen = ({ navigation }: any) => {
     ]);
   };
 
-  const handleUnitToggle = () => {
-    setWeightUnit((u) => (u === "kg" ? "lbs" : "kg"));
-  };
+  // const handleUnitToggle = () => {
+  //   setWeightUnit((u) => (u === "kg" ? "lbs" : "kg"));
+  // };
 
   return (
     <View className="flex-1 bg-void">
@@ -62,7 +70,7 @@ export const ProfileScreen = ({ navigation }: any) => {
           {/* Avatar card */}
           <AppCard className="flex-row items-center">
             <View className="w-12 h-12 rounded-full bg-accent items-center justify-center mr-4">
-              <Text className="text-white text-lg font-bold">
+              <Text className="text-text-primary text-lg font-bold">
                 {user?.username?.[0]?.toUpperCase() ?? "A"}
               </Text>
             </View>
@@ -76,6 +84,12 @@ export const ProfileScreen = ({ navigation }: any) => {
               >
                 {user?.email ?? ""}
               </Text>
+              {user?.created_at && (
+                <Text
+                  className="text-[11px] text-text-tertiary/90 mt-1.5">
+                  Member since {formatMemberSince(user.created_at)}
+                </Text>
+              )}
             </View>
             {/* there is no feature for edit profile rn */}
             {/* <TouchableOpacity
@@ -189,6 +203,29 @@ export const ProfileScreen = ({ navigation }: any) => {
                 showChevron
                 onPress={() => {}}
                 isLast
+              />
+            </AppCard>
+          </View> */}
+
+          {/* Goals and Measuremnts Links */}
+          {/* <View> */}
+            {/* <SectionHeader title="Account" /> */}
+            {/* <AppCard className="p-0 overflow-hidden">
+              <SettingsRow
+                iconBg="#2C1F5E"
+                iconColor="#7C5CFC"
+                iconShape="square"
+                label="Goals"
+                showChevron
+                onPress={() => navigation.navigate("Goals")}
+              />
+              <SettingsRow
+                iconBg="#1A2E1A"
+                iconColor="#22C55E"
+                iconShape="circle"
+                label="Measurements"
+                showChevron
+                onPress={() => navigation.navigate("Measurements")}
               />
             </AppCard>
           </View> */}
