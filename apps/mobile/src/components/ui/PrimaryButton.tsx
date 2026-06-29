@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Text,
   TouchableOpacity,
@@ -10,6 +9,7 @@ import {
 
 interface PrimaryButtonProps {
   title: string;
+  variant?: "primary" | "danger";
   onPress: () => void;
   loading?: boolean;
   disabled?: boolean;
@@ -23,13 +23,17 @@ export const PrimaryButton = ({
   onPress,
   loading = false,
   disabled = false,
+  variant = "primary",
   style,
   textStyle,
   activeOpacity = 0.8,
 }: PrimaryButtonProps) => {
+  const bgClass =
+    variant === "danger" ? "bg-red-500" : "bg-accent";
+
   return (
     <TouchableOpacity
-      className={`h-12 rounded-xl bg-accent items-center justify-center flex-row px-4 ${
+      className={`h-12 rounded-xl items-center justify-center flex-row px-4 ${bgClass} ${
         disabled || loading ? "opacity-60" : ""
       }`}
       style={style}
@@ -38,7 +42,7 @@ export const PrimaryButton = ({
       activeOpacity={activeOpacity}
     >
       {loading ? (
-        <ActivityIndicator color="#FFFFFF" size="small" />
+        <ActivityIndicator color="#fff" />
       ) : (
         <Text className="text-white text-sm font-semibold" style={textStyle}>
           {title}

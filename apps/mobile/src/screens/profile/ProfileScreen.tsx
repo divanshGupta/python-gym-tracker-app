@@ -6,9 +6,11 @@ import {
   AppCard,
   AppHeader,
   ScreenContainer,
+  SectionHeader,
   StatCard,
 } from "../../components/ui";
 import { tokens } from "../../theme/tokens";
+import { SettingsRow } from "./SettingsRow";
 
 type WeightUnit = "kg" | "lbs";
 
@@ -192,6 +194,29 @@ export const ProfileScreen = ({ navigation }: any) => {
               />
             </AppCard>
           </View> */}
+
+          {/* Goals and Measuremnts Links */}
+          <View>
+            {/* <SectionHeader title="Account" /> */}
+            <AppCard className="p-0 overflow-hidden">
+              <SettingsRow
+                iconBg="#2C1F5E"
+                iconColor="#7C5CFC"
+                iconShape="square"
+                label="Goals"
+                showChevron
+                onPress={() => navigation.navigate("Goals")}
+              />
+              <SettingsRow
+                iconBg="#1A2E1A"
+                iconColor="#22C55E"
+                iconShape="circle"
+                label="Measurements"
+                showChevron
+                onPress={() => navigation.navigate("Measurements")}
+              />
+            </AppCard>
+          </View>
 
           {/* Logout button */}
           <TouchableOpacity

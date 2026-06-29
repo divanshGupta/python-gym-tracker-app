@@ -1,6 +1,14 @@
 // Match your FastAPI backend enums exactly
 // These are the 4 categories your backend has seeded
 
+export const EXERCISE_CATEGORY_VALUES = [
+  "strength",
+  "cardio",
+  "flexibility",
+  "core",
+] as const;
+
+
 export const EXERCISE_CATEGORIES = [
   { value: "strength",    label: "Strength"    },
   { value: "cardio",      label: "Cardio"      },

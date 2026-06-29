@@ -6,10 +6,11 @@ import { z } from "zod";
 import { useEffect } from "react";
 
 import { useExercise, useUpdateExercise } from "@gymtracker/hooks";
+import { EXERCISE_CATEGORY_VALUES } from "@gymtracker/constants";
 
 const schema = z.object({
-  name: z.string().min(1, "Name is required"),
-  category: z.string().min(1, "Category is required"),
+  name: z.string().min(1),
+  category: z.enum(EXERCISE_CATEGORY_VALUES),
   muscle_group: z.string().optional(),
   equipment: z.string().optional(),
   description: z.string().optional(),
