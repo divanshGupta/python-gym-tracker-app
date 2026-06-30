@@ -3,27 +3,28 @@
 version: "3.9"
 
 services:
-  db:
-    image: postgres:16-alpine
-    container_name: gymtracker-db
-    restart: always
+# i am using neon db so docker postgres db is obsolete
+  # db:
+  #   image: postgres:16-alpine
+  #   container_name: gymtracker-db
+  #   restart: always
     
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: gymdb
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #     POSTGRES_DB: gymdb
     
-    ports:
-      - "5432:5432"
+  #   ports:
+  #     - "5432:5432"
     
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+  #   volumes:
+  #     - pgdata:/var/lib/postgresql/data
     
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U postgres"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
 
   api:
     build:
@@ -36,17 +37,13 @@ services:
       - "8000:8000"
     
     environment:
-      DATABASE_URL: postgresql+asyncpg://postgres:${POSTGRES_PASSWORD}@db:5432/gymdb
+      DATABASE_URL: ${DATABASE_URL}
       SECRET_KEY: ${SECRET_KEY}
       ALGORITHM: ${ALGORITHM}
       ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES}
       REFRESH_TOKEN_EXPIRE_DAYS: ${REFRESH_TOKEN_EXPIRE_DAYS}
       RATE_LIMIT_LOGIN: ${RATE_LIMIT_LOGIN}
       RATE_LIMIT_DEFAULT: ${RATE_LIMIT_DEFAULT}
-    
-    depends_on:
-      db:
-        condition: service_healthy
     
     volumes:
       - ./apps/api:/app
@@ -55,7 +52,7 @@ services:
       - ./.env
 
     # (gives DB time to fully initialize)
-    command: sh -c "sleep 10 && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    command: sh -c "uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
 
 volumes:
   pgdata:
