@@ -3,7 +3,7 @@ from sqlalchemy.orm import DeclarativeBase
 from app.config import settings
 
 # Like mongoose.connect()
-engine = create_async_engine(settings.DATABASE_URL, echo=True)
+engine = create_async_engine(settings.DATABASE_URL, echo=True, pool_pre_ping=True)
 
 # Like a session factory — echo=True logs all SQL (turn off in prod)
 AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)
