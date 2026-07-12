@@ -1,0 +1,10 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "apps/api/Dockerfile"
+buildContext = "apps/api"
+
+[deploy]
+preDeployCommand = "alembic upgrade head"
+startCommand = "uvicorn app.main:app --host 0.0.0.0 --port 8000"
+healthcheckPath = "/docs"
+healthcheckTimeout = 30
