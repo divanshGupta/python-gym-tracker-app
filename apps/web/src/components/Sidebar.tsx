@@ -66,7 +66,7 @@ export function Sidebar() {
             </div>
 
             <span className="text-[15px] font-semibold tracking-tight text-text-primary">
-              GymTracker
+              Fit Logger
             </span>
           </Link>
 
@@ -128,7 +128,7 @@ export function Sidebar() {
             </div>
 
             <span className="text-[18px] font-semibold tracking-tight text-text-primary">
-              GymTracker
+              Fit Logger
             </span>
           </Link>
 
