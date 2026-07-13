@@ -50,7 +50,7 @@ export default function Register() {
   return (
     <div className="min-h-screen bg-void flex items-center justify-center px-6 py-10">
       <div className="w-full max-w-md rounded-2xl border border-border-default bg-surface p-8 shadow-sm">
-        <h1 className="mb-2 text-2xl font-semibold tracking-tight text-accent">GymTracker</h1>
+        <h1 className="mb-2 text-2xl font-semibold tracking-tight text-accent">Fit Logger</h1>
         <h2 className="text-xl font-semibold text-text-primary">Create Account</h2>
         <p className="mt-1 mb-6 text-sm text-text-secondary">
           Start tracking your workouts and progress.
