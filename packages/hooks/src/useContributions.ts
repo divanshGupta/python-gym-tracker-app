@@ -1,4 +1,3 @@
-// packages/hooks/src/useContributions.ts
 import { statsApi } from "@gymtracker/api-client";
 import {
   CONTRIBUTION_RANGES,

@@ -1,4 +1,3 @@
-// packages/api-client/src/stats.api/ts
 import type {
   ExerciseProgress,
   PersonalBests,

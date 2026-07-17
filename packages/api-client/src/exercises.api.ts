@@ -1,4 +1,3 @@
-// packages/api-client/src/exercises.api.ts
 import { apiClient } from "./client";
 import type { Exercise, ExerciseCategory, CreateExercisePayload, UpdateExercisePayload } from "@gymtracker/types";
 
