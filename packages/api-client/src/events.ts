@@ -1,6 +1,6 @@
 // A tiny cross-platform event emitter
-// Works in both browser (web) and React Native (mobile)
-// No DOM dependency — uses a simple callback registry
+// Works in both browser and reacct native
+// No dom dependency — uses a simple callback registry
 
 type Listener = () => void;
 
